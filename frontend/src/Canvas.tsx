@@ -6,8 +6,10 @@ interface CanvasProps {
 }
 
 export default function Canvas({ mode }: CanvasProps) {
-    const [coordinate, setCoordinate] = useState({x: -1, y: -1});
+    const [pos, setPos] = useState({x: -1, y: -1});
     const [text, setText] = useState("");
+    const [fontSize, setFontSize] = useState(20);
+    const [font, setFont] = useState("sans-serif");
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     let canvas: HTMLCanvasElement;
@@ -23,33 +25,37 @@ export default function Canvas({ mode }: CanvasProps) {
             scale = window.devicePixelRatio;
             canvas.width = rect.width * scale;
             canvas.height = rect.height * scale;
+            if (ctx && pos.x > -1 && pos.y > -1) {
+                ctx.font = `${fontSize}px ${font}`;
+                ctx.fillText(text, pos.x, pos.y);
+                ctx.strokeRect(pos.x, pos.y - fontSize*1.5, ctx.measureText(text).width, fontSize * 2);
+                console.log(ctx.measureText(text));
+            }
         }
-    })
+    });
 
-    const select = (x: number, y: number) => {
-        setCoordinate({x: x, y: y});
+    const selectPos = (x: number, y: number) => {
         setText("");
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const coordX = (x - rect.left) * scaleX;
+        const coordY = (y - rect.top) * scaleY;
+        setPos({x: coordX, y: coordY});
     }
 
-    const write = (key: string) => {
-        console.log(`coordinate: (${coordinate.x}, ${coordinate.y})`);
+    const enterText = (key: string) => {
         console.log(`key pressed: ${key}`);
-        if (ctx) {
-            setText(text + key);
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const coordX = (coordinate.x - rect.left) * scaleX;
-            const coordY = (coordinate.y - rect.top) * scaleY;
-            console.log(`x: ${coordX}, y: ${coordY}`);
-            ctx.font = "20px sans-serif";
-            ctx.fillText(text, coordX, coordY);
+        if (key === 'Backspace') {
+            setText(text.substring(0, text.length-1));
+            return;
         }
+        setText(text + key);
     }
 
     return (
         <>
         <div className="flex place-content-center">
-            <canvas className="bg-amber-50 border-4 mobile:w-screen mobile:border-0 h-screen" ref={canvasRef} tabIndex={0} onClick={(e) => {select(e.clientX, e.clientY)}} onKeyDown={(e) => {write(e.key)}}>
+            <canvas className="bg-amber-50 border-4 mobile:w-screen mobile:border-0 w-240 h-screen" ref={canvasRef} tabIndex={0} onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {enterText(e.key)}}>
             </canvas>
         </div>
         </>
