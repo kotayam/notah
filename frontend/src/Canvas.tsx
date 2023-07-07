@@ -3,6 +3,9 @@ import { useRef, useEffect, useState } from "react";
 
 type CanvasProps = {
     mode: string;
+    fontSize: number;
+    font: string;
+    bold: boolean;
 }
 
 type CanvasElement = {
@@ -13,11 +16,9 @@ type CanvasElement = {
     fontSize: number;
 }
 
-export default function Canvas({ mode }: CanvasProps) {
+export default function Canvas({ mode, fontSize, font, bold }: CanvasProps) {
     const [pos, setPos] = useState({x: -1, y: -1});
     const [text, setText] = useState("");
-    const [fontSize, setFontSize] = useState(20);
-    const [font, setFont] = useState("sans-serif");
     const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -42,7 +43,7 @@ export default function Canvas({ mode }: CanvasProps) {
 
     const draw = (ctx: CanvasRenderingContext2D) => {
         console.log(canvasElts);
-        canvasElts.forEach(elt => {
+        canvasElts.forEach((elt, idx) => {
             ctx.font = `${elt.fontSize}px ${elt.font}`;
             const sentence = elt.text.split('\n');
             let boxWidth = -1;
@@ -54,7 +55,10 @@ export default function Canvas({ mode }: CanvasProps) {
                     }
                 }
             });
-            ctx.strokeRect(elt.x, elt.y - elt.fontSize*1.5, boxWidth, elt.fontSize * (sentence.length + 1));
+            if (idx === canvasElts.length-1) {
+                ctx.strokeRect(elt.x, elt.y - elt.fontSize*1.5, boxWidth, elt.fontSize * (sentence.length + 1));
+            }
+            
         });
     }
 
@@ -110,8 +114,8 @@ export default function Canvas({ mode }: CanvasProps) {
 
     return (
         <>
-        <div className="flex place-content-center">
-            <canvas className="bg-amber-50 border-4 mobile:w-screen mobile:border-0 w-240 h-screen" ref={canvasRef} tabIndex={0} 
+        <div className="flex place-content-center w-screen">
+            <canvas className="bg-amber-50 mobile:w-screen mobile:border-0 laptop:border-4 laptop:w-240" ref={canvasRef} tabIndex={0} 
             onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {enterText(e.key)}}>
             </canvas>
         </div>
