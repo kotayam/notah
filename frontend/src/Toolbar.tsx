@@ -9,15 +9,16 @@ type ToolbarProps = {
     changeFont: (newFont: string) => void;
     bold: boolean;
     toggleBold: (isBold: boolean) => void;
+    italic: boolean;
+    toggleItalic: (isItalic: boolean) => void;
  }
 
-export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold }: ToolbarProps) {
+export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic }: ToolbarProps) {
     let boldStyle;
-    if (bold) {
-        boldStyle = "bg-stone-700";
-    } else {
-        boldStyle = "bg-transparent";
-    }
+    bold? boldStyle = "bg-gray-400": boldStyle = "bg-transparent";
+
+    let italicStyle;
+    italic? italicStyle = "bg-gray-400": italicStyle = "bg-transparent";
 
     return (
         <>
@@ -47,7 +48,8 @@ export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, fo
                         <option value="48">48</option>
                         <option value="72">72</option>
                     </select>
-                    <button className={`rounded-none ${boldStyle}`} onClick={e => toggleBold(bold)}>B</button>
+                    <button className={`rounded-none w-[20px] ${boldStyle}`} onClick={e => toggleBold(bold)}><strong>B</strong></button>
+                    <button className={`rounded-none w-[20px] ${italicStyle}`} onClick={e => toggleItalic(italic)}><em>I</em></button>
                 </div>
             </div>
         </>

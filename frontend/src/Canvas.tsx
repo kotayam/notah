@@ -6,6 +6,7 @@ type CanvasProps = {
     fontSize: number;
     font: string;
     bold: boolean;
+    italic: boolean;
 }
 
 type CanvasElement = {
@@ -14,9 +15,11 @@ type CanvasElement = {
     y: number;
     font: string;
     fontSize: number;
+    fontWeight: string;
+    fontStyle: string;
 }
 
-export default function Canvas({ mode, fontSize, font, bold }: CanvasProps) {
+export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasProps) {
     const [pos, setPos] = useState({x: -1, y: -1});
     const [text, setText] = useState("");
     const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
@@ -44,7 +47,7 @@ export default function Canvas({ mode, fontSize, font, bold }: CanvasProps) {
     const draw = (ctx: CanvasRenderingContext2D) => {
         console.log(canvasElts);
         canvasElts.forEach((elt, idx) => {
-            ctx.font = `${elt.fontSize}px ${elt.font}`;
+            ctx.font = `${elt.fontWeight} ${elt.fontStyle} ${elt.fontSize}px ${elt.font}`;
             const sentence = elt.text.split('\n');
             let boxWidth = -1;
             sentence.forEach((line, idx) => {
@@ -68,10 +71,12 @@ export default function Canvas({ mode, fontSize, font, bold }: CanvasProps) {
         const scaleY = canvas.height / rect.height;
         const coordX = (x - rect.left) * scaleX;
         const coordY = (y - rect.top) * scaleY;
+        const fontWeight = bold? 'bold' : 'normal';
+        const fontStyle = italic? 'italic': 'normal'
         setPos({x: coordX, y: coordY});
         setCanvasElts(canvasElts => [
             ...canvasElts, 
-            {text: '', x: coordX, y: coordY, font: font, fontSize: fontSize}
+            {text: '', x: coordX, y: coordY, font: font, fontSize: fontSize, fontWeight: fontWeight, fontStyle: fontStyle}
         ]);
     }
 
@@ -115,7 +120,7 @@ export default function Canvas({ mode, fontSize, font, bold }: CanvasProps) {
     return (
         <>
         <div className="flex place-content-center w-screen">
-            <canvas className="bg-amber-50 mobile:w-screen mobile:border-0 laptop:border-4 laptop:w-240" ref={canvasRef} tabIndex={0} 
+            <canvas className="bg-amber-50 h-[500px] mobile:w-screen mobile:border-0 laptop:border-4 laptop:w-240" ref={canvasRef} tabIndex={0} 
             onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {enterText(e.key)}}>
             </canvas>
         </div>
