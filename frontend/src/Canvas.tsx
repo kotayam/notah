@@ -10,7 +10,7 @@ type CanvasProps = {
 }
 
 type CanvasElement = {
-    text: JSX.Element;
+    text: string;
     x: number;
     y: number;
     width: number;
@@ -19,6 +19,7 @@ type CanvasElement = {
     fontSize: number;
     fontWeight: string;
     fontStyle: string;
+    selected: boolean;
 }
 
 export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasProps) {
@@ -90,11 +91,12 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
         const fontWeight = bold? 'bold' : 'normal';
         const fontStyle = italic? 'italic': 'normal'
         setPos({x: coordX, y: coordY});
-        setCanvasElts(canvasElts => [
-            ...canvasElts, 
-            {text: <></>, x: x, y: y, width: 0, height: 0, 
-            font: font, fontSize: fontSize, fontWeight: fontWeight, fontStyle: fontStyle}
-        ]);
+        setCanvasElts(canvasElts => {
+            canvasElts.forEach(elt => elt.selected = false);
+            return [...canvasElts, 
+            {text: "", x: x, y: y, width: 0, height: 0, 
+            font: font, fontSize: fontSize, fontWeight: fontWeight, fontStyle: fontStyle, selected: true}]
+        });
     }
 
     const setBoxDimension = (newText: string, elt: CanvasElement) => {
@@ -114,29 +116,36 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
     const enterText = (key: string, ctx: CanvasRenderingContext2D) => {
         console.log(`key pressed: ${key}`);
         const k = key.toLowerCase();
-        let newText = "";
         switch (k) {
-            case 'backspace': 
-                newText = text.substring(0, text.length-1);
-                setText(newText);
+            case 'backspace':
+                const arr = text.split('\n');
+                if (arr[arr.length - 1] === '') arr.pop();
+                if (arr[arr.length-1] ===  '&nbsp;' || arr[arr.length-1] === '<br/>') {
+                    arr.pop();
+                    setText(arr.join('\n'));
+                    setCanvasElts(canvasElts => {
+                        canvasElts[canvasElts.length-1].text = arr.join('\n');
+                        return [...canvasElts];
+                    });
+                    return;
+                }
+                setText(text.substring(0, text.length-1));
                 setCanvasElts(canvasElts => {
-                    canvasElts[canvasElts.length-1].text = <>{newText}</>;
+                    canvasElts[canvasElts.length-1].text = text.substring(0, text.length-1);
                     return [...canvasElts];
                 });
                 return;
             case ' ':
-                newText = text + " ";
-                setText(newText);
+                setText(text + '\n&nbsp;\n')
                 setCanvasElts(canvasElts => {
-                    canvasElts[canvasElts.length-1].text = <>{canvasElts[canvasElts.length-1].text}&nbsp;</>;
+                    canvasElts[canvasElts.length-1].text = text + '\n&nbsp;\n';
                     return [...canvasElts];
                 });
                 return;
             case 'enter':
-                newText = text + '\n';
-                setText(newText);
+                setText(text + '\n<br/>\n')
                 setCanvasElts(canvasElts => {
-                    canvasElts[canvasElts.length-1].text = <>{canvasElts[canvasElts.length-1].text}<br/></>;
+                    canvasElts[canvasElts.length-1].text = text + '\n<br/>\n';
                     return [...canvasElts];
                 });
                 return;
@@ -144,19 +153,37 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
         if (k.length !== 1) {
             return;
         }
-        newText = text + key;
-        setText(newText);
+        setText(text + key)
         setCanvasElts(canvasElts => {
-            canvasElts[canvasElts.length-1].text = <>{newText}</>;
+            canvasElts[canvasElts.length-1].text = text + key;
             return [...canvasElts];
         });
-        return;
     }
 
     const returnText = (elt: CanvasElement) => {
-        return <p className="absolute border-2" style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
+        const arr = elt.text.split('\n');
+        const children: JSX.Element[] = [];
+        arr.forEach(child => {
+            switch (child) {
+                case '&nbsp;': 
+                    children.push(<>&nbsp;</>);
+                    return;
+                case '<br/>': 
+                    children.push(<br/>);
+                    return;
+                default:
+                    children.push(<>{child}</>);
+                    return;
+            }
+        })
+        let border = "border-0";
+        if (elt.selected) {
+            children.push(<span className="animate-blinker inline-block">_</span>);
+            border = "border-2";
+        }
+        return <p key={elt.x} className={`absolute ${border}`} style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
         fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, top: `${elt.y}px`, left: `${elt.x}px`}}
-        >{elt.text}</p>
+        >{children}</p>
     }
 
     return (

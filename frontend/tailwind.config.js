@@ -22,7 +22,16 @@ export default {
         '128': '32rem',
         '144': '36rem',
         '240': '60rem'
-      }
+      },
+      keyframes: {
+        blinker: {
+          '0%, 100%': {opacity: '1'},
+          '50%': {opacity: '0'}
+        }
+      },
+      animation: {
+        blinker: 'blinker 1s infinite step-end',
+      },
     },
   },
   plugins: [],
