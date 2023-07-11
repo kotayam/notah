@@ -28,6 +28,7 @@ function App() {
   const toggleBold = (isBold: boolean) => {
     isBold? setBold(false) : setBold(true);
     console.log(`Bold mode: ${!isBold}`);
+
     }
 
   const toggleItalic = (isItalic: boolean) => {

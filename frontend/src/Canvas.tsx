@@ -26,6 +26,8 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
     const [pos, setPos] = useState({x: -1, y: -1});
     const [text, setText] = useState("");
     const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
+    const [boldStatus, setBoldStatus] = useState(false);
+    const [italicStatus, setItalicStatus] = useState(false);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     let canvas: HTMLCanvasElement;
@@ -36,6 +38,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
     useEffect(() => {
         if (canvasRef.current) {
             canvas = canvasRef.current;
+            canvas.focus();
             ctx = canvas.getContext('2d');
             rect = canvas.getBoundingClientRect();
             // scale = window.devicePixelRatio;
@@ -113,67 +116,78 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
         const boxHeight = elt.fontSize * (sentence.length + 1);
     }
 
-    const enterText = (key: string, ctx: CanvasRenderingContext2D) => {
+    const enterText = (key: string) => {
         console.log(`key pressed: ${key}`);
         const k = key.toLowerCase();
+        let newText = text;
         switch (k) {
+            case ' ':
+                if (text.charAt(text.length-1) !== ' ') newText += ' ';
+                // newText += '\n&nbsp;\n'
+                break;
+            
+            case 'enter':
+                newText += '\n<br>\n'
+                break;
+            
             case 'backspace':
                 const arr = text.split('\n');
                 if (arr[arr.length - 1] === '') arr.pop();
-                if (arr[arr.length-1] ===  '&nbsp;' || arr[arr.length-1] === '<br/>') {
+                if (arr[arr.length-1] ===  '&nbsp;' || arr[arr.length-1] === '<br>' || arr[arr.length-1] === '<strong>') {
                     arr.pop();
-                    setText(arr.join('\n'));
-                    setCanvasElts(canvasElts => {
-                        canvasElts[canvasElts.length-1].text = arr.join('\n');
-                        return [...canvasElts];
-                    });
-                    return;
+                    newText = arr.join('\n');
+                } else {
+                    newText = text.substring(0, text.length-1);
                 }
-                setText(text.substring(0, text.length-1));
-                setCanvasElts(canvasElts => {
-                    canvasElts[canvasElts.length-1].text = text.substring(0, text.length-1);
-                    return [...canvasElts];
-                });
-                return;
-            case ' ':
-                setText(text + '\n&nbsp;\n')
-                setCanvasElts(canvasElts => {
-                    canvasElts[canvasElts.length-1].text = text + '\n&nbsp;\n';
-                    return [...canvasElts];
-                });
-                return;
-            case 'enter':
-                setText(text + '\n<br/>\n')
-                setCanvasElts(canvasElts => {
-                    canvasElts[canvasElts.length-1].text = text + '\n<br/>\n';
-                    return [...canvasElts];
-                });
-                return;
+                break;
+            
+            default:
+                if (k.length > 1) break;
+                if (bold && !boldStatus) {
+                    setBoldStatus(true);
+                    newText += '\n<strong>';
+                } else if (!bold && boldStatus) {
+                    setBoldStatus(false);
+                    newText += '\n';
+                }
+                newText += key;
+                // if (bold && italic) {
+                //     newText += '\n<span>\n' + key;
+                // } else if (bold) {
+                //     newText += '\n<strong>' + key;
+                // } else if (italic) {
+                //     newText += '\n<em>\n' + key;
+                // } else {
+                //     newText += key;
+                // }
+                break;
         }
-        if (k.length !== 1) {
-            return;
-        }
-        setText(text + key)
+        setText(newText);
         setCanvasElts(canvasElts => {
-            canvasElts[canvasElts.length-1].text = text + key;
+            canvasElts[canvasElts.length-1].text = newText;
             return [...canvasElts];
         });
     }
 
-    const returnText = (elt: CanvasElement) => {
+    const returnText = (elt: CanvasElement, idx: number) => {
         const arr = elt.text.split('\n');
+        console.log(arr);
         const children: JSX.Element[] = [];
-        arr.forEach(child => {
+        arr.forEach((child) => {
             switch (child) {
                 case '&nbsp;': 
                     children.push(<>&nbsp;</>);
-                    return;
-                case '<br/>': 
+                    break;
+                case '<br>': 
                     children.push(<br/>);
-                    return;
+                    break;
                 default:
-                    children.push(<>{child}</>);
-                    return;
+                    if (child.includes('<strong>')) {
+                        children.push(<strong>{child.substring(8, child.length)}</strong>)
+                    } else {
+                        children.push(<>{child}</>);
+                    }
+                    break;
             }
         })
         let border = "border-0";
@@ -181,7 +195,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
             children.push(<span className="animate-blinker inline-block">_</span>);
             border = "border-2";
         }
-        return <p key={elt.x} className={`absolute ${border}`} style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
+        return <p key={idx} className={`absolute ${border}`} style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
         fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, top: `${elt.y}px`, left: `${elt.x}px`}}
         >{children}</p>
     }
@@ -190,9 +204,9 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
         <>
         <div className="flex place-content-center w-screen">
             <canvas className="bg-amber-50 h-[500px] mobile:w-screen mobile:border-0 laptop:border-4 laptop:w-240" ref={canvasRef} tabIndex={0} 
-            onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {if (ctx) enterText(e.key, ctx)}}>
+            onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {e.preventDefault(); enterText(e.key)}}>
             </canvas>
-            {canvasElts.map(elt => returnText(elt))}
+            {canvasElts.map((elt, idx) => returnText(elt, idx))}
         </div>
         </>
     );
