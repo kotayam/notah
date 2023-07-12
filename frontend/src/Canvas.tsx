@@ -1,5 +1,6 @@
 import "./App.css";
 import { useRef, useEffect, useState } from "react";
+import TextBox from "./TextBox";
 
 type CanvasProps = {
     mode: string;
@@ -9,7 +10,8 @@ type CanvasProps = {
     italic: boolean;
 }
 
-type CanvasElement = {
+export type CanvasElement = {
+    id: number;
     text: string;
     x: number;
     y: number;
@@ -97,7 +99,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
         setCanvasElts(canvasElts => {
             canvasElts.forEach(elt => elt.selected = false);
             return [...canvasElts, 
-            {text: "", x: x, y: y, width: 0, height: 0, 
+            {id: canvasElts.length, text: "", x: x, y: y, width: 0, height: 0, 
             font: font, fontSize: fontSize, fontWeight: fontWeight, fontStyle: fontStyle, selected: true}]
         });
     }
@@ -169,44 +171,20 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
         });
     }
 
-    const returnText = (elt: CanvasElement, idx: number) => {
-        const arr = elt.text.split('\n');
-        console.log(arr);
-        const children: JSX.Element[] = [];
-        arr.forEach((child) => {
-            switch (child) {
-                case '&nbsp;': 
-                    children.push(<>&nbsp;</>);
-                    break;
-                case '<br>': 
-                    children.push(<br/>);
-                    break;
-                default:
-                    if (child.includes('<strong>')) {
-                        children.push(<strong>{child.substring(8, child.length)}</strong>)
-                    } else {
-                        children.push(<>{child}</>);
-                    }
-                    break;
-            }
-        })
-        let border = "border-0";
-        if (elt.selected) {
-            children.push(<span className="animate-blinker inline-block">_</span>);
-            border = "border-2";
-        }
-        return <p key={idx} className={`absolute ${border}`} style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
-        fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, top: `${elt.y}px`, left: `${elt.x}px`}}
-        >{children}</p>
+    const selectText = (target: EventTarget & HTMLParagraphElement) => {
+        console.log(target.innerHTML);
     }
+
+    //{children}
+    //
 
     return (
         <>
-        <div className="flex place-content-center w-screen">
-            <canvas className="bg-amber-50 h-[500px] mobile:w-screen mobile:border-0 laptop:border-4 laptop:w-240" ref={canvasRef} tabIndex={0} 
+        <div className="w-full">
+            <canvas className="bg-amber-50 w-full h-full" ref={canvasRef} tabIndex={0} 
             onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {e.preventDefault(); enterText(e.key)}}>
             </canvas>
-            {canvasElts.map((elt, idx) => returnText(elt, idx))}
+            {canvasElts.map(elt => <TextBox elt={elt}/>)}
         </div>
         </>
     );

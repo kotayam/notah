@@ -1,7 +1,8 @@
 import "./App.css";
-import React, { useState } from "react";
+import { useState } from "react";
 import Toolbar from "./Toolbar.tsx";
 import Canvas from "./Canvas.tsx";
+import Notes from "./Notes.tsx";
 
 function App() {
   const [mode, setMode] = useState("text");
@@ -38,12 +39,18 @@ function App() {
 
   return (
     <>
-    <Toolbar mode={mode} changeMode={changeMode} 
-      fontSize={fontSize} changeFontSize={changeFontSize} 
-      font={font} changeFont={changeFont} 
-      bold={bold} toggleBold={toggleBold}
-      italic={italic} toggleItalic={toggleItalic}/>
-    <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic}/>
+    <div>
+      <Toolbar mode={mode} changeMode={changeMode} 
+        fontSize={fontSize} changeFontSize={changeFontSize} 
+        font={font} changeFont={changeFont} 
+        bold={bold} toggleBold={toggleBold}
+        italic={italic} toggleItalic={toggleItalic}/>
+      <div className="flex h-full">
+        <Notes />
+        <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic}/>
+      </div>
+    </div>
+    
     </>
   )
 }
