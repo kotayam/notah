@@ -8,6 +8,16 @@ export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, fo
     let italicStyle;
     italic? italicStyle = "bg-gray-400": italicStyle = "bg-transparent";
 
+    const boldSelected = (thisMode: string) => {
+        if (thisMode === mode) return 'bold';
+        return 'normal';
+    }
+
+    const underlineSelected = (thisMode: string) => {
+        if (thisMode === mode) return 'underline #fbbf24 4px';
+        return '';
+    }
+
     return (
         <>
         <div className="w-full border-b-2">
@@ -15,14 +25,26 @@ export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, fo
                 <h1 className="font-bold">Notah</h1>
             </div>
             <div className="bg-gray-100 p-px">
-                <input type="radio" id="text" onChange={e => {changeMode("text")}} checked={mode === "text"}/>
-                <label htmlFor="text">Text</label>
-                <input type="radio" id="table" onChange={e => {changeMode("table")}} checked={mode === "table"}/>
-                <label htmlFor="table">Table</label>
-                <input type="radio" id="draw" onChange={e => {changeMode("draw")}} checked={mode === "draw"}/>
-                <label htmlFor="draw">Draw</label>
-                <input type="radio" id="shape" onChange={e => {changeMode("shape")}} checked={mode === "shape"}/>
-                <label htmlFor="shape">Shape</label>
+                <button 
+                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
+                style={{fontWeight: boldSelected('text'), textDecoration: underlineSelected('text') }}
+                onClick={_ => {changeMode("text")}}
+                >Text</button>
+                <button 
+                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
+                style={{fontWeight: boldSelected('table'), textDecoration: underlineSelected('table') }}
+                onClick={_ => {changeMode("table")}}
+                >Table</button>
+                <button 
+                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
+                style={{fontWeight: boldSelected('shape'), textDecoration: underlineSelected('shape') }}
+                onClick={_ => {changeMode("shape")}}
+                >Shape</button>
+                <button 
+                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4"
+                style={{fontWeight: boldSelected('draw'), textDecoration: underlineSelected('draw') }} 
+                onClick={_ => {changeMode("draw")}}
+                >Draw</button>
             </div>
             <div className="bg-gray-100 p-px">
             <select className="border-2" value={font} onChange={e => {changeFont(e.target.value)}} name="font" id="font">

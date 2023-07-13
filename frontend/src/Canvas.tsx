@@ -1,5 +1,5 @@
 import "./App.css";
-import { useRef, useEffect, useState } from "react";
+import { MouseEvent, useRef, useEffect, useState } from "react";
 import TextBox from "./TextBox";
 import { CanvasElement, TextBoxElement, ShapeElement } from "./Classes.ts";
 import { CanvasProps } from "./Props.ts";
@@ -10,71 +10,80 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
     const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
     const [boldStatus, setBoldStatus] = useState(false);
     const [italicStatus, setItalicStatus] = useState(false);
+    const [drawing, setDrawing] = useState(false);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     let canvas: HTMLCanvasElement;
     let rect: DOMRect;
-    // let scale: number;
+    let scale: number;
 
     useEffect(() => {
         if (canvasRef.current) {
             canvas = canvasRef.current;
             canvas.focus();
             const ctx = canvas.getContext('2d');
-            if (ctx) setContext(ctx);
             rect = canvas.getBoundingClientRect();
-            // scale = window.devicePixelRatio;
-            // canvas.width = rect.width * scale;
-            // canvas.height = rect.height * scale;
-            // if (ctx && pos.x > -1 && pos.y > -1) {
-            //     draw(ctx);
-            // }
+            scale = window.devicePixelRatio;
+            canvas.width = rect.width * scale;
+            canvas.height = rect.height * scale;
+            if (ctx) {
+                setContext(ctx);
+                returnCanvasElement();
+            }
         }
     })
 
-    // const draw = (ctx: CanvasRenderingContext2D) => {
-    //     console.log(canvasElts);
-    //     canvasElts.forEach((elt, idx) => {
-    //         ctx.font = `${elt.fontWeight} ${elt.fontStyle} ${elt.fontSize}px ${elt.font}`;
-    //         const sentence = elt.text.split('\n');
-    //         let boxWidth = -1;
-    //         sentence.forEach((line, idx) => {
-    //             if (ctx) {
-    //                 ctx && ctx.fillText(line, elt.x, elt.y + elt.fontSize*idx);
-    //                 if (ctx.measureText(line).width >= boxWidth) {
-    //                     boxWidth = ctx.measureText(line).width;
-    //                 }
-    //             }
-    //         });
-    //         const boxHeight = elt.fontSize * (sentence.length + 1);
-    //         if (idx === canvasElts.length-1) {
-    //             ctx.strokeRect(elt.x, elt.y - elt.fontSize*1.5, boxWidth, boxHeight);
-    //         }
-    //     });
-    // }
-
-    const selectPos = (x: number, y: number) => {
+    const handleMouseDown = (e: MouseEvent) => {
         let newElt: CanvasElement;
         if (mode === "text") {
             setText("");
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const coordX = (x - rect.left) * scaleX;
-            const coordY = (y - rect.top) * scaleY;
             const fontWeight = bold? 'bold' : 'normal';
             const fontStyle = italic? 'italic': 'normal';
-            newElt = new TextBoxElement(canvasElts.length, x, y, true, "", font, fontSize, fontWeight, fontStyle);
+            newElt = new TextBoxElement(canvasElts.length, e.clientX, e.clientY, true, "", font, fontSize, fontWeight, fontStyle);
         } else if (mode === "shape") {
+            setDrawing(true);
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
-            const coordX = (x - rect.left) * scaleX;
-            const coordY = (y - rect.top) * scaleY;
-            newElt = new ShapeElement(canvasElts.length, x, y, true, "rect", 100, 100);
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            newElt = new ShapeElement(canvasElts.length, x, y, true, "rect", 0, 0);
         }
         setCanvasElts(canvasElts => {
             canvasElts.forEach(elt => elt.selected = false);
             return [...canvasElts, newElt];
         });
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+        if (!drawing) return;
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        setCanvasElts(prevState => {
+            const selected = prevState.filter(elt => elt.selected)[0];
+            const nonSelected = prevState.filter(elt => !elt.selected);
+            (selected as ShapeElement).width = x - selected.x;
+            (selected as ShapeElement).height = y - selected.y;
+            return [...nonSelected, selected];
+        });
+    }
+
+    const handleMouseUp = (e: MouseEvent) => {
+        setDrawing(false);
+        // if (mode === 'text') {
+        //     return;
+        // }
+        // setCanvasElts(canvasElts => {
+        //     const selected = canvasElts.filter(elt => elt.selected)[0];
+        //     const nonSelected = canvasElts.filter(elt => !elt.selected);
+        //     if (selected instanceof ShapeElement) {
+        //         selected.width = selected.x + e.clientX;
+        //         selected.height = selected.y + e.clientY;
+        //     }
+        //     return [...nonSelected, selected];
+        // });
+        
     }
 
     const enterText = (key: string) => {
@@ -138,7 +147,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
 
     const drawShape = (elt: ShapeElement) => {
         console.log(context);
-        if (context) context.fillRect(elt.x, elt.y, elt.width, elt.height);
+        if (context) context.strokeRect(elt.x, elt.y, elt.width, elt.height);
     }
 
     const returnCanvasElement = () => {
@@ -158,8 +167,14 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
     return (
         <>
         <div className="w-full">
-            <canvas className="bg-amber-50 w-full h-full" ref={canvasRef} tabIndex={0} 
-            onClick={(e) => {selectPos(e.clientX, e.clientY)}} onKeyDown={(e) => {e.preventDefault(); if (mode === 'text') enterText(e.key)}}>
+            <canvas 
+            className="bg-amber-50 w-full h-full" 
+            ref={canvasRef} 
+            tabIndex={0} 
+            onMouseDown={(e) => {handleMouseDown(e)}} 
+            onMouseMove={(e) => {handleMouseMove(e)}}
+            onMouseUp={e => {handleMouseUp(e)}} 
+            onKeyDown={(e) => {e.preventDefault(); if (mode === 'text') enterText(e.key)}}>
             </canvas>
             {returnCanvasElement()}
         </div>
