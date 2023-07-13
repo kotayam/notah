@@ -1,17 +1,5 @@
 import "./App.css";
-
-type ToolbarProps = {
-    mode: string;
-    changeMode: (newMode: string) => void;
-    fontSize: number;
-    changeFontSize: (newFontSize: string) => void;
-    font: string;
-    changeFont: (newFont: string) => void;
-    bold: boolean;
-    toggleBold: (isBold: boolean) => void;
-    italic: boolean;
-    toggleItalic: (isItalic: boolean) => void;
- }
+import { ToolbarProps } from "./Props.ts";
 
 export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic }: ToolbarProps) {
     let boldStyle;

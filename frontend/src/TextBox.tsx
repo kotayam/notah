@@ -1,8 +1,4 @@
-import { CanvasElement } from "./Canvas";
-
-type TextBoxProps = {
-    elt: CanvasElement;
-}
+import { TextBoxProps } from "./Props";
 
 export default function TextBox({ elt }: TextBoxProps) {
     const returnText = () => {
@@ -32,7 +28,6 @@ export default function TextBox({ elt }: TextBoxProps) {
             children.push(<span key='blinker' className="animate-blinker inline-block">_</span>);
             border = "border-2";
         }
-        console.log(children);
         return <p key={elt.id} id={elt.id.toString()} className={`absolute hover:border-2 ${border}`} style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
         fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, top: `${elt.y}px`, left: `${elt.x}px`}} 
         >{children}</p>
