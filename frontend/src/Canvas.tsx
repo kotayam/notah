@@ -4,7 +4,7 @@ import TextBox from "./TextBox";
 import { CanvasElement, TextBoxElement, ShapeElement } from "./Classes.ts";
 import { CanvasProps } from "./Props.ts";
 
-export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasProps) {
+export default function Canvas({ mode, fontSize, font, bold, italic, shape }: CanvasProps) {
     const [text, setText] = useState("");
     const [context, setContext] = useState<CanvasRenderingContext2D>();
     const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
@@ -46,7 +46,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
             const scaleY = canvas.height / rect.height;
             const x = (e.clientX - rect.left) * scaleX;
             const y = (e.clientY - rect.top) * scaleY;
-            newElt = new ShapeElement(canvasElts.length, x, y, true, "rect", 0, 0);
+            newElt = new ShapeElement(canvasElts.length, x, y, true, shape, 0, 0);
         }
         setCanvasElts(canvasElts => {
             canvasElts.forEach(elt => elt.selected = false);
@@ -146,8 +146,26 @@ export default function Canvas({ mode, fontSize, font, bold, italic }: CanvasPro
     }
 
     const drawShape = (elt: ShapeElement) => {
-        console.log(context);
-        if (context) context.strokeRect(elt.x, elt.y, elt.width, elt.height);
+        if (context) {
+            switch (elt.shape) {
+                case 'rect': 
+                    context.strokeRect(elt.x, elt.y, elt.width, elt.height);
+                    break;
+                case 'circle':
+                    const x = elt.x + elt.width / 2;
+                    const y = elt.y + elt.height / 2;
+                    context.beginPath();
+                    context.ellipse(x, y, Math.abs(elt.width) / 2, Math.abs(elt.height) / 2, Math.PI, 0, 2 * Math.PI);
+                    context.stroke();
+                    break;
+                case 'line':
+                    context.beginPath();
+                    context.moveTo(elt.x, elt.y);
+                    context.lineTo(elt.x + elt.width, elt.y + elt.height);
+                    context.stroke();
+                    break;
+            }
+        } 
     }
 
     const returnCanvasElement = () => {

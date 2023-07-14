@@ -11,6 +11,8 @@ export type ToolbarProps = {
     toggleBold: (isBold: boolean) => void;
     italic: boolean;
     toggleItalic: (isItalic: boolean) => void;
+    shape: string;
+    changeShape: (newShape: string) => void;
  }
 
 export type CanvasProps = {
@@ -19,8 +21,31 @@ export type CanvasProps = {
     font: string;
     bold: boolean;
     italic: boolean;
+    shape: string;
 }
 
 export type TextBoxProps = {
     elt: TextBoxElement;
+}
+
+export type ModeSelectorProps = {
+    mode: string;
+    thisMode: string;
+    changeMode: (newMode: string) => void;
+}
+
+export type TextFunctionBarProps = {
+    fontSize: number;
+    changeFontSize: (newFontSize: string) => void;
+    font: string;
+    changeFont: (newFont: string) => void;
+    bold: boolean;
+    toggleBold: (isBold: boolean) => void;
+    italic: boolean;
+    toggleItalic: (isItalic: boolean) => void;
+}
+
+export type ShapeFunctionBarProps = {
+    shape: string;
+    changeShape: (newShape: string) => void;
 }

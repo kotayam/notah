@@ -1,70 +1,45 @@
 import "./App.css";
 import { ToolbarProps } from "./Props.ts";
+import ModeSelector from "./ModeSelector.tsx";
+import { TextFunctionBar, ShapeFunctionBar } from "./FunctionBar.tsx";
 
-export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic }: ToolbarProps) {
-    let boldStyle;
-    bold? boldStyle = "bg-gray-400": boldStyle = "bg-transparent";
-
-    let italicStyle;
-    italic? italicStyle = "bg-gray-400": italicStyle = "bg-transparent";
-
-    const boldSelected = (thisMode: string) => {
-        if (thisMode === mode) return 'bold';
-        return 'normal';
-    }
-
-    const underlineSelected = (thisMode: string) => {
-        if (thisMode === mode) return 'underline #fbbf24 4px';
-        return '';
+export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic, shape, changeShape }: ToolbarProps) {
+    const returnFunctionBar = () => {
+        switch(mode) {
+            case 'text': 
+                return <TextFunctionBar 
+                    fontSize={fontSize} changeFontSize={changeFontSize} 
+                    font={font} changeFont={changeFont} 
+                    bold={bold} toggleBold={toggleBold}
+                    italic={italic} toggleItalic={toggleItalic}
+                />
+            case 'shape':
+                return <ShapeFunctionBar
+                    shape={shape} changeShape={changeShape}
+                />
+        }
     }
 
     return (
         <>
         <div className="w-full border-b-2">
-            <div className="bg-amber-400 p-px h-8 text-center">
+            <div className="bg-amber-400 h-10 text-center">
+                <button 
+                className="float-left p-2"
+                onClick={() => console.log('saved note')}
+                >
+                Save
+                </button>
                 <h1 className="font-bold">Notah</h1>
             </div>
             <div className="bg-gray-100 p-px">
-                <button 
-                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
-                style={{fontWeight: boldSelected('text'), textDecoration: underlineSelected('text') }}
-                onClick={_ => {changeMode("text")}}
-                >Text</button>
-                <button 
-                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
-                style={{fontWeight: boldSelected('table'), textDecoration: underlineSelected('table') }}
-                onClick={_ => {changeMode("table")}}
-                >Table</button>
-                <button 
-                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
-                style={{fontWeight: boldSelected('shape'), textDecoration: underlineSelected('shape') }}
-                onClick={_ => {changeMode("shape")}}
-                >Shape</button>
-                <button 
-                className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4"
-                style={{fontWeight: boldSelected('draw'), textDecoration: underlineSelected('draw') }} 
-                onClick={_ => {changeMode("draw")}}
-                >Draw</button>
+                <ModeSelector mode={mode} thisMode={'Text'} changeMode={changeMode}/>
+                <ModeSelector mode={mode} thisMode={'Shape'} changeMode={changeMode}/>
+                <ModeSelector mode={mode} thisMode={'Table'} changeMode={changeMode}/>
+                <ModeSelector mode={mode} thisMode={'Draw'} changeMode={changeMode}/>
             </div>
-            <div className="bg-gray-100 p-px">
-            <select className="border-2" value={font} onChange={e => {changeFont(e.target.value)}} name="font" id="font">
-                <option value="calibri">Calibri</option>
-                <option value="arial">Arial</option>
-                <option value="times-new-roman">Times New Roman</option>
-                <option value="georgia">Georgia</option>
-                <option value="sans-serif">Sans-Serif</option>
-            </select>
-            <select className="border-2" value={fontSize} onChange={e => {changeFontSize(e.target.value)}} name="font-size" id="font-size">
-                <option value="12">12</option>
-                <option value="16">16</option>
-                <option value="20">20</option>
-                <option value="24">24</option>
-                <option value="36">36</option>
-                <option value="48">48</option>
-                <option value="72">72</option>
-            </select>
-            <button className={`rounded-none w-[20px] ${boldStyle}`} onClick={e => toggleBold(bold)}><strong>B</strong></button>
-            <button className={`rounded-none w-[20px] ${italicStyle}`} onClick={e => toggleItalic(italic)}><em>I</em></button>
+            <div className="bg-gray-100 h-10 px-4">
+                {returnFunctionBar()}
             </div>
         </div>
         </>

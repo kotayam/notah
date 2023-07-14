@@ -10,6 +10,7 @@ function App() {
   const [font, setFont] = useState("calibri");
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
+  const [shape, setShape] = useState('rect');
 
   const changeMode = (newMode: string) => {
     setMode(newMode);
@@ -37,6 +38,11 @@ function App() {
     console.log(`Italic mode: ${!isItalic}`);
   }
 
+  const changeShape = (newShape: string) => {
+    setShape(newShape);
+    console.log(`shape changed to: ${newShape}`);
+  }
+
   return (
     <>
     <div>
@@ -44,10 +50,11 @@ function App() {
         fontSize={fontSize} changeFontSize={changeFontSize} 
         font={font} changeFont={changeFont} 
         bold={bold} toggleBold={toggleBold}
-        italic={italic} toggleItalic={toggleItalic}/>
+        italic={italic} toggleItalic={toggleItalic}
+        shape={shape} changeShape={changeShape}/>
       <div className="flex h-full">
         <Notes />
-        <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic}/>
+        <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic} shape={shape}/>
       </div>
     </div>
     
