@@ -1,6 +1,7 @@
 import { TextBoxProps } from "./Props";
 
-export default function TextBox({ elt }: TextBoxProps) {
+export default function TextBox({ elt, selectTextBox }: TextBoxProps) {
+
     const returnText = () => {
         // return <TextBox x={elt.x} y={elt.y} text={text} idx={idx} updateText={updateText}/>
         const arr = elt.text.split('\n');
@@ -28,9 +29,21 @@ export default function TextBox({ elt }: TextBoxProps) {
             children.push(<span key='blinker' className="animate-blinker inline-block">_</span>);
             border = "border-2";
         }
-        return <p key={elt.id} id={elt.id.toString()} className={`absolute hover:border-2 ${border}`} style={{fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
-        fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, top: `${elt.y}px`, left: `${elt.x}px`}} 
-        >{children}</p>
+        return (
+            <p 
+            key={elt.id} 
+            id={elt.id.toString()} 
+            className={`absolute hover:border-2 ${border}`} 
+            style={{
+                fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
+                fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, 
+                top: `${elt.y}px`, left: `${elt.x}px`
+            }} 
+            onClick={_ => {selectTextBox(elt)}}
+            >
+            {children}
+            </p>
+        )
     }
 
     //onClick={e => {console.log(e); selectText(e.currentTarget)}}

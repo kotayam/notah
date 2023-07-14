@@ -26,6 +26,7 @@ export type CanvasProps = {
 
 export type TextBoxProps = {
     elt: TextBoxElement;
+    selectTextBox: (elt: TextBoxElement) => void;
 }
 
 export type ModeSelectorProps = {

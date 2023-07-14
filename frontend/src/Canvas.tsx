@@ -11,6 +11,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
     const [boldStatus, setBoldStatus] = useState(false);
     const [italicStatus, setItalicStatus] = useState(false);
     const [drawing, setDrawing] = useState(false);
+    const [selectedElt, setSelectedElt] = useState(-1);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     let canvas: HTMLCanvasElement;
@@ -20,7 +21,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
     useEffect(() => {
         if (canvasRef.current) {
             canvas = canvasRef.current;
-            canvas.focus();
+            // canvas.focus();
             const ctx = canvas.getContext('2d');
             rect = canvas.getBoundingClientRect();
             scale = window.devicePixelRatio;
@@ -48,6 +49,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
             const y = (e.clientY - rect.top) * scaleY;
             newElt = new ShapeElement(canvasElts.length, x, y, true, shape, 0, 0);
         }
+        setSelectedElt(canvasElts.length);
         setCanvasElts(canvasElts => {
             canvasElts.forEach(elt => elt.selected = false);
             return [...canvasElts, newElt];
@@ -61,29 +63,30 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
         setCanvasElts(prevState => {
-            const selected = prevState.filter(elt => elt.selected)[0];
-            const nonSelected = prevState.filter(elt => !elt.selected);
+            const selected = prevState.filter(elt => elt.id === selectedElt)[0];
+            const nonSelected = prevState.filter(elt => elt.id !== selectedElt);
             (selected as ShapeElement).width = x - selected.x;
             (selected as ShapeElement).height = y - selected.y;
             return [...nonSelected, selected];
         });
     }
 
-    const handleMouseUp = (e: MouseEvent) => {
+    const handleMouseUp = () => {
         setDrawing(false);
-        // if (mode === 'text') {
-        //     return;
-        // }
-        // setCanvasElts(canvasElts => {
-        //     const selected = canvasElts.filter(elt => elt.selected)[0];
-        //     const nonSelected = canvasElts.filter(elt => !elt.selected);
-        //     if (selected instanceof ShapeElement) {
-        //         selected.width = selected.x + e.clientX;
-        //         selected.height = selected.y + e.clientY;
-        //     }
-        //     return [...nonSelected, selected];
-        // });
-        
+    }
+
+    const selectTextBox = (elt: TextBoxElement) => {
+        console.log(`text box: ${elt.id} selected.`);
+        // canvasK.focus();
+        setText(elt.text);
+        setSelectedElt(elt.id);
+        setCanvasElts(prevState => {
+            const other = prevState.filter(e => e.id !== elt.id);
+            const selected= prevState.filter(e => e.id === elt.id)[0];
+            other.forEach(e => e.selected = false);
+            selected.selected = true;
+            return [...other, selected];
+        })
     }
 
     const enterText = (key: string) => {
@@ -134,15 +137,11 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
         }
         setText(newText);
         setCanvasElts(canvasElts => {
-            const selected = (canvasElts.filter(elt => elt.selected));
-            const nonSelected = (canvasElts.filter(elt => !elt.selected));
+            const selected = (canvasElts.filter(elt => elt.id === selectedElt));
+            const nonSelected = (canvasElts.filter(elt => elt.id !== selectedElt));
             (selected[0] as TextBoxElement).text = newText;
             return [...nonSelected, ...selected];
         });
-    }
-
-    const selectText = (target: EventTarget & HTMLParagraphElement) => {
-        console.log(target.innerHTML);
     }
 
     const drawShape = (elt: ShapeElement) => {
@@ -173,7 +172,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
         const elts: JSX.Element[] = [];
         canvasElts.map(elt => {
             if (elt instanceof TextBoxElement) {
-                elts.push(<TextBox elt={elt as TextBoxElement}/>);
+                elts.push(<TextBox elt={elt as TextBoxElement} selectTextBox={selectTextBox}/>);
             }
             else if (elt instanceof ShapeElement) {
                 drawShape(elt);
@@ -184,15 +183,18 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
 
     return (
         <>
-        <div className="w-full">
+        <div 
+        className="w-full" 
+        tabIndex={0} 
+        onKeyDown={(e) => {e.preventDefault(); enterText(e.key)}}
+        >
             <canvas 
             className="bg-amber-50 w-full h-full" 
             ref={canvasRef} 
-            tabIndex={0} 
             onMouseDown={(e) => {handleMouseDown(e)}} 
             onMouseMove={(e) => {handleMouseMove(e)}}
-            onMouseUp={e => {handleMouseUp(e)}} 
-            onKeyDown={(e) => {e.preventDefault(); if (mode === 'text') enterText(e.key)}}>
+            onMouseUp={_ => {handleMouseUp()}} 
+            >
             </canvas>
             {returnCanvasElement()}
         </div>
