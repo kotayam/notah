@@ -41,3 +41,16 @@ export class ShapeElement extends CanvasElement {
         this.height = height;
     }
 }
+
+export class TableElement extends CanvasElement {
+    row: number;
+    col: number;
+    content: string[][];
+
+    constructor(id: number, x: number, y: number, selected: boolean, row: number, col: number, content: string[][]) {
+        super(id, x, y, selected);
+        this.row = row;
+        this.col = col;
+        this.content = content;
+    }
+}

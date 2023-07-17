@@ -1,9 +1,8 @@
 import { TextBoxProps } from "./Props";
 
-export default function TextBox({ elt, selectTextBox }: TextBoxProps) {
+export default function TextBox({ elt, selectTextBox, x, y }: TextBoxProps) {
 
     const returnText = () => {
-        // return <TextBox x={elt.x} y={elt.y} text={text} idx={idx} updateText={updateText}/>
         const arr = elt.text.split('\n');
         if (arr[0] === '') arr.shift();
         const children = [];
@@ -31,15 +30,14 @@ export default function TextBox({ elt, selectTextBox }: TextBoxProps) {
         }
         return (
             <p 
-            key={elt.id} 
             id={elt.id.toString()} 
             className={`absolute hover:border-2 ${border}`} 
             style={{
                 fontFamily: `${elt.font}`, fontSize: `${elt.fontSize}px`, 
                 fontStyle: `${elt.fontStyle}`, fontWeight: `${elt.fontWeight}`, 
-                top: `${elt.y}px`, left: `${elt.x}px`
+                top: `${y}px`, left: `${x}px`
             }} 
-            onClick={_ => {selectTextBox(elt)}}
+            onMouseDown={e => {console.log(e); selectTextBox(elt)}}
             >
             {children}
             </p>

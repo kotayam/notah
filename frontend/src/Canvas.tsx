@@ -1,10 +1,14 @@
 import "./App.css";
-import { MouseEvent, useRef, useEffect, useState } from "react";
-import TextBox from "./TextBox";
-import { CanvasElement, TextBoxElement, ShapeElement } from "./Classes.ts";
+import { useRef, useEffect, useState } from "react";
+import { MouseEvent, KeyboardEvent } from "react";
+import { CanvasElement, TextBoxElement, ShapeElement, TableElement } from "./Classes.ts";
 import { CanvasProps } from "./Props.ts";
+import TextBox from "./TextBox.tsx";
+import Table from "./Table.tsx";
 
 export default function Canvas({ mode, fontSize, font, bold, italic, shape }: CanvasProps) {
+    const [canvasRect, setCanvasRect] = useState({offsetLeft: 0, offsetTop: 0});
+    const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
     const [context, setContext] = useState<CanvasRenderingContext2D>();
     const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
@@ -14,40 +18,48 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
     const [selectedElt, setSelectedElt] = useState(-1);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    let canvas: HTMLCanvasElement;
-    let rect: DOMRect;
-    let scale: number;
+
+    useEffect(() => {
+        if (canvasRef.current) setCanvasRect({offsetLeft: canvasRef.current.offsetLeft, offsetTop: canvasRef.current.offsetTop});
+    }, [])
 
     useEffect(() => {
         if (canvasRef.current) {
-            canvas = canvasRef.current;
-            // canvas.focus();
+            const canvas = canvasRef.current;
+            const handleResize = () => {
+                setCanvasRect({offsetLeft: canvas.offsetLeft, offsetTop: canvas.offsetTop});
+                setScale(window.devicePixelRatio);
+                console.log(`offsetLeft: ${canvas.offsetLeft}, offsetTop: ${canvas.offsetTop}`)
+            }
+            window.addEventListener('resize', handleResize);
             const ctx = canvas.getContext('2d');
-            rect = canvas.getBoundingClientRect();
-            scale = window.devicePixelRatio;
+            const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width * scale;
             canvas.height = rect.height * scale;
             if (ctx) {
                 setContext(ctx);
                 returnCanvasElement();
             }
+            return () => {window.removeEventListener('resize', handleResize)};
         }
     })
 
     const handleMouseDown = (e: MouseEvent) => {
         let newElt: CanvasElement;
+        const x = (e.pageX - canvasRect.offsetLeft) * scale;
+        const y = (e.pageY - canvasRect.offsetTop) * scale;
         if (mode === "text") {
             setText("");
             const fontWeight = bold? 'bold' : 'normal';
             const fontStyle = italic? 'italic': 'normal';
-            newElt = new TextBoxElement(canvasElts.length, e.clientX, e.clientY, true, "", font, fontSize, fontWeight, fontStyle);
-        } else if (mode === "shape") {
+            newElt = new TextBoxElement(canvasElts.length, x, y, true, "", font, fontSize, fontWeight, fontStyle);
+        } 
+        else if (mode === "shape") {
             setDrawing(true);
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            const x = (e.clientX - rect.left) * scaleX;
-            const y = (e.clientY - rect.top) * scaleY;
             newElt = new ShapeElement(canvasElts.length, x, y, true, shape, 0, 0);
+        }
+        else if (mode === "table") {
+            newElt = new TableElement(canvasElts.length, x, y, true, 2, 2, [['test','test'],['test','test']]);
         }
         setSelectedElt(canvasElts.length);
         setCanvasElts(canvasElts => {
@@ -58,10 +70,8 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
 
     const handleMouseMove = (e: MouseEvent) => {
         if (!drawing) return;
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
+        const x = (e.pageX - canvasRect.offsetLeft) * scale;
+        const y = (e.pageY - canvasRect.offsetTop) * scale;
         setCanvasElts(prevState => {
             const selected = prevState.filter(elt => elt.id === selectedElt)[0];
             const nonSelected = prevState.filter(elt => elt.id !== selectedElt);
@@ -77,7 +87,6 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
 
     const selectTextBox = (elt: TextBoxElement) => {
         console.log(`text box: ${elt.id} selected.`);
-        // canvasK.focus();
         setText(elt.text);
         setSelectedElt(elt.id);
         setCanvasElts(prevState => {
@@ -89,7 +98,9 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
         })
     }
 
-    const enterText = (key: string) => {
+    const enterText = (e: KeyboardEvent) => {
+        e.stopPropagation();
+        const key = e.key;
         console.log(`key pressed: ${key}`);
         const k = key.toLowerCase();
         let newText = text;
@@ -168,14 +179,18 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
     }
 
     const returnCanvasElement = () => {
-        console.log(canvasElts);
         const elts: JSX.Element[] = [];
         canvasElts.map(elt => {
+            const x = elt.x + canvasRect.offsetLeft;
+            const y = elt.y + canvasRect.offsetTop;
             if (elt instanceof TextBoxElement) {
-                elts.push(<TextBox elt={elt as TextBoxElement} selectTextBox={selectTextBox}/>);
+                elts.push(<TextBox key={elt.id}  elt={elt as TextBoxElement} x={x} y={y} selectTextBox={selectTextBox}/>);
             }
             else if (elt instanceof ShapeElement) {
                 drawShape(elt);
+            }
+            else if (elt instanceof TableElement) {
+                elts.push(<Table key={elt.id} elt={elt as TableElement} x={x} y={y}/>);
             }
         })
         return elts;
@@ -186,7 +201,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
         <div 
         className="w-full" 
         tabIndex={0} 
-        onKeyDown={(e) => {e.preventDefault(); enterText(e.key)}}
+        onKeyDown={(e) => {e.preventDefault(); enterText(e)}}
         >
             <canvas 
             className="bg-amber-50 w-full h-full" 

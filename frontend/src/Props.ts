@@ -1,4 +1,4 @@
-import { CanvasElement, TextBoxElement } from "./Classes";
+import { CanvasElement, TextBoxElement, TableElement } from "./Classes";
 
 export type ToolbarProps = {
     mode: string;
@@ -27,6 +27,14 @@ export type CanvasProps = {
 export type TextBoxProps = {
     elt: TextBoxElement;
     selectTextBox: (elt: TextBoxElement) => void;
+    x: number;
+    y: number;
+}
+
+export type TableProps = {
+    elt: TableElement;
+    x: number;
+    y: number;
 }
 
 export type ModeSelectorProps = {
