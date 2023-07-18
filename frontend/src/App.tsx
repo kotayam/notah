@@ -11,6 +11,8 @@ function App() {
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
   const [shape, setShape] = useState('rect');
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [content, setContent] = useState<string[][]>([])
 
   const changeMode = (newMode: string) => {
     setMode(newMode);
@@ -43,6 +45,25 @@ function App() {
     console.log(`shape changed to: ${newShape}`);
   }
 
+  const createTable = (row: number, col: number) => {
+    console.log(`row: ${row}, col: ${col}`);
+    const headers = new Array(col);
+    for (let i = 0; i < headers.length; i++) {
+      headers[i] = `header ${i}`;
+    }
+    setHeaders(headers);
+    console.log(headers);
+    const content = new Array(row-1);
+    content.fill(new Array(col));
+    for (let r = 0; r < content.length; r++) {
+      for (let c = 0; c < content[r].length; c++) {
+        content[r][c] = 'empty';
+      }
+    }
+    setContent(content);
+    console.log(content);
+  }
+
   return (
     <>
     <div>
@@ -51,10 +72,12 @@ function App() {
         font={font} changeFont={changeFont} 
         bold={bold} toggleBold={toggleBold}
         italic={italic} toggleItalic={toggleItalic}
-        shape={shape} changeShape={changeShape}/>
+        shape={shape} changeShape={changeShape}
+        createTable={createTable}
+        />
       <div className="flex h-full">
         <Notes />
-        <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic} shape={shape}/>
+        <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic} shape={shape} headers={headers} content={content}/>
       </div>
     </div>
     

@@ -6,7 +6,7 @@ import { CanvasProps } from "./Props.ts";
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
 
-export default function Canvas({ mode, fontSize, font, bold, italic, shape }: CanvasProps) {
+export default function Canvas({ mode, fontSize, font, bold, italic, shape, headers, content }: CanvasProps) {
     const [canvasRect, setCanvasRect] = useState({offsetLeft: 0, offsetTop: 0});
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
@@ -59,7 +59,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape }: Ca
             newElt = new ShapeElement(canvasElts.length, x, y, true, shape, 0, 0);
         }
         else if (mode === "table") {
-            newElt = new TableElement(canvasElts.length, x, y, true, 2, 2, [['test','test'],['test','test']]);
+            newElt = new TableElement(canvasElts.length, x, y, true, 2, 2, headers, content);
         }
         setSelectedElt(canvasElts.length);
         setCanvasElts(canvasElts => {

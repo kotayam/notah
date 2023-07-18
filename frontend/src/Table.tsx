@@ -1,20 +1,21 @@
 import { TableProps } from "./Props.ts";
+import TableRow from "./TableRow.tsx";
 
 export default function Table({ elt, x, y }: TableProps) {
     return (
         <>
-        <table className="absolute border border-collapse table-auto" style={{top: y, left: x}}>
+        <table className="absolute border-gray-800 border-collapse table-auto" style={{top: y, left: x}}>
             <thead>
                 <tr>
-                    {elt.content[0].map((head, headID) =>
-                        <th key={headID}>{head}</th>)}
+                    {elt.headers.map((head, headID) =>
+                        <th className="border border-gray-800" onClick={e => console.log(e)} key={headID}>{head}</th>
+                    )}
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    {elt.content[1].map((row, rowID) =>
-                        (<td  key={rowID}>{row}</td>))}
-                </tr>
+                {elt.content.map((rowContent, rowID) =>
+                    <TableRow key={rowID} rowContent={rowContent}/>
+                )}
             </tbody>
         </table>
         </>

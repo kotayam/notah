@@ -1,4 +1,5 @@
-import { TextFunctionBarProps, ShapeFunctionBarProps } from "./Props.ts";
+import { useRef, useEffect, useState } from "react";
+import { TextFunctionBarProps, ShapeFunctionBarProps, TableFunctionBarProps } from "./Props.ts";
 
 export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, bold, toggleBold, italic, toggleItalic}: TextFunctionBarProps) {
     let boldStyle;
@@ -49,6 +50,21 @@ export function ShapeFunctionBar({ shape, changeShape }: ShapeFunctionBarProps) 
         <button className="hover:bg-gray-300 active:bg-gray-400 border-1 py-2 px-6" style={{fontWeight: boldSelected('rect'), backgroundColor: bgSelected('rect')}} onClick={_ => changeShape('rect')}>Rectangle</button>
         <button className="hover:bg-gray-300 active:bg-gray-400 border-1 py-2 px-6" style={{fontWeight: boldSelected('circle'), backgroundColor: bgSelected('circle')}} onClick={_ => changeShape('circle')}>Circle</button>
         <button className="hover:bg-gray-300 active:bg-gray-400 border-1 py-2 px-6" style={{fontWeight: boldSelected('line'), backgroundColor: bgSelected('line')}} onClick={_ => changeShape('line')}>Line</button>
+        </>
+    )
+}
+
+export function TableFunctionBar( { createTable }: TableFunctionBarProps ) {
+    const[numRow, setNumRow] = useState(2);
+    const[numCol, setNumCol] = useState(2);
+
+    return (
+        <>
+        <label htmlFor="row">Row:</label>
+        <input onChange={e => setNumRow(parseInt(e.target.value))} id="row" type="number" value={numRow}/>
+        <label htmlFor="col">Column:</label>
+        <input onChange={e => setNumCol(parseInt(e.target.value))} id="col" type="number" value={numCol}/>
+        <button onClick={_ => createTable(numRow, numCol)}>Create Table</button>
         </>
     )
 }

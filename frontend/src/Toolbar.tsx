@@ -1,22 +1,30 @@
 import "./App.css";
 import { ToolbarProps } from "./Props.ts";
 import ModeSelector from "./ModeSelector.tsx";
-import { TextFunctionBar, ShapeFunctionBar } from "./FunctionBar.tsx";
+import { TextFunctionBar, ShapeFunctionBar, TableFunctionBar } from "./FunctionBar.tsx";
 
-export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic, shape, changeShape }: ToolbarProps) {
+export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic, shape, changeShape, createTable }: ToolbarProps) {
     const returnFunctionBar = () => {
         switch(mode) {
             case 'text': 
-                return <TextFunctionBar 
+                return (
+                <TextFunctionBar 
                     fontSize={fontSize} changeFontSize={changeFontSize} 
                     font={font} changeFont={changeFont} 
                     bold={bold} toggleBold={toggleBold}
                     italic={italic} toggleItalic={toggleItalic}
-                />
+                />)
             case 'shape':
-                return <ShapeFunctionBar
+                return (
+                <ShapeFunctionBar
                     shape={shape} changeShape={changeShape}
+                />)
+            case 'table':
+                return (
+                <TableFunctionBar
+                    createTable={createTable}
                 />
+                )
         }
     }
 

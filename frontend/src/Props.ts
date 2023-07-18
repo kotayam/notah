@@ -13,6 +13,7 @@ export type ToolbarProps = {
     toggleItalic: (isItalic: boolean) => void;
     shape: string;
     changeShape: (newShape: string) => void;
+    createTable: (row: number, col: number) => void;
  }
 
 export type CanvasProps = {
@@ -22,6 +23,8 @@ export type CanvasProps = {
     bold: boolean;
     italic: boolean;
     shape: string;
+    headers: string[];
+    content: string[][];
 }
 
 export type TextBoxProps = {
@@ -35,6 +38,10 @@ export type TableProps = {
     elt: TableElement;
     x: number;
     y: number;
+}
+
+export type TableRowProps = {
+    rowContent: string[];
 }
 
 export type ModeSelectorProps = {
@@ -57,4 +64,8 @@ export type TextFunctionBarProps = {
 export type ShapeFunctionBarProps = {
     shape: string;
     changeShape: (newShape: string) => void;
+}
+
+export type TableFunctionBarProps = {
+    createTable: (row: number, col: number) => void;
 }
