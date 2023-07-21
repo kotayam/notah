@@ -18,6 +18,7 @@ export type ToolbarProps = {
 
 export type CanvasProps = {
     mode: string;
+    changeMode: (newMode: string) => void;
     fontSize: number;
     font: string;
     bold: boolean;
@@ -32,16 +33,25 @@ export type TextBoxProps = {
     selectTextBox: (elt: TextBoxElement) => void;
     x: number;
     y: number;
+    selectedElt: {id: number, r: number, c: number};
+    updateText: (newText: string) => void;
 }
 
 export type TableProps = {
     elt: TableElement;
+    selectTableText: (elt: TableElement, row: number, col: number) => void;
     x: number;
     y: number;
+    selectedElt: {id: number, r: number, c: number};
+    updateText: (newText: string) => void;
 }
 
 export type TableRowProps = {
+    rowId: number;
+    elt: TableElement;
     rowContent: string[];
+    selectTableText: (elt: TableElement, row: number, col: number) => void;
+    updateText: (newText: string) => void;
 }
 
 export type ModeSelectorProps = {

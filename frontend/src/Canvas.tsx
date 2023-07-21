@@ -6,7 +6,7 @@ import { CanvasProps } from "./Props.ts";
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
 
-export default function Canvas({ mode, fontSize, font, bold, italic, shape, headers, content }: CanvasProps) {
+export default function Canvas({ mode, changeMode, fontSize, font, bold, italic, shape, headers, content }: CanvasProps) {
     const [canvasRect, setCanvasRect] = useState({offsetLeft: 0, offsetTop: 0});
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
@@ -15,7 +15,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
     const [boldStatus, setBoldStatus] = useState(false);
     const [italicStatus, setItalicStatus] = useState(false);
     const [drawing, setDrawing] = useState(false);
-    const [selectedElt, setSelectedElt] = useState(-1);
+    const [selectedElt, setSelectedElt] = useState({id: -1, r: -1, c: -1});
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -38,7 +38,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
             canvas.height = rect.height * scale;
             if (ctx) {
                 setContext(ctx);
-                returnCanvasElement();
+                // returnCanvasElement();
             }
             return () => {window.removeEventListener('resize', handleResize)};
         }
@@ -49,7 +49,7 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
         const x = (e.pageX - canvasRect.offsetLeft) * scale;
         const y = (e.pageY - canvasRect.offsetTop) * scale;
         if (mode === "text") {
-            setText("");
+            // setText("");
             const fontWeight = bold? 'bold' : 'normal';
             const fontStyle = italic? 'italic': 'normal';
             newElt = new TextBoxElement(canvasElts.length, x, y, true, "", font, fontSize, fontWeight, fontStyle);
@@ -60,8 +60,13 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
         }
         else if (mode === "table") {
             newElt = new TableElement(canvasElts.length, x, y, true, 2, 2, headers, content);
+            changeMode('text');
         }
-        setSelectedElt(canvasElts.length);
+        setSelectedElt(prevState => {
+            const newState = prevState;
+            newState.id = canvasElts.length;
+            return newState;
+        });
         setCanvasElts(canvasElts => {
             canvasElts.forEach(elt => elt.selected = false);
             return [...canvasElts, newElt];
@@ -73,8 +78,8 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
         const x = (e.pageX - canvasRect.offsetLeft) * scale;
         const y = (e.pageY - canvasRect.offsetTop) * scale;
         setCanvasElts(prevState => {
-            const selected = prevState.filter(elt => elt.id === selectedElt)[0];
-            const nonSelected = prevState.filter(elt => elt.id !== selectedElt);
+            const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
+            const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
             (selected as ShapeElement).width = x - selected.x;
             (selected as ShapeElement).height = y - selected.y;
             return [...nonSelected, selected];
@@ -88,71 +93,109 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
     const selectTextBox = (elt: TextBoxElement) => {
         console.log(`text box: ${elt.id} selected.`);
         setText(elt.text);
-        setSelectedElt(elt.id);
-        setCanvasElts(prevState => {
-            const other = prevState.filter(e => e.id !== elt.id);
-            const selected= prevState.filter(e => e.id === elt.id)[0];
-            other.forEach(e => e.selected = false);
-            selected.selected = true;
-            return [...other, selected];
-        })
+        setSelectedElt(prevState => {
+            const newState = prevState;
+            newState.id = elt.id;
+            return newState;
+        });
     }
 
-    const enterText = (e: KeyboardEvent) => {
-        e.stopPropagation();
-        const key = e.key;
-        console.log(`key pressed: ${key}`);
-        const k = key.toLowerCase();
-        let newText = text;
-        switch (k) {
-            case ' ':
-                if (text.charAt(text.length-1) !== ' ') newText += ' ';
-                // newText += '\n&nbsp;\n'
-                break;
-            
-            case 'enter':
-                newText += '\n<br>\n'
-                break;
-            
-            case 'backspace':
-                const arr = text.split('\n');
-                if (arr[arr.length - 1] === '') arr.pop();
-                if (arr[arr.length-1] ===  '&nbsp;' || arr[arr.length-1] === '<br>' || arr[arr.length-1] === '<strong>') {
-                    arr.pop();
-                    newText = arr.join('\n');
-                } else {
-                    newText = text.substring(0, text.length-1);
-                }
-                break;
-            
-            default:
-                if (k.length > 1) break;
-                if (bold && !boldStatus) {
-                    setBoldStatus(true);
-                    newText += '\n<strong>';
-                } else if (!bold && boldStatus) {
-                    setBoldStatus(false);
-                    newText += '\n';
-                }
-                newText += key;
-                // if (bold && italic) {
-                //     newText += '\n<span>\n' + key;
-                // } else if (bold) {
-                //     newText += '\n<strong>' + key;
-                // } else if (italic) {
-                //     newText += '\n<em>\n' + key;
-                // } else {
-                //     newText += key;
-                // }
-                break;
+    const selectTableText = (elt: TableElement, row: number, col: number) => {
+        console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
+        if (row === -1) {
+            setText(elt.headers[col]);
+        } else {
+            setText(elt.content[row][col]);
         }
-        setText(newText);
-        setCanvasElts(canvasElts => {
-            const selected = (canvasElts.filter(elt => elt.id === selectedElt));
-            const nonSelected = (canvasElts.filter(elt => elt.id !== selectedElt));
-            (selected[0] as TextBoxElement).text = newText;
-            return [...nonSelected, ...selected];
-        });
+        setSelectedElt({id: elt.id, r: row, c: col});
+    }
+
+    // const enterText = (e: KeyboardEvent) => {
+    //     e.stopPropagation();
+    //     const key = e.key;
+    //     console.log(`key pressed: ${key}`);
+    //     const k = key.toLowerCase();
+    //     let newText = text;
+    //     switch (k) {
+    //         case ' ':
+    //             if (text.charAt(text.length-1) !== ' ') newText += ' ';
+    //             // newText += '\n&nbsp;\n'
+    //             break;
+            
+    //         case 'enter':
+    //             newText += '\n<br>\n'
+    //             break;
+            
+    //         case 'backspace':
+    //             const arr = text.split('\n');
+    //             if (arr[arr.length - 1] === '') arr.pop();
+    //             if (arr[arr.length-1] ===  '&nbsp;' || arr[arr.length-1] === '<br>' || arr[arr.length-1] === '<strong>') {
+    //                 arr.pop();
+    //                 newText = arr.join('\n');
+    //             } else {
+    //                 newText = text.substring(0, text.length-1);
+    //             }
+    //             break;
+            
+    //         default:
+    //             if (k.length > 1) break;
+    //             if (bold && !boldStatus) {
+    //                 setBoldStatus(true);
+    //                 newText += '\n<strong>';
+    //             } else if (!bold && boldStatus) {
+    //                 setBoldStatus(false);
+    //                 newText += '\n';
+    //             }
+    //             newText += key;
+    //             // if (bold && italic) {
+    //             //     newText += '\n<span>\n' + key;
+    //             // } else if (bold) {
+    //             //     newText += '\n<strong>' + key;
+    //             // } else if (italic) {
+    //             //     newText += '\n<em>\n' + key;
+    //             // } else {
+    //             //     newText += key;
+    //             // }
+    //             break;
+    //     }
+    //     setText(newText);
+    //     setCanvasElts(canvasElts => {
+    //         const selected = canvasElts.filter(elt => elt.id === selectedElt.id)[0];
+    //         const nonSelected = canvasElts.filter(elt => elt.id !== selectedElt.id);
+    //         if (selected instanceof TextBoxElement) {
+    //             selected.text = newText;
+    //         } 
+    //         else if (selected instanceof TableElement) {
+    //             if (selectedElt.r === -1) {
+    //                 selected.headers[selectedElt.c] = newText;
+    //             } 
+    //             else {
+    //                 selected.content[selectedElt.r][selectedElt.c] = newText;
+    //             }
+    //         }
+    //         return [...nonSelected, selected];
+    //     });
+    // }
+
+    const updateText = (newText: string) => {
+        let txt = '';
+        newText? txt = newText : txt = 'enter text';
+        setCanvasElts(prevState => {
+            const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
+            const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
+            if (selected instanceof TextBoxElement) {
+                selected.text = txt;
+            } 
+            else if (selected instanceof TableElement) {
+                if (selectedElt.r === -1) {
+                    selected.headers[selectedElt.c] = txt;
+                } 
+                else {
+                    selected.content[selectedElt.r][selectedElt.c] = txt;
+                }
+            }
+            return [...nonSelected, selected];
+        })
     }
 
     const drawShape = (elt: ShapeElement) => {
@@ -184,13 +227,13 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
             const x = elt.x + canvasRect.offsetLeft;
             const y = elt.y + canvasRect.offsetTop;
             if (elt instanceof TextBoxElement) {
-                elts.push(<TextBox key={elt.id}  elt={elt as TextBoxElement} x={x} y={y} selectTextBox={selectTextBox}/>);
+                elts.push(<TextBox key={elt.id}  elt={elt as TextBoxElement} x={x} y={y} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }
             else if (elt instanceof ShapeElement) {
                 drawShape(elt);
             }
             else if (elt instanceof TableElement) {
-                elts.push(<Table key={elt.id} elt={elt as TableElement} x={x} y={y}/>);
+                elts.push(<Table key={elt.id} elt={elt as TableElement} x={x} y={y} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);
             }
         })
         return elts;
@@ -199,9 +242,10 @@ export default function Canvas({ mode, fontSize, font, bold, italic, shape, head
     return (
         <>
         <div 
+        id="canvas-container"
         className="w-full" 
-        tabIndex={0} 
-        onKeyDown={(e) => {e.preventDefault(); enterText(e)}}
+        // tabIndex={0} 
+        //onKeyDown={(e) => {e.preventDefault(); enterText(e)}}
         >
             <canvas 
             className="bg-amber-50 w-full h-full" 

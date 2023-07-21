@@ -49,7 +49,7 @@ function App() {
     console.log(`row: ${row}, col: ${col}`);
     const headers = new Array(col);
     for (let i = 0; i < headers.length; i++) {
-      headers[i] = `header ${i}`;
+      headers[i] = "";
     }
     setHeaders(headers);
     console.log(headers);
@@ -57,11 +57,12 @@ function App() {
     content.fill(new Array(col));
     for (let r = 0; r < content.length; r++) {
       for (let c = 0; c < content[r].length; c++) {
-        content[r][c] = 'empty';
+        content[r][c] = '';
       }
     }
     setContent(content);
     console.log(content);
+    changeMode('table');
   }
 
   return (
@@ -77,7 +78,7 @@ function App() {
         />
       <div className="flex h-full">
         <Notes />
-        <Canvas mode={mode} fontSize={fontSize} font={font} bold={bold} italic={italic} shape={shape} headers={headers} content={content}/>
+        <Canvas mode={mode} changeMode={changeMode} fontSize={fontSize} font={font} bold={bold} italic={italic} shape={shape} headers={headers} content={content}/>
       </div>
     </div>
     
@@ -85,4 +86,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
