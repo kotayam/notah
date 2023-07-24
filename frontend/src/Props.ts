@@ -1,4 +1,4 @@
-import { CanvasElement, TextBoxElement, TableElement } from "./Classes";
+import { CanvasElement, TextBoxElement, TableElement, ShapeElement } from "./Classes";
 
 export type ToolbarProps = {
     mode: string;
@@ -26,22 +26,23 @@ export type CanvasProps = {
     shape: string;
     headers: string[];
     content: string[][];
+    updateHistory: (elts: CanvasElement[]) => void;
 }
 
 export type TextBoxProps = {
     elt: TextBoxElement;
     selectTextBox: (elt: TextBoxElement) => void;
-    x: number;
-    y: number;
     selectedElt: {id: number, r: number, c: number};
     updateText: (newText: string) => void;
+}
+
+export type ShapeProps = {
+    elt: ShapeElement;
 }
 
 export type TableProps = {
     elt: TableElement;
     selectTableText: (elt: TableElement, row: number, col: number) => void;
-    x: number;
-    y: number;
     selectedElt: {id: number, r: number, c: number};
     updateText: (newText: string) => void;
 }

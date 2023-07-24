@@ -3,6 +3,7 @@ import { useState } from "react";
 import Toolbar from "./Toolbar.tsx";
 import Canvas from "./Canvas.tsx";
 import Notes from "./Notes.tsx";
+import { CanvasElement } from "./Classes.ts";
 
 function App() {
   const [mode, setMode] = useState("text");
@@ -13,6 +14,7 @@ function App() {
   const [shape, setShape] = useState('rect');
   const [headers, setHeaders] = useState<string[]>([]);
   const [content, setContent] = useState<string[][]>([])
+  const [actionHistory, setActionHistory] = useState<CanvasElement[]>([]);
 
   const changeMode = (newMode: string) => {
     setMode(newMode);
@@ -65,10 +67,15 @@ function App() {
     changeMode('table');
   }
 
+  const updateHistory = (elts: CanvasElement[]) => {
+    setActionHistory(elts);
+  }
+
   return (
     <>
     <div>
-      <Toolbar mode={mode} changeMode={changeMode} 
+      <Toolbar 
+        mode={mode} changeMode={changeMode} 
         fontSize={fontSize} changeFontSize={changeFontSize} 
         font={font} changeFont={changeFont} 
         bold={bold} toggleBold={toggleBold}
@@ -78,7 +85,14 @@ function App() {
         />
       <div className="flex h-full">
         <Notes />
-        <Canvas mode={mode} changeMode={changeMode} fontSize={fontSize} font={font} bold={bold} italic={italic} shape={shape} headers={headers} content={content}/>
+        <Canvas 
+          mode={mode} changeMode={changeMode} 
+          fontSize={fontSize} font={font} 
+          bold={bold} italic={italic} 
+          shape={shape} 
+          headers={headers} content={content}
+          updateHistory={updateHistory}
+          />
       </div>
     </div>
     

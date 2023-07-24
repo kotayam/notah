@@ -5,9 +5,9 @@ import { CanvasElement, TextBoxElement, ShapeElement, TableElement } from "./Cla
 import { CanvasProps } from "./Props.ts";
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
+import Shape from "./Shape.tsx";
 
-export default function Canvas({ mode, changeMode, fontSize, font, bold, italic, shape, headers, content }: CanvasProps) {
-    const [canvasRect, setCanvasRect] = useState({offsetLeft: 0, offsetTop: 0});
+export default function Canvas({ mode, changeMode, fontSize, font, bold, italic, shape, headers, content}: CanvasProps) {
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
     const [context, setContext] = useState<CanvasRenderingContext2D>();
@@ -17,37 +17,18 @@ export default function Canvas({ mode, changeMode, fontSize, font, bold, italic,
     const [drawing, setDrawing] = useState(false);
     const [selectedElt, setSelectedElt] = useState({id: -1, r: -1, c: -1});
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    // useEffect(() => {
+    //     const handleResize = () => {
+    //         setScale(window.devicePixelRatio);
+    //     }
+    //     window.addEventListener('resize', handleResize);
+    //     return () => {window.removeEventListener('resize', handleResize)};
+    // })
 
-    useEffect(() => {
-        if (canvasRef.current) setCanvasRect({offsetLeft: canvasRef.current.offsetLeft, offsetTop: canvasRef.current.offsetTop});
-    }, [])
-
-    useEffect(() => {
-        if (canvasRef.current) {
-            const canvas = canvasRef.current;
-            const handleResize = () => {
-                setCanvasRect({offsetLeft: canvas.offsetLeft, offsetTop: canvas.offsetTop});
-                setScale(window.devicePixelRatio);
-                console.log(`offsetLeft: ${canvas.offsetLeft}, offsetTop: ${canvas.offsetTop}`)
-            }
-            window.addEventListener('resize', handleResize);
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * scale;
-            canvas.height = rect.height * scale;
-            if (ctx) {
-                setContext(ctx);
-                // returnCanvasElement();
-            }
-            return () => {window.removeEventListener('resize', handleResize)};
-        }
-    })
-
-    const handleMouseDown = (e: MouseEvent) => {
+    const handleMouseDown = (e: MouseEvent, parent: HTMLDivElement) => {
         let newElt: CanvasElement;
-        const x = (e.pageX - canvasRect.offsetLeft) * scale;
-        const y = (e.pageY - canvasRect.offsetTop) * scale;
+        const x = (e.pageX - parent.offsetLeft);
+        const y = (e.pageY - parent.offsetTop);
         if (mode === "text") {
             // setText("");
             const fontWeight = bold? 'bold' : 'normal';
@@ -73,10 +54,11 @@ export default function Canvas({ mode, changeMode, fontSize, font, bold, italic,
         });
     }
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e: MouseEvent, parent: HTMLDivElement) => {
         if (!drawing) return;
-        const x = (e.pageX - canvasRect.offsetLeft) * scale;
-        const y = (e.pageY - canvasRect.offsetTop) * scale;
+        const x = (e.pageX - parent.offsetLeft);
+        const y = (e.pageY - parent.offsetTop);
+        // console.log(`x: ${x}, y: ${y}`);
         setCanvasElts(prevState => {
             const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
             const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
@@ -198,42 +180,17 @@ export default function Canvas({ mode, changeMode, fontSize, font, bold, italic,
         })
     }
 
-    const drawShape = (elt: ShapeElement) => {
-        if (context) {
-            switch (elt.shape) {
-                case 'rect': 
-                    context.strokeRect(elt.x, elt.y, elt.width, elt.height);
-                    break;
-                case 'circle':
-                    const x = elt.x + elt.width / 2;
-                    const y = elt.y + elt.height / 2;
-                    context.beginPath();
-                    context.ellipse(x, y, Math.abs(elt.width) / 2, Math.abs(elt.height) / 2, Math.PI, 0, 2 * Math.PI);
-                    context.stroke();
-                    break;
-                case 'line':
-                    context.beginPath();
-                    context.moveTo(elt.x, elt.y);
-                    context.lineTo(elt.x + elt.width, elt.y + elt.height);
-                    context.stroke();
-                    break;
-            }
-        } 
-    }
-
     const returnCanvasElement = () => {
         const elts: JSX.Element[] = [];
         canvasElts.map(elt => {
-            const x = elt.x + canvasRect.offsetLeft;
-            const y = elt.y + canvasRect.offsetTop;
             if (elt instanceof TextBoxElement) {
-                elts.push(<TextBox key={elt.id}  elt={elt as TextBoxElement} x={x} y={y} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
+                elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }
             else if (elt instanceof ShapeElement) {
-                drawShape(elt);
+                elts.push(<Shape key={elt.id} elt={elt}/>)
             }
             else if (elt instanceof TableElement) {
-                elts.push(<Table key={elt.id} elt={elt as TableElement} x={x} y={y} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);
+                elts.push(<Table key={elt.id} elt={elt} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);
             }
         })
         return elts;
@@ -243,19 +200,20 @@ export default function Canvas({ mode, changeMode, fontSize, font, bold, italic,
         <>
         <div 
         id="canvas-container"
-        className="w-full" 
+        className="w-full h-screen overflow-scroll" 
         // tabIndex={0} 
         //onKeyDown={(e) => {e.preventDefault(); enterText(e)}}
         >
-            <canvas 
-            className="bg-amber-50 w-full h-full" 
-            ref={canvasRef} 
-            onMouseDown={(e) => {handleMouseDown(e)}} 
-            onMouseMove={(e) => {handleMouseMove(e)}}
+            <div
+            id="canvas"
+            className="w-full h-full relative" 
+            // ref={canvasRef} 
+            onMouseDown={(e) => {handleMouseDown(e, e.currentTarget)}} 
+            onMouseMove={(e) => {handleMouseMove(e, e.currentTarget)}}
             onMouseUp={_ => {handleMouseUp()}} 
             >
-            </canvas>
-            {returnCanvasElement()}
+                {returnCanvasElement()}
+            </div>
         </div>
         </>
     );

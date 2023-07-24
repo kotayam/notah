@@ -1,9 +1,8 @@
 import { TextBoxProps } from "./Props";
-import DOMPurify from "isomorphic-dompurify";
-import HTMLReactParser from "html-react-parser";
+import { useState } from "react";
 
-export default function TextBox({ elt, selectTextBox, x, y, selectedElt, updateText }: TextBoxProps) {
-
+export default function TextBox({ elt, selectTextBox, selectedElt, updateText }: TextBoxProps) {
+    const [isEditable, setIsEditable] = useState(false);
     // const returnText = () => {
     //     const arr = elt.text.split('\n');
     //     if (arr[0] === '') arr.shift();
@@ -38,7 +37,14 @@ export default function TextBox({ elt, selectTextBox, x, y, selectedElt, updateT
 
     return (
         <>
-            <div contentEditable onKeyUp={e => {updateText(e.currentTarget.innerHTML)}} key={elt.id} className={`absolute hover:border-2 min-w-[100px] ${border}`} style={{ top: `${y}px`, left: `${x}px` }} onClick={_ => {selectTextBox(elt)}}
+            <div 
+            contentEditable='true'
+            key={elt.id} 
+            className={`absolute hover:border-2 min-w-[100px] ${border}`} 
+            style={{ top: elt.y, left: elt.x }} 
+            onClick={_ => {selectTextBox(elt)}}
+            // onKeyUp={e => {updateText(e.currentTarget.innerHTML)}} 
+            onMouseDown={e => e.stopPropagation()}
             >
             </div>
         </>

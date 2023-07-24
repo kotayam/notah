@@ -33,10 +33,20 @@ export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, fo
         console.log(head);
     }
 
+    const undo = () => {
+        
+    }
+
     return (
         <>
         <div className="w-full border-b-2">
             <div className="bg-amber-400 h-10 text-center">
+                <button 
+                className="float-left p-2 bg-amber-300"
+                onClick={() => undo()}
+                >
+                Undo
+                </button>
                 <button 
                 className="float-left p-2 bg-amber-300"
                 onClick={() => save()}
