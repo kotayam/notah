@@ -2,26 +2,24 @@ export class CanvasElement {
     id: number;
     x: number;
     y: number;
-    selected: boolean;
     
-    constructor(id: number, x: number, y: number, selected: boolean) {
+    constructor(id: number, x: number, y: number) {
         this.id = id;
         this.x = x;
         this.y = y;
-        this.selected = selected;
     }
 }
 
 export class TextBoxElement extends CanvasElement {
-    text: string;
+    content: string;
     font: string;
     fontSize: number;
     fontWeight: string;
     fontStyle: string;
 
-    constructor(id: number, x: number, y: number, selected: boolean, text: string, font: string, fontSize: number, fontWeight: string, fontStyle: string) {
-            super(id, x, y, selected);
-            this.text = text;
+    constructor(id: number, x: number, y: number, content: string, font: string, fontSize: number, fontWeight: string, fontStyle: string) {
+            super(id, x, y);
+            this.content = content;
             this.font = font;
             this.fontSize = fontSize;
             this.fontWeight = fontWeight;
@@ -34,8 +32,8 @@ export class ShapeElement extends CanvasElement {
     width: number;
     height: number;
 
-    constructor(id: number, x: number, y: number, selected: boolean, shape: string, width: number, height: number) {
-        super(id, x, y, selected);
+    constructor(id: number, x: number, y: number, shape: string, width: number, height: number) {
+        super(id, x, y);
         this.shape = shape;
         this.width = width;
         this.height = height;
@@ -45,14 +43,12 @@ export class ShapeElement extends CanvasElement {
 export class TableElement extends CanvasElement {
     row: number;
     col: number;
-    headers: string[];
-    content: string[][]
+    tableContent: string[][]
 
-    constructor(id: number, x: number, y: number, selected: boolean, row: number, col: number, headers: string[], content: string[][]) {
-        super(id, x, y, selected);
+    constructor(id: number, x: number, y: number, row: number, col: number, tableContent: string[][]) {
+        super(id, x, y);
         this.row = row;
         this.col = col;
-        this.headers = headers;
-        this.content = content;
+        this.tableContent = tableContent;
     }
 }

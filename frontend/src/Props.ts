@@ -24,8 +24,7 @@ export type CanvasProps = {
     bold: boolean;
     italic: boolean;
     shape: string;
-    headers: string[];
-    content: string[][];
+    tableContent: string[][];
     updateHistory: (elts: CanvasElement[]) => void;
 }
 

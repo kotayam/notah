@@ -7,13 +7,12 @@ import { CanvasElement } from "./Classes.ts";
 
 function App() {
   const [mode, setMode] = useState("text");
-  const [fontSize, setFontSize] = useState(20);
-  const [font, setFont] = useState("calibri");
+  const [fontSize, setFontSize] = useState(16);
+  const [font, setFont] = useState("sans-serif");
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
   const [shape, setShape] = useState('rect');
-  const [headers, setHeaders] = useState<string[]>([]);
-  const [content, setContent] = useState<string[][]>([])
+  const [tableContent, setTableContent] = useState<string[][]>([])
   const [actionHistory, setActionHistory] = useState<CanvasElement[]>([]);
 
   const changeMode = (newMode: string) => {
@@ -49,21 +48,14 @@ function App() {
 
   const createTable = (row: number, col: number) => {
     console.log(`row: ${row}, col: ${col}`);
-    const headers = new Array(col);
-    for (let i = 0; i < headers.length; i++) {
-      headers[i] = "";
-    }
-    setHeaders(headers);
-    console.log(headers);
-    const content = new Array(row-1);
-    content.fill(new Array(col));
-    for (let r = 0; r < content.length; r++) {
-      for (let c = 0; c < content[r].length; c++) {
-        content[r][c] = '';
+    const tableContent = new Array(row);
+    tableContent.fill(new Array(col));
+    for (let r = 0; r < tableContent.length; r++) {
+      for (let c = 0; c < tableContent[r].length; c++) {
+        tableContent[r][c] = '';
       }
     }
-    setContent(content);
-    console.log(content);
+    setTableContent(tableContent);
     changeMode('table');
   }
 
@@ -90,7 +82,7 @@ function App() {
           fontSize={fontSize} font={font} 
           bold={bold} italic={italic} 
           shape={shape} 
-          headers={headers} content={content}
+          tableContent={tableContent}
           updateHistory={updateHistory}
           />
       </div>
