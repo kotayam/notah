@@ -104,25 +104,25 @@ export function TableFunctionBar( { createTable }: TableFunctionBarProps ) {
             return (
                 <>
                 <div className="absolute border-[1px] bg-white p-2" style={{top: rect.bottom, left: rect.left}}>
-                <p>{`${gridCoord.r + 1}*${gridCoord.c + 1} table`}</p>
-                <div className={`grid grid-cols-${COL} gird-rows-${ROW} gap-1`}>
-                    {grid.map((r, rowId) => {
-                        return (r.map((_, colId) => {
-                            let bgColor = 'bg-gray-100';
-                            if (rowId <= gridCoord.r && colId <= gridCoord.c) {
-                                bgColor = 'bg-amber-200';
-                            }
-                            return (
-                                <div 
-                                    key={`${rowId}-${colId}`} 
-                                    className={`border-[1px] h-8 w-8 ${bgColor}`} 
-                                    onMouseEnter={_ => setGridCoord(_ => {return {r: rowId, c: colId}})}
-                                    onClick={_ => {setClicked(prev => !prev); createTable(rowId+1, colId+1)}}
-                                    ></div>
-                            )
-                        }))
-                    })}
-                </div>
+                    <p>{`${gridCoord.r + 1}*${gridCoord.c + 1} table`}</p>
+                    <div className={`grid grid-cols-${COL} gird-rows-${ROW} gap-1`}>
+                        {grid.map((r, rowId) => {
+                            return (r.map((_, colId) => {
+                                let bgColor = 'bg-gray-100';
+                                if (rowId <= gridCoord.r && colId <= gridCoord.c) {
+                                    bgColor = 'bg-amber-200';
+                                }
+                                return (
+                                    <div 
+                                        key={`${rowId}-${colId}`} 
+                                        className={`border-[1px] h-8 w-8 ${bgColor}`} 
+                                        onMouseEnter={_ => setGridCoord(_ => {return {r: rowId, c: colId}})}
+                                        onClick={_ => {setClicked(prev => !prev); createTable(rowId+1, colId+1)}}
+                                        ></div>
+                                )
+                            }))
+                        })}
+                    </div>
                 </div>
                 </>
             )
