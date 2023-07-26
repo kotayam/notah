@@ -1,12 +1,43 @@
-import { useRef, useEffect, useState } from "react";
+import { useState } from "react";
 import { TextFunctionBarProps, ShapeFunctionBarProps, TableFunctionBarProps } from "./Props.ts";
 
-export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, bold, toggleBold, italic, toggleItalic}: TextFunctionBarProps) {
+export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, fontColor, changeFontColor, bold, toggleBold, italic, toggleItalic}: TextFunctionBarProps) {
+    const [colorClicked, setColorClicked] = useState(false);
+    const [colorRect, setColorRect] = useState<DOMRect>();
+
+    const textColors = ['black', 'white', 'red', 'yellow', 'green', 'blue'];
+
     let boldStyle;
     bold? boldStyle = "bg-gray-300": boldStyle = "bg-transparent";
 
     let italicStyle;
     italic? italicStyle = "bg-gray-300": italicStyle = "bg-transparent";
+
+    const showColorOption = () => {
+        console.log(fontColor);
+        if (colorClicked && colorRect) {
+            return (
+                <>
+                <div className="absolute border-[1px] bg-white p-2" style={{top: colorRect.bottom, left: colorRect.left}}>
+                    <p>Font Color</p>
+                    <div className={`grid gap-1`} style={{gridTemplateRows: `repeat(${1}, minmax(0, 1fr))`, gridTemplateColumns: `repeat(${textColors.length}, minmax(0, 1fr))`}}>
+                        {textColors.map((color, idx) => {
+                            return (
+                                <div 
+                                    key={`${idx}`} 
+                                    className="border-[1px] h-8 w-8 hover:border-black z-[999]"
+                                    style={{backgroundColor: color}}
+                                    onClick={e => {e.stopPropagation(); console.log('clicked'); setColorClicked(prev => !prev); changeFontColor(color)}}
+                                ></div>
+                            )
+                        })}
+                    </div>
+                </div>
+                </>
+            )
+        }
+        
+    }
 
     return (
         <>
@@ -30,6 +61,13 @@ export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, bo
             <button className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${boldStyle}`} onClick={_ => toggleBold(bold)}><strong>B</strong></button>
             <button className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${italicStyle}`} onClick={_ => toggleItalic(italic)}><em>I</em></button>
             <button className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none`}><span className="underline">U</span></button>
+            <button className={`hover:bg-gray-300 active:bg-gray-400 text-[21px] w-[30px] rounded-none`} onClick={e => {setColorClicked(prev => !prev); setColorRect(e.currentTarget.getBoundingClientRect())}}>
+                <div className="w-full h-full">
+                    <p className="h-7">A</p>
+                    <div className="h-1 w-5 m-auto" style={{backgroundColor: fontColor}}></div>
+                </div>
+            </button>
+            {showColorOption()}
         </>
         
     )
@@ -95,7 +133,6 @@ export function TableFunctionBar( { createTable }: TableFunctionBarProps ) {
 
     const showTableOption = () => {
         if (clicked && rect) {
-            console.log(gridCoord);
             const grid = new Array<string[]>(ROW);
             const rowContent = new Array(COL);
             rowContent.fill('');
@@ -105,7 +142,7 @@ export function TableFunctionBar( { createTable }: TableFunctionBarProps ) {
                 <>
                 <div className="absolute border-[1px] bg-white p-2" style={{top: rect.bottom, left: rect.left}}>
                     <p>{`${gridCoord.r + 1}*${gridCoord.c + 1} table`}</p>
-                    <div className={`grid grid-cols-${COL} gird-rows-${ROW} gap-1`}>
+                    <div className={`grid gap-1`} style={{gridTemplateRows: `repeat(${ROW}, minmax(0, 1fr))`, gridTemplateColumns: `repeat(${COL}, minmax(0, 1fr))`}}>
                         {grid.map((r, rowId) => {
                             return (r.map((_, colId) => {
                                 let bgColor = 'bg-gray-100';

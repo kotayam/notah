@@ -3,9 +3,8 @@ import { ToolbarProps } from "./Props.ts";
 import ModeSelector from "./ModeSelector.tsx";
 import { TextFunctionBar, ShapeFunctionBar, TableFunctionBar } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 
-export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, bold, toggleBold, italic, toggleItalic, shape, changeShape, createTable }: ToolbarProps) {
+export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, fontColor, changeFontColor, bold, toggleBold, italic, toggleItalic, shape, changeShape, createTable }: ToolbarProps) {
     const returnFunctionBar = () => {
         switch(mode) {
             case 'text': 
@@ -13,6 +12,7 @@ export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, fo
                 <TextFunctionBar 
                     fontSize={fontSize} changeFontSize={changeFontSize} 
                     font={font} changeFont={changeFont} 
+                    fontColor={fontColor} changeFontColor={changeFontColor}
                     bold={bold} toggleBold={toggleBold}
                     italic={italic} toggleItalic={toggleItalic}
                 />)

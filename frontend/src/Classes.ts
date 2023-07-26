@@ -14,14 +14,16 @@ export class TextBoxElement extends CanvasElement {
     content: string;
     font: string;
     fontSize: number;
+    fontColor: string;
     fontWeight: string;
     fontStyle: string;
 
-    constructor(id: number, x: number, y: number, content: string, font: string, fontSize: number, fontWeight: string, fontStyle: string) {
+    constructor(id: number, x: number, y: number, content: string, font: string, fontSize: number, fontColor: string, fontWeight: string, fontStyle: string) {
             super(id, x, y);
             this.content = content;
             this.font = font;
             this.fontSize = fontSize;
+            this.fontColor = fontColor;
             this.fontWeight = fontWeight;
             this.fontStyle = fontStyle;
     }

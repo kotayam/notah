@@ -7,7 +7,7 @@ import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
 import Shape from "./Shape.tsx";
 
-export default function Canvas({ mode, changeMode, fontSize, font, bold, italic, shape, tableContent}: CanvasProps) {
+export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bold, italic, shape, tableContent}: CanvasProps) {
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
     const [context, setContext] = useState<CanvasRenderingContext2D>();
@@ -33,7 +33,7 @@ export default function Canvas({ mode, changeMode, fontSize, font, bold, italic,
             // setText("");
             const fontWeight = bold? 'bold' : 'normal';
             const fontStyle = italic? 'italic': 'normal';
-            newElt = new TextBoxElement(canvasElts.length, x, y, "", font, fontSize, fontWeight, fontStyle);
+            newElt = new TextBoxElement(canvasElts.length, x, y, "", font, fontSize, fontColor, fontWeight, fontStyle);
         } 
         else if (mode === "shape") {
             setDrawing(true);

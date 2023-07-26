@@ -10,7 +10,7 @@ export default function TextBox({ elt, selectTextBox, selectedElt}: TextBoxProps
             contentEditable='true'
             key={elt.id} 
             className={`absolute hover:border-2 min-w-[100px] ${border}`} 
-            style={{ top: elt.y, left: elt.x, fontFamily: elt.font, fontSize: elt.fontSize}} 
+            style={{ top: elt.y, left: elt.x, fontFamily: elt.font, fontSize: elt.fontSize, color: elt.fontColor}} 
             onClick={_ => {selectTextBox(elt)}}
             onMouseDown={e => e.stopPropagation()}
             >

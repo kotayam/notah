@@ -9,6 +9,7 @@ function App() {
   const [mode, setMode] = useState("text");
   const [fontSize, setFontSize] = useState(16);
   const [font, setFont] = useState("sans-serif");
+  const [fontColor, setFontColor] = useState('black');
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
   const [shape, setShape] = useState('rect');
@@ -28,6 +29,11 @@ function App() {
   const changeFont = (newFont: string) => {
     setFont(newFont);
     console.log(`font changed to: ${newFont}`);
+  }
+
+  const changeFontColor = (newFontColor: string) => {
+    setFontColor(newFontColor);
+    console.log(`font color changed to: ${newFontColor}`);
   }
 
   const toggleBold = (isBold: boolean) => {
@@ -70,21 +76,22 @@ function App() {
         mode={mode} changeMode={changeMode} 
         fontSize={fontSize} changeFontSize={changeFontSize} 
         font={font} changeFont={changeFont} 
+        fontColor={fontColor} changeFontColor={changeFontColor}
         bold={bold} toggleBold={toggleBold}
         italic={italic} toggleItalic={toggleItalic}
         shape={shape} changeShape={changeShape}
         createTable={createTable}
-        />
+      />
       <div className="flex h-full">
         <Notes />
         <Canvas 
           mode={mode} changeMode={changeMode} 
-          fontSize={fontSize} font={font} 
+          fontSize={fontSize} font={font} fontColor={fontColor}
           bold={bold} italic={italic} 
           shape={shape} 
           tableContent={tableContent}
           updateHistory={updateHistory}
-          />
+        />
       </div>
     </div>
     

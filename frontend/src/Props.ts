@@ -8,6 +8,8 @@ export type ToolbarProps = {
     font: string;
     changeFont: (newFont: string) => void;
     bold: boolean;
+    fontColor: string;
+    changeFontColor: (newFontColor: string) => void;
     toggleBold: (isBold: boolean) => void;
     italic: boolean;
     toggleItalic: (isItalic: boolean) => void;
@@ -21,6 +23,7 @@ export type CanvasProps = {
     changeMode: (newMode: string) => void;
     fontSize: number;
     font: string;
+    fontColor: string;
     bold: boolean;
     italic: boolean;
     shape: string;
@@ -66,6 +69,8 @@ export type TextFunctionBarProps = {
     font: string;
     changeFont: (newFont: string) => void;
     bold: boolean;
+    fontColor: string;
+    changeFontColor: (newFontColor: string) => void;
     toggleBold: (isBold: boolean) => void;
     italic: boolean;
     toggleItalic: (isItalic: boolean) => void;
