@@ -6,12 +6,18 @@ import { CanvasProps } from "./Props.ts";
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
 import Shape from "./Shape.tsx";
+import { useDispatch, useSelector } from "react-redux";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { actionCreators, rootState } from "./store/index.ts";
 
 export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bold, italic, shape, tableContent}: CanvasProps) {
+    const canvasElements = useSelector((state: rootState) => state.canvasElements)
+    const dispatch = useDispatch();
+    const { addCanvasElement, deleteCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
+
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
     const [context, setContext] = useState<CanvasRenderingContext2D>();
-    const [canvasElts, setCanvasElts] = useState<CanvasElement[]>([]);
     const [boldStatus, setBoldStatus] = useState(false);
     const [italicStatus, setItalicStatus] = useState(false);
     const [drawing, setDrawing] = useState(false);
@@ -33,24 +39,28 @@ export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bo
             // setText("");
             const fontWeight = bold? 'bold' : 'normal';
             const fontStyle = italic? 'italic': 'normal';
-            newElt = new TextBoxElement(canvasElts.length, x, y, "", font, fontSize, fontColor, fontWeight, fontStyle);
+            newElt = new TextBoxElement(canvasElements.length, x, y, "", font, fontSize, fontColor, fontWeight, fontStyle);
         } 
         else if (mode === "shape") {
             setDrawing(true);
-            newElt = new ShapeElement(canvasElts.length, x, y, shape, 0, 0);
+            newElt = new ShapeElement(canvasElements.length, x, y, shape, 0, 0);
         }
         else if (mode === "table") {
-            newElt = new TableElement(canvasElts.length, x, y, 2, 2, tableContent);
+            newElt = new TableElement(canvasElements.length, x, y, 2, 2, tableContent);
             changeMode('text');
         }
+        else {
+            return;
+        }
+        addCanvasElement(newElt);
         setSelectedElt(prevState => {
             const newState = prevState;
-            newState.id = canvasElts.length;
+            newState.id = canvasElements.length;
             return newState;
         });
-        setCanvasElts(canvasElts => {
-            return [...canvasElts, newElt];
-        });
+        // setCanvasElts(canvasElts => {
+        //     return [...canvasElts, newElt];
+        // });
     }
 
     const handleMouseMove = (e: MouseEvent, parent: HTMLDivElement) => {
@@ -58,13 +68,18 @@ export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bo
         const x = (e.pageX - parent.offsetLeft);
         const y = (e.pageY - parent.offsetTop);
         // console.log(`x: ${x}, y: ${y}`);
-        setCanvasElts(prevState => {
-            const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
-            const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
-            (selected as ShapeElement).width = x - selected.x;
-            (selected as ShapeElement).height = y - selected.y;
-            return [...nonSelected, selected];
-        });
+        const tgt = canvasElements.filter(elt => elt.id === selectedElt.id)[0];
+        const other = canvasElements.filter(elt => elt.id !== selectedElt.id);
+        (tgt as ShapeElement).width = x - tgt.x;
+        (tgt as ShapeElement).height = y - tgt.y;
+        updateCanvasElement([...other, tgt]);
+        // setCanvasElts(prevState => {
+        //     const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
+        //     const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
+        //     (selected as ShapeElement).width = x - selected.x;
+        //     (selected as ShapeElement).height = y - selected.y;
+        //     return [...nonSelected, selected];
+        // });
     }
 
     const handleMouseUp = () => {
@@ -90,22 +105,33 @@ export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bo
     const updateText = (newText: string) => {
         let txt = '';
         newText? txt = newText : txt = 'enter text';
-        setCanvasElts(prevState => {
-            const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
-            const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
-            if (selected instanceof TextBoxElement) {
-                selected.content = txt;
-            } 
-            else if (selected instanceof TableElement) {
-                selected.tableContent[selectedElt.r][selectedElt.c] = txt;
-            }
-            return [...nonSelected, selected];
-        })
+        // setCanvasElts(prevState => {
+        //     const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
+        //     const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
+        //     if (selected instanceof TextBoxElement) {
+        //         selected.content = txt;
+        //     } 
+        //     else if (selected instanceof TableElement) {
+        //         selected.tableContent[selectedElt.r][selectedElt.c] = txt;
+        //     }
+        //     return [...nonSelected, selected];
+        // })
     }
 
     const returnCanvasElement = () => {
         const elts: JSX.Element[] = [];
-        canvasElts.map(elt => {
+        // canvasElts.map(elt => {
+        //     if (elt instanceof TextBoxElement) {
+        //         elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
+        //     }
+        //     else if (elt instanceof ShapeElement) {
+        //         elts.push(<Shape key={elt.id} elt={elt}/>)
+        //     }
+        //     else if (elt instanceof TableElement) {
+        //         elts.push(<Table key={elt.id} elt={elt} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);
+        //     }
+        // })
+        canvasElements.map(elt => {
             if (elt instanceof TextBoxElement) {
                 elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }
@@ -117,6 +143,7 @@ export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bo
             }
         })
         return elts;
+        
     }
 
     return (
