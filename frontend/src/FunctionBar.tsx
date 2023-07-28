@@ -1,20 +1,29 @@
 import { useState } from "react";
-import { TextFunctionBarProps, ShapeFunctionBarProps, TableFunctionBarProps } from "./Props.ts";
+import { ShapeFunctionBarProps, TableFunctionBarProps } from "./Props.ts";
+import { useDispatch, useSelector } from "react-redux";
+import { rootState } from "./store/index.ts";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { actionCreators } from "./store/index.ts";
 
-export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, fontColor, changeFontColor, bold, toggleBold, italic, toggleItalic}: TextFunctionBarProps) {
+export function TextFunctionBar() {
     const [colorClicked, setColorClicked] = useState(false);
     const [colorRect, setColorRect] = useState<DOMRect>();
+
+    const textStyle = useSelector((state: rootState) => state.textStyle);
+    const dispatch = useDispatch();
+    const { changeFont, changeFontWeight, changeFontStyle, changeFontColor, changeFontSize } = bindActionCreators(actionCreators, dispatch);
 
     const textColors = ['black', 'white', 'red', 'yellow', 'green', 'blue'];
 
     let boldStyle;
-    bold? boldStyle = "bg-gray-300": boldStyle = "bg-transparent";
+    if (textStyle.fontWeight === 'bold') boldStyle = "bg-gray-300";
+    else boldStyle = "bg-transparent";
 
     let italicStyle;
-    italic? italicStyle = "bg-gray-300": italicStyle = "bg-transparent";
+    if (textStyle.fontStyle === 'italic') italicStyle = "bg-gray-300";
+    else italicStyle = "bg-transparent";
 
     const showColorOption = () => {
-        console.log(fontColor);
         if (colorClicked && colorRect) {
             return (
                 <>
@@ -27,7 +36,7 @@ export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, fo
                                     key={`${idx}`} 
                                     className="border-[1px] h-8 w-8 hover:border-black z-[999]"
                                     style={{backgroundColor: color}}
-                                    onClick={e => {e.stopPropagation(); console.log('clicked'); setColorClicked(prev => !prev); changeFontColor(color)}}
+                                    onClick={e => {e.stopPropagation(); setColorClicked(prev => !prev); changeFontColor(color)}}
                                 ></div>
                             )
                         })}
@@ -41,14 +50,14 @@ export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, fo
 
     return (
         <>
-            <select className="hover:bg-gray-300 border-2 text-[18px]" value={font} onChange={e => {changeFont(e.target.value)}} name="font" id="font">
+            <select className="hover:bg-gray-300 border-2 text-[18px]" value={textStyle.font} onChange={e => {changeFont(e.target.value)}} name="font" id="font">
                 <option value="sans-serif">Sans-Serif</option>
                 <option value="calibri">Calibri</option>
                 <option value="arial">Arial</option>
                 <option value="times-new-roman">Times New Roman</option>
                 <option value="georgia">Georgia</option>
             </select>
-            <select className="hover:bg-gray-300 border-2 text-[18px]" value={fontSize} onChange={e => {changeFontSize(e.target.value)}} name="font-size" id="font-size">
+            <select className="hover:bg-gray-300 border-2 text-[18px]" value={textStyle.fontSize} onChange={e => {changeFontSize(parseInt(e.target.value))}} name="font-size" id="font-size">
                 <option value="11">11</option>
                 <option value="12">12</option>
                 <option value="16">16</option>
@@ -58,13 +67,25 @@ export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, fo
                 <option value="48">48</option>
                 <option value="72">72</option>
             </select>
-            <button className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${boldStyle}`} onClick={_ => toggleBold(bold)}><strong>B</strong></button>
-            <button className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${italicStyle}`} onClick={_ => toggleItalic(italic)}><em>I</em></button>
+            <button 
+                className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${boldStyle}`} 
+                onClick={_ => {
+                    if (textStyle.fontWeight === 'bold') changeFontWeight('normal');
+                    else changeFontWeight('bold');
+                }}
+            ><strong>B</strong></button>
+            <button 
+                className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${italicStyle}`} 
+                onClick={_ => {
+                    if (textStyle.fontStyle === 'italic') changeFontStyle('normal');
+                    else changeFontStyle('italic');
+                }}
+            ><em style={{fontFamily: 'georgia'}}>I</em></button>
             <button className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none`}><span className="underline">U</span></button>
             <button className={`hover:bg-gray-300 active:bg-gray-400 text-[21px] w-[30px] rounded-none`} onClick={e => {setColorClicked(prev => !prev); setColorRect(e.currentTarget.getBoundingClientRect())}}>
                 <div className="w-full h-full">
                     <p className="h-7">A</p>
-                    <div className="h-1 w-5 m-auto" style={{backgroundColor: fontColor}}></div>
+                    <div className="h-1 w-5 m-auto" style={{backgroundColor: textStyle.fontColor}}></div>
                 </div>
             </button>
             {showColorOption()}
@@ -73,7 +94,11 @@ export function TextFunctionBar({ font, changeFont, fontSize, changeFontSize, fo
     )
 }
 
-export function ShapeFunctionBar({ shape, changeShape }: ShapeFunctionBarProps) {
+export function ShapeFunctionBar() {
+    const shape = useSelector((state: rootState) => state.shape);
+    const dispatch = useDispatch();
+    const { changeShape } = bindActionCreators(actionCreators, dispatch);
+
     const boldSelected = (thisShape: string) => {
         if (thisShape === shape) return 'bold';
         return 'normal';

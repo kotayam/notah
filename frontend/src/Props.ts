@@ -1,32 +1,10 @@
 import { CanvasElement, TextBoxElement, TableElement, ShapeElement } from "./Classes";
 
 export type ToolbarProps = {
-    mode: string;
-    changeMode: (newMode: string) => void;
-    fontSize: number;
-    changeFontSize: (newFontSize: string) => void;
-    font: string;
-    changeFont: (newFont: string) => void;
-    bold: boolean;
-    fontColor: string;
-    changeFontColor: (newFontColor: string) => void;
-    toggleBold: (isBold: boolean) => void;
-    italic: boolean;
-    toggleItalic: (isItalic: boolean) => void;
-    shape: string;
-    changeShape: (newShape: string) => void;
     createTable: (row: number, col: number) => void;
  }
 
 export type CanvasProps = {
-    mode: string;
-    changeMode: (newMode: string) => void;
-    fontSize: number;
-    font: string;
-    fontColor: string;
-    bold: boolean;
-    italic: boolean;
-    shape: string;
     tableContent: string[][];
     updateHistory: (elts: CanvasElement[]) => void;
 }
@@ -58,22 +36,7 @@ export type TableRowProps = {
 }
 
 export type ModeSelectorProps = {
-    mode: string;
     thisMode: string;
-    changeMode: (newMode: string) => void;
-}
-
-export type TextFunctionBarProps = {
-    fontSize: number;
-    changeFontSize: (newFontSize: string) => void;
-    font: string;
-    changeFont: (newFont: string) => void;
-    bold: boolean;
-    fontColor: string;
-    changeFontColor: (newFontColor: string) => void;
-    toggleBold: (isBold: boolean) => void;
-    italic: boolean;
-    toggleItalic: (isItalic: boolean) => void;
 }
 
 export type ShapeFunctionBarProps = {

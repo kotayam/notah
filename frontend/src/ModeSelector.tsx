@@ -1,6 +1,15 @@
 import { ModeSelectorProps } from "./Props.ts";
+import { rootState } from "./store/index.ts";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { actionCreators } from "./store/index.ts";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-export default function ModeSelector({ mode, thisMode, changeMode }: ModeSelectorProps) {
+export default function ModeSelector({ thisMode }: ModeSelectorProps) {
+    const mode = useSelector((state: rootState) => state.mode);
+    const dispatch = useDispatch();
+    const { changeMode } =bindActionCreators(actionCreators, dispatch);
+
     const boldSelected = () => {
         if (thisMode.toLowerCase() === mode) return 'bold';
         return 'normal';

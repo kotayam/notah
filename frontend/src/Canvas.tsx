@@ -10,16 +10,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 
-export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bold, italic, shape, tableContent}: CanvasProps) {
-    const canvasElements = useSelector((state: rootState) => state.canvasElements)
+export default function Canvas({tableContent}: CanvasProps) {
     const dispatch = useDispatch();
     const { addCanvasElement, deleteCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
 
+    const canvasElements = useSelector((state: rootState) => state.canvasElements);
+    const textStyle = useSelector((state: rootState) => state.textStyle);
+    const shape = useSelector((state: rootState) => state.shape);
+    const mode = useSelector((state: rootState) => state.mode);
+
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
-    const [context, setContext] = useState<CanvasRenderingContext2D>();
-    const [boldStatus, setBoldStatus] = useState(false);
-    const [italicStatus, setItalicStatus] = useState(false);
     const [drawing, setDrawing] = useState(false);
     const [selectedElt, setSelectedElt] = useState({id: -1, r: -1, c: -1});
 
@@ -37,9 +38,7 @@ export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bo
         const y = (e.pageY - parent.offsetTop);
         if (mode === "text") {
             // setText("");
-            const fontWeight = bold? 'bold' : 'normal';
-            const fontStyle = italic? 'italic': 'normal';
-            newElt = new TextBoxElement(canvasElements.length, x, y, "", font, fontSize, fontColor, fontWeight, fontStyle);
+            newElt = new TextBoxElement(canvasElements.length, x, y, "", textStyle.font, textStyle.fontSize, textStyle.fontColor, textStyle.fontWeight, textStyle.fontStyle);
         } 
         else if (mode === "shape") {
             setDrawing(true);
@@ -47,7 +46,6 @@ export default function Canvas({ mode, changeMode, fontSize, font, fontColor, bo
         }
         else if (mode === "table") {
             newElt = new TableElement(canvasElements.length, x, y, 2, 2, tableContent);
-            changeMode('text');
         }
         else {
             return;

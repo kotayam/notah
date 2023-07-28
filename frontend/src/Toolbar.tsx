@@ -3,24 +3,18 @@ import { ToolbarProps } from "./Props.ts";
 import ModeSelector from "./ModeSelector.tsx";
 import { TextFunctionBar, ShapeFunctionBar, TableFunctionBar } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
+import { useSelector } from "react-redux";
+import { rootState } from "./store/index.ts";
 
-export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, font, changeFont, fontColor, changeFontColor, bold, toggleBold, italic, toggleItalic, shape, changeShape, createTable }: ToolbarProps) {
+export default function Toolbar({ createTable }: ToolbarProps) {
+    const mode = useSelector((state: rootState) => state.mode);
+
     const returnFunctionBar = () => {
         switch(mode) {
             case 'text': 
-                return (
-                <TextFunctionBar 
-                    fontSize={fontSize} changeFontSize={changeFontSize} 
-                    font={font} changeFont={changeFont} 
-                    fontColor={fontColor} changeFontColor={changeFontColor}
-                    bold={bold} toggleBold={toggleBold}
-                    italic={italic} toggleItalic={toggleItalic}
-                />)
+                return (<TextFunctionBar />)
             case 'shape':
-                return (
-                <ShapeFunctionBar
-                    shape={shape} changeShape={changeShape}
-                />)
+                return (<ShapeFunctionBar/>)
             case 'table':
                 return (
                 <TableFunctionBar
@@ -80,10 +74,10 @@ export default function Toolbar({ mode, changeMode, fontSize, changeFontSize, fo
                 <h1 className="font-bold">Notah</h1>
             </div>
             <div className="bg-gray-100 p-px">
-                <ModeSelector mode={mode} thisMode={'Text'} changeMode={changeMode}/>
-                <ModeSelector mode={mode} thisMode={'Shape'} changeMode={changeMode}/>
-                <ModeSelector mode={mode} thisMode={'Table'} changeMode={changeMode}/>
-                <ModeSelector mode={mode} thisMode={'Draw'} changeMode={changeMode}/>
+                <ModeSelector thisMode={'Text'}/>
+                <ModeSelector thisMode={'Shape'}/>
+                <ModeSelector thisMode={'Table'}/>
+                <ModeSelector thisMode={'Draw'}/>
                 <button className="float-right h-full bg-gray-200 p-2" onClick={_ => saveAsPdf()}>Save as PDF</button>
             </div>
             <div className="bg-gray-100 h-10 px-4">
