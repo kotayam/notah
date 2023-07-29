@@ -1,4 +1,4 @@
-import { CanvasElement, TextBoxElement, ShapeElement, TableElement } from "src/Classes";
+import { CanvasElement } from "src/Classes";
 import { ActionType } from "../action-types";
 
 interface AddCanvasElementAction {

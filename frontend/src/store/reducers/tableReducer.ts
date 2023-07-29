@@ -3,7 +3,7 @@ import { ActionType } from "../action-types";
 
 const initialState = {row: 0, col: 0}
 
-const shapeReducer = (state = initialState, action: TableAction) => {
+const tableReducer = (state = initialState, action: TableAction) => {
     switch(action.type) {
         case ActionType.TABLE:
             return action.payload;
@@ -12,4 +12,4 @@ const shapeReducer = (state = initialState, action: TableAction) => {
     }
 }
 
-export default shapeReducer;
+export default tableReducer;

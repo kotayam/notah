@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ShapeFunctionBarProps, TableFunctionBarProps } from "./Props.ts";
+import { TableFunctionBarProps } from "./Props.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
@@ -138,7 +138,10 @@ export function ShapeFunctionBar() {
     )
 }
 
-export function TableFunctionBar( { createTable }: TableFunctionBarProps ) {
+export function TableFunctionBar( { }: TableFunctionBarProps ) {
+    const dispatch = useDispatch();
+    const { createTable } = bindActionCreators(actionCreators, dispatch);
+
     const[clicked, setClicked] = useState(false);
     const[rect, setRect] = useState<DOMRect>();
     const[gridCoord, setGridCoord] = useState({r: -1, c: -1}); 
@@ -179,7 +182,7 @@ export function TableFunctionBar( { createTable }: TableFunctionBarProps ) {
                                         key={`${rowId}-${colId}`} 
                                         className={`border-[1px] h-8 w-8 ${bgColor}`} 
                                         onMouseEnter={_ => setGridCoord(_ => {return {r: rowId, c: colId}})}
-                                        onClick={_ => {setClicked(prev => !prev); createTable(rowId+1, colId+1)}}
+                                        onClick={_ => {setClicked(prev => !prev); createTable({row: rowId+1, col: colId+1})}}
                                         ></div>
                                 )
                             }))

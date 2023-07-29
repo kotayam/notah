@@ -17,6 +17,7 @@ export default function Canvas({tableContent}: CanvasProps) {
     const canvasElements = useSelector((state: rootState) => state.canvasElements);
     const textStyle = useSelector((state: rootState) => state.textStyle);
     const shape = useSelector((state: rootState) => state.shape);
+    const table = useSelector((state: rootState) => state.table);
     const mode = useSelector((state: rootState) => state.mode);
 
     const [scale, setScale] = useState(window.devicePixelRatio);
@@ -45,7 +46,14 @@ export default function Canvas({tableContent}: CanvasProps) {
             newElt = new ShapeElement(canvasElements.length, x, y, shape, 0, 0);
         }
         else if (mode === "table") {
-            newElt = new TableElement(canvasElements.length, x, y, 2, 2, tableContent);
+            const tableContent = new Array(table.row);
+            tableContent.fill(new Array(table.col));
+            for (let r = 0; r < tableContent.length; r++) {
+                for (let c = 0; c < tableContent[r].length; c++) {
+                    tableContent[r][c] = '';
+                }
+            }
+            newElt = new TableElement(canvasElements.length, x, y, table.row, table.col, tableContent);
         }
         else {
             return;
@@ -118,17 +126,6 @@ export default function Canvas({tableContent}: CanvasProps) {
 
     const returnCanvasElement = () => {
         const elts: JSX.Element[] = [];
-        // canvasElts.map(elt => {
-        //     if (elt instanceof TextBoxElement) {
-        //         elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
-        //     }
-        //     else if (elt instanceof ShapeElement) {
-        //         elts.push(<Shape key={elt.id} elt={elt}/>)
-        //     }
-        //     else if (elt instanceof TableElement) {
-        //         elts.push(<Table key={elt.id} elt={elt} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);
-        //     }
-        // })
         canvasElements.map(elt => {
             if (elt instanceof TextBoxElement) {
                 elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
