@@ -7,6 +7,7 @@ namespace backend.DTO
 {
     public class NoteBookDto
     {
+        public Guid Id { get; set; }
         public string Title { get; set; } = null!;
     }
 }

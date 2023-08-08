@@ -12,6 +12,6 @@ namespace backend.Interfaces
         Task<ICollection<NoteBook>> GetAllNoteBooksAsync();
         Task<NoteBook?> GetNoteBookByIdAsync(Guid id);
         Task<ICollection<NoteBook>> GetNoteBooksByOwnerIdAsync(Guid ownerId);
-        Task<NoteBook?> AddNoteBookAsync(Guid ownerId, NoteBookDto noteBookDto);
+        Task<NoteBook?> AddNoteBookAsync(Guid ownerId, String title);
     }
 }

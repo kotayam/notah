@@ -30,12 +30,12 @@ namespace backend.Repository
         public async Task<ICollection<NoteBook>> GetNoteBooksByOwnerIdAsync(Guid ownerId) {
             return await dbContext.NoteBooks.Include(nb => nb.Owner).Where(nb => nb.OwnerId == ownerId).ToListAsync();
         }
-        public async Task<NoteBook?> AddNoteBookAsync(Guid ownerId, NoteBookDto noteBookDto) {
+        public async Task<NoteBook?> AddNoteBookAsync(Guid ownerId, String title) {
             var owner = await dbContext.Accounts.FindAsync(ownerId);
             if (owner != null) {
                 var noteBook = new NoteBook() {
                     Id = Guid.NewGuid(),
-                    Title = noteBookDto.Title,
+                    Title = title,
                     OwnerId = owner.Id,
                     Owner = owner
                 };

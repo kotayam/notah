@@ -27,12 +27,12 @@ namespace backend.Repository
             return await dbContext.Accounts.Include(a => a.NoteBooks).Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<Account?> AddAccountAsync(AccountDto accountDto) {
+        public async Task<Account?> AddAccountAsync(String fullName, String email, String password) {
             var account = new Account() {
                 Id = Guid.NewGuid(),
-                FullName = accountDto.FullName,
-                Email = accountDto.Email,
-                Password = accountDto.Password,
+                FullName = fullName,
+                Email = email,
+                Password = password,
                 NoteBooks = new List<NoteBook>()
             };
             await dbContext.Accounts.AddAsync(account);
@@ -40,15 +40,25 @@ namespace backend.Repository
             return account;
         }
 
-        public async Task<Account?> UpdateAccountAsync(Guid id, AccountDto accountDto) {
-            var acc = await dbContext.Accounts.FindAsync(id);
-            if (acc != null) {
-                acc.FullName = accountDto.FullName;
-                acc.Email = accountDto.Email;
-                acc.Password = accountDto.Password;
+        public async Task<Account?> UpdateAccountAsync(Guid id, String fullName, String email, String password) {
+            var account = await dbContext.Accounts.FindAsync(id);
+            if (account != null) {
+                account.FullName = fullName;
+                account.Email = email;
+                account.Password = password;
                 await dbContext.SaveChangesAsync();
             }
-            return acc;
+            return account;
+        }
+
+        public async Task<Account?> AddNoteBookAsync(Guid id, Guid noteBookId) {
+            var noteBook = await dbContext.NoteBooks.FindAsync(noteBookId);
+            var account = await dbContext.Accounts.FindAsync(id);
+            if (account != null && noteBook != null) {
+                account.NoteBooks.Add(noteBook);
+                await dbContext.SaveChangesAsync();
+            }
+            return account;
         }
 
         public async Task<Account?> DeleteAccountAsync(Guid id) {
