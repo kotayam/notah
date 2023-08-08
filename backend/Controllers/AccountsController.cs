@@ -26,7 +26,17 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAccounts()
         {
-            return Ok(await accountRepository.GetAllAccountsAsync());
+            var accounts = await accountRepository.GetAllAccountsAsync();
+            var accountsDto = from a in accounts select new AccountDetailsDto() {
+                Id = a.Id,
+                FullName = a.FullName,
+                Email = a.Email,
+                Password = a.Password,
+                NoteBooks = (from nb in a.NoteBooks select new NoteBookDto() {
+                    Title = nb.Title
+                }).ToList()
+            };
+            return Ok(accountsDto);
         }
 
         [HttpGet]
@@ -34,18 +44,30 @@ namespace backend.Controllers
         public async Task<IActionResult> GetAccount([FromRoute] Guid id)
         {
             var account = await accountRepository.GetAccountAsync(id);
-            if (account == null)
+            if (account != null)
             {
-                return NotFound();
+                var accountDetailsDto = new AccountDetailsDto() {
+                    Id = account.Id,
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Password = account.Password,
+                    NoteBooks = (from nb in account.NoteBooks select new NoteBookDto() {
+                        Title = nb.Title
+                    }).ToList()
+                };
+                return Ok(accountDetailsDto);
             }
-            return Ok(account);
+            return NotFound();
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAccount(AccountDto accountDto)
         {
-            await accountRepository.AddAccountAsync(accountDto);
-            return Ok(accountDto);
+            var account = await accountRepository.AddAccountAsync(accountDto);
+            if (account != null) {
+                return Ok(accountDto);
+            }
+            return NotFound();
         }
 
         [HttpPut]
@@ -69,7 +91,12 @@ namespace backend.Controllers
 
             if (account != null)
             {
-                return Ok(account);
+                var accountDto = new AccountDto() {
+                    FullName = account.FullName,
+                    Email = account.Email,
+                    Password = account.Password
+                };
+                return Ok(accountDto);
             }
 
             return NotFound();

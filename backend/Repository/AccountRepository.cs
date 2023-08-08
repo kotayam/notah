@@ -20,11 +20,11 @@ namespace backend.Repository
         }
 
         public async Task<ICollection<Account>> GetAllAccountsAsync() {
-            return await dbContext.Accounts.ToListAsync();
+            return await dbContext.Accounts.Include(a => a.NoteBooks).ToListAsync();
         }
 
         public async Task<Account?> GetAccountAsync(Guid id) {
-            return await dbContext.Accounts.FindAsync(id);
+            return await dbContext.Accounts.Include(a => a.NoteBooks).Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Account?> AddAccountAsync(AccountDto accountDto) {

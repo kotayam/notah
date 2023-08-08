@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace backend.Models
+namespace backend.DTO
 {
-    public class AddNoteBookRequest
+    public class NoteBookDto
     {
         public string Title { get; set; } = null!;
     }
