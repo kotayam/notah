@@ -10,5 +10,6 @@ namespace backend.Models
         public Guid Id { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
+        public Note Note { get; set; } = null!;
     }
 }

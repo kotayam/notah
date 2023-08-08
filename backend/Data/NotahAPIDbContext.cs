@@ -14,5 +14,16 @@ namespace backend.Data
         }
 
         public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<NoteBook> NoteBooks { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>()
+                .HasMany(e => e.NoteBooks)
+                .WithOne(e => e.Owner)
+                .HasForeignKey(e => e.OwnerId)
+                .IsRequired();
+        }
     }
 }

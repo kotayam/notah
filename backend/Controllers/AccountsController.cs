@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.Data;
+using backend.DTO;
+using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,68 +17,58 @@ namespace backend.Controllers
     [Route("api/v1/[controller]")]
     public class AccountsController : Controller
     {
-        private readonly NotahAPIDbContext dbContext;
-        public AccountsController(NotahAPIDbContext dbContext)
+        private readonly IAccountRepository accountRepository;
+        public AccountsController(IAccountRepository accountRepository)
         {
-            this.dbContext = dbContext;
+            this.accountRepository = accountRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAccounts() {
-            return Ok(await dbContext.Accounts.ToListAsync());
+        public async Task<IActionResult> GetAllAccounts()
+        {
+            return Ok(await accountRepository.GetAllAccountsAsync());
         }
 
         [HttpGet]
         [Route("{id:guid}")]
-        public async Task<IActionResult> GetAccount([FromRoute] Guid id) {
-            var account = await dbContext.Accounts.FindAsync(id);
-            if (account == null) {
+        public async Task<IActionResult> GetAccount([FromRoute] Guid id)
+        {
+            var account = await accountRepository.GetAccountAsync(id);
+            if (account == null)
+            {
                 return NotFound();
             }
             return Ok(account);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccount(AddAccountRequest addAccountRequest) {
-            var account = new Account() {
-                Id = Guid.NewGuid(),
-                FullName = addAccountRequest.FullName,
-                Email = addAccountRequest.Email,
-                Password = addAccountRequest.Password,
-                NoteBooks = new List<NoteBook>()
-            };
-
-            await dbContext.Accounts.AddAsync(account);
-            await dbContext.SaveChangesAsync();
-
-            return Ok(account);
+        public async Task<IActionResult> AddAccount(AccountDto accountDto)
+        {
+            await accountRepository.AddAccountAsync(accountDto);
+            return Ok(accountDto);
         }
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, UpdateAccountRequest updateAccountRequest) {
-            var account = await dbContext.Accounts.FindAsync(id);
-            
-            if (account != null) {
-                account.FullName = updateAccountRequest.FullName;
-                account.Email = updateAccountRequest.Email;
-                account.Password = updateAccountRequest.Password;
+        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, AccountDto accountDto)
+        {
+            var account = await accountRepository.UpdateAccountAsync(id, accountDto);
 
-                await dbContext.SaveChangesAsync();
-                return Ok(account);
+            if (account != null)
+            {
+                return Ok(accountDto);
             }
             return NotFound();
         }
 
         [HttpDelete]
         [Route("{id:guid}")]
-        public async Task<IActionResult> DeleteAccount([FromRoute] Guid id) {
-            var account = await dbContext.Accounts.FindAsync(id);
+        public async Task<IActionResult> DeleteAccount([FromRoute] Guid id)
+        {
+            var account = await accountRepository.DeleteAccountAsync(id);
 
-            if (account != null) {
-                dbContext.Accounts.Remove(account);
-                await dbContext.SaveChangesAsync();
-
+            if (account != null)
+            {
                 return Ok(account);
             }
 
