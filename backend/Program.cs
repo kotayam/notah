@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseInMemoryDatabase("NotahDb"));
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INoteBookRepository, NoteBookRepository>();
+builder.Services.AddScoped<IPageRepository, PageRepository>();
 
 var app = builder.Build();
 

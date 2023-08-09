@@ -27,35 +27,42 @@ namespace backend.Controllers
         public async Task<IActionResult> GetAllAccounts()
         {
             var accounts = await accountRepository.GetAllAccountsAsync();
-            var accountsDto = from a in accounts select new AccountDetailsDto() {
-                Id = a.Id,
-                FullName = a.FullName,
-                Email = a.Email,
-                Password = a.Password,
-                NoteBooks = (from nb in a.NoteBooks select new NoteBookDto() {
-                    Id = nb.Id,
-                    Title = nb.Title
-                }).ToList()
-            };
+            var accountsDto = from a in accounts
+                              select new AccountDetailsDto()
+                              {
+                                  Id = a.Id,
+                                  FullName = a.FullName,
+                                  Email = a.Email,
+                                  Password = a.Password,
+                                  NoteBooks = (from nb in a.NoteBooks
+                                               select new NoteBookDto()
+                                               {
+                                                   Id = nb.Id,
+                                                   Title = nb.Title
+                                               }).ToList()
+                              };
             return Ok(accountsDto);
         }
 
         [HttpGet]
         [Route("{id:guid}")]
-        public async Task<IActionResult> GetAccount([FromRoute] Guid id)
+        public async Task<IActionResult> GetAccountById([FromRoute] Guid id)
         {
-            var account = await accountRepository.GetAccountAsync(id);
+            var account = await accountRepository.GetAccountByIdAsync(id);
             if (account != null)
             {
-                var accountDetailsDto = new AccountDetailsDto() {
+                var accountDetailsDto = new AccountDetailsDto()
+                {
                     Id = account.Id,
                     FullName = account.FullName,
                     Email = account.Email,
                     Password = account.Password,
-                    NoteBooks = (from nb in account.NoteBooks select new NoteBookDto() {
-                        Id = nb.Id,
-                        Title = nb.Title
-                    }).ToList()
+                    NoteBooks = (from nb in account.NoteBooks
+                                 select new NoteBookDto()
+                                 {
+                                     Id = nb.Id,
+                                     Title = nb.Title
+                                 }).ToList()
                 };
                 return Ok(accountDetailsDto);
             }
@@ -63,11 +70,13 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccount(String fullName, String email, String password)
+        public async Task<IActionResult> AddAccount(String fullName = "Full Name", String email = "notah@gmail.com", String password = "password")
         {
             var account = await accountRepository.AddAccountAsync(fullName, email, password);
-            if (account != null) {
-                var accountDto = new AccountDto() {
+            if (account != null)
+            {
+                var accountDto = new AccountDto()
+                {
                     Id = account.Id,
                     FullName = fullName,
                     Email = email,
@@ -80,37 +89,18 @@ namespace backend.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, String fullName, String email, String password)
+        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, String fullName = "New Name", String email = "new@gmail.com", String password = "new_pass")
         {
             var account = await accountRepository.UpdateAccountAsync(id, fullName, email, password);
 
             if (account != null)
             {
-                var accountDto = new AccountDto() {
+                var accountDto = new AccountDto()
+                {
                     Id = account.Id,
                     FullName = fullName,
                     Email = email,
                     Password = password
-                };
-                return Ok(accountDto);
-            }
-            return NotFound();
-        }
-
-        [HttpPut]
-        [Route("addNoteBook/{id:guid}")]
-        public async Task<IActionResult> AddNoteBook([FromRoute] Guid id, Guid noteBookId) {
-            var account = await accountRepository.AddNoteBookAsync(id, noteBookId);
-            if (account != null) {
-                var accountDto = new AccountDetailsDto() {
-                    Id = account.Id,
-                    FullName = account.FullName,
-                    Email = account.Email,
-                    Password = account.Password,
-                    NoteBooks = (from nb in account.NoteBooks select new NoteBookDto() {
-                        Id = nb.Id,
-                        Title = nb.Title
-                    }).ToList()
                 };
                 return Ok(accountDto);
             }
@@ -125,7 +115,8 @@ namespace backend.Controllers
 
             if (account != null)
             {
-                var accountDto = new AccountDto() {
+                var accountDto = new AccountDto()
+                {
                     Id = account.Id,
                     FullName = account.FullName,
                     Email = account.Email,

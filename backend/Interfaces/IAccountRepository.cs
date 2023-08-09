@@ -10,10 +10,9 @@ namespace backend.Interfaces
     public interface IAccountRepository
     {
         Task<ICollection<Account>> GetAllAccountsAsync();
-        Task<Account?> GetAccountAsync(Guid id);
+        Task<Account?> GetAccountByIdAsync(Guid id);
         Task<Account?> AddAccountAsync(String fullName, String email, String password);
         Task<Account?> UpdateAccountAsync(Guid id, String fullName, String email, String password);
-        Task<Account?> AddNoteBookAsync(Guid id, Guid noteBookId);
         Task<Account?> DeleteAccountAsync(Guid id);
     }
 }

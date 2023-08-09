@@ -18,97 +18,125 @@ namespace backend.Controllers
     public class NoteBooksController : Controller
     {
         public INoteBookRepository noteBookRepository;
-        private readonly IAccountRepository accountRepository;
 
-        public NoteBooksController(INoteBookRepository noteBookRepository, IAccountRepository accountRepository)
+        public NoteBooksController(INoteBookRepository noteBookRepository)
         {
             this.noteBookRepository = noteBookRepository;
-            this.accountRepository = accountRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllNoteBooks()
         {
             var noteBooks = await noteBookRepository.GetAllNoteBooksAsync();
-            var noteBooksDto = from nb in noteBooks select new NoteBookDetailsDto() {
-                Id = nb.Id,
-                Title = nb.Title,
-                Notes = nb.Notes,
-                OwnerId = nb.OwnerId,
-                Owner = new AccountDto() {
-                    Id = nb.Owner.Id,
-                    FullName = nb.Owner.FullName,
-                    Email = nb.Owner.Email,
-                    Password = nb.Owner.Password
-                }
-            };
+            var noteBooksDto = from nb in noteBooks
+                               select new NoteBookDetailsDto()
+                               {
+                                   Id = nb.Id,
+                                   Title = nb.Title,
+                                   Pages = (from n in nb.Pages
+                                            select new PageDto()
+                                            {
+                                                Id = n.Id,
+                                                Title = n.Title
+                                            }).ToList(),
+                                   OwnerId = nb.OwnerId,
+                               };
             return Ok(noteBooksDto);
         }
 
         [HttpGet]
         [Route("{id:guid}")]
-        public async Task<IActionResult> GetNoteBook([FromRoute] Guid id) {
+        public async Task<IActionResult> GetNoteBookById([FromRoute] Guid id)
+        {
             var noteBook = await noteBookRepository.GetNoteBookByIdAsync(id);
-            if (noteBook != null) {
-                var noteBookDto = new NoteBookDetailsDto() {
+            if (noteBook != null)
+            {
+                var noteBookDto = new NoteBookDetailsDto()
+                {
                     Id = noteBook.Id,
                     Title = noteBook.Title,
-                    Notes = noteBook.Notes,
-                    OwnerId = noteBook.OwnerId,
-                    Owner = new AccountDto() {
-                        Id = noteBook.Owner.Id,
-                        FullName = noteBook.Owner.FullName,
-                        Email = noteBook.Owner.Email,
-                        Password = noteBook.Owner.Password
-                    }
+                    Pages = (from n in noteBook.Pages
+                             select new PageDto()
+                             {
+                                 Id = n.Id,
+                                 Title = n.Title
+                             }).ToList(),
+                    OwnerId = noteBook.OwnerId
                 };
                 return Ok(noteBookDto);
             }
             return NotFound();
-            
+
         }
 
         [HttpGet]
-        [Route("owner/{ownerId:guid}")]
-        public async Task<IActionResult> GetNoteBooksByOwnerId([FromRoute] Guid ownerId) {
+        [Route("byOwnerId/{ownerId:guid}")]
+        public async Task<IActionResult> GetNoteBooksByOwnerId([FromRoute] Guid ownerId)
+        {
             var noteBooks = await noteBookRepository.GetNoteBooksByOwnerIdAsync(ownerId);
-            var noteBooksDto = from nb in noteBooks select new NoteBookDetailsDto() {
-                Id = nb.Id,
-                Title = nb.Title,
-                Notes = nb.Notes,
-                OwnerId = nb.OwnerId,
-                Owner = new AccountDto() {
-                    Id = nb.Owner.Id,
-                    FullName = nb.Owner.FullName,
-                    Email = nb.Owner.Email,
-                    Password = nb.Owner.Password
-                }
-            };
+            var noteBooksDto = from nb in noteBooks
+                               select new NoteBookDetailsDto()
+                               {
+                                   Id = nb.Id,
+                                   Title = nb.Title,
+                                   Pages = (from n in nb.Pages
+                                            select new PageDto()
+                                            {
+                                                Id = n.Id,
+                                                Title = n.Title
+                                            }).ToList(),
+                                   OwnerId = nb.OwnerId
+                               };
             return Ok(noteBooksDto);
         }
 
         [HttpPost]
         [Route("{ownerId:guid}")]
-        public async Task<IActionResult> AddNoteBook([FromRoute] Guid ownerId, String title)
+        public async Task<IActionResult> AddNoteBook([FromRoute] Guid ownerId, String title = "New Notebook")
         {
             var noteBook = await noteBookRepository.AddNoteBookAsync(ownerId, title);
-            if (noteBook != null) {
-                var account = await accountRepository.AddNoteBookAsync(ownerId, noteBook.Id);
-                if (account != null) {
-                    var noteBookDetailsDto = new NoteBookDetailsDto() {
-                        Id = noteBook.Id,
-                        Title = noteBook.Title,
-                        Notes = noteBook.Notes,
-                        OwnerId = noteBook.OwnerId,
-                        Owner = new AccountDto() {
-                            Id = account.Id,
-                            FullName = account.FullName,
-                            Email = account.Email,
-                            Password = account.Password
-                        }
-                    };
-                    return Ok(noteBookDetailsDto);
-                }
+            if (noteBook != null)
+            {
+                var noteBookDto = new NoteBookDto()
+                {
+                    Id = noteBook.Id,
+                    Title = noteBook.Title
+                };
+                return Ok(noteBookDto);
+            }
+            return NotFound();
+        }
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateNoteBook([FromRoute] Guid id, string title = "New Title")
+        {
+            var noteBook = await noteBookRepository.UpdateNoteBookAsync(id, title);
+            if (noteBook != null)
+            {
+                var noteBookDto = new NoteBookDto()
+                {
+                    Id = noteBook.Id,
+                    Title = noteBook.Title
+                };
+                return Ok(noteBookDto);
+            }
+            return NotFound();
+        }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteNoteBook([FromRoute] Guid id)
+        {
+            var noteBook = await noteBookRepository.DeleteNoteBookAsync(id);
+            if (noteBook != null)
+            {
+                var noteBookDto = new NoteBookDto()
+                {
+                    Id = noteBook.Id,
+                    Title = noteBook.Title
+                };
+                return Ok(noteBookDto);
             }
             return NotFound();
         }

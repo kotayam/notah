@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace backend.Models
 {
-    public class Note
+    public class Page
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
         public ICollection<CanvasElement> CanvasElements { get; set; } = new List<CanvasElement>();
+        public Guid NoteBookId { get; set; }
         public NoteBook NoteBook { get; set; } = null!;
     }
 }

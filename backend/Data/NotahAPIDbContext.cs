@@ -7,15 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data
 {
-    public class NotahAPIDbContext: DbContext
+    public class NotahAPIDbContext : DbContext
     {
-        public NotahAPIDbContext(DbContextOptions options) : base(options) {
+        public NotahAPIDbContext(DbContextOptions options) : base(options)
+        {
 
         }
 
         public DbSet<Account> Accounts { get; set; }
-
         public DbSet<NoteBook> NoteBooks { get; set; }
+        public DbSet<Page> Pages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +24,11 @@ namespace backend.Data
                 .HasMany(e => e.NoteBooks)
                 .WithOne(e => e.Owner)
                 .HasForeignKey(e => e.OwnerId)
+                .IsRequired();
+            modelBuilder.Entity<NoteBook>()
+                .HasMany(e => e.Pages)
+                .WithOne(e => e.NoteBook)
+                .HasForeignKey(e => e.NoteBookId)
                 .IsRequired();
         }
     }

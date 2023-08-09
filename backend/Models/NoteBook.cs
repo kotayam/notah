@@ -9,7 +9,7 @@ namespace backend.Models
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
-        public ICollection<Note>? Notes {get; set; } = new List<Note>();
+        public ICollection<Page>? Pages {get; set; } = new List<Page>();
         public Guid OwnerId { get; set; }
         public Account Owner { get; set; } = null!;
     }

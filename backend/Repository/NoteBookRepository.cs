@@ -20,20 +20,26 @@ namespace backend.Repository
             this.dbContext = dbContext;
         }
 
-        public async Task<ICollection<NoteBook>> GetAllNoteBooksAsync() {
-            return await dbContext.NoteBooks.Include(nb => nb.Owner).ToListAsync();
+        public async Task<ICollection<NoteBook>> GetAllNoteBooksAsync()
+        {
+            return await dbContext.NoteBooks.Include(nb => nb.Pages).ToListAsync();
         }
 
-        public async Task<NoteBook?> GetNoteBookByIdAsync(Guid id) {
-            return await dbContext.NoteBooks.Include(nb => nb.Owner).Where(nb => nb.Id == id).FirstOrDefaultAsync();
+        public async Task<NoteBook?> GetNoteBookByIdAsync(Guid id)
+        {
+            return await dbContext.NoteBooks.Include(nb => nb.Pages).Where(nb => nb.Id == id).FirstOrDefaultAsync();
         }
-        public async Task<ICollection<NoteBook>> GetNoteBooksByOwnerIdAsync(Guid ownerId) {
-            return await dbContext.NoteBooks.Include(nb => nb.Owner).Where(nb => nb.OwnerId == ownerId).ToListAsync();
+        public async Task<ICollection<NoteBook>> GetNoteBooksByOwnerIdAsync(Guid ownerId)
+        {
+            return await dbContext.NoteBooks.Include(nb => nb.Pages).Where(nb => nb.OwnerId == ownerId).ToListAsync();
         }
-        public async Task<NoteBook?> AddNoteBookAsync(Guid ownerId, String title) {
+        public async Task<NoteBook?> AddNoteBookAsync(Guid ownerId, String title)
+        {
             var owner = await dbContext.Accounts.FindAsync(ownerId);
-            if (owner != null) {
-                var noteBook = new NoteBook() {
+            if (owner != null)
+            {
+                var noteBook = new NoteBook()
+                {
                     Id = Guid.NewGuid(),
                     Title = title,
                     OwnerId = owner.Id,
@@ -44,6 +50,26 @@ namespace backend.Repository
                 return noteBook;
             }
             return null;
+        }
+
+        public async Task<NoteBook?> UpdateNoteBookAsync(Guid id, String title)
+        {
+            var noteBook = await dbContext.NoteBooks.FindAsync(id);
+            if (noteBook != null) {
+                noteBook.Title = title;
+                await dbContext.SaveChangesAsync();
+            }
+            return noteBook;
+        }
+
+        public async Task<NoteBook?> DeleteNoteBookAsync(Guid id)
+        {
+            var noteBook = await dbContext.NoteBooks.Include(nb => nb.Pages).Where(nb => nb.Id == id).FirstOrDefaultAsync();
+            if (noteBook != null) {
+                dbContext.NoteBooks.Remove(noteBook);
+                await dbContext.SaveChangesAsync();
+            }
+            return noteBook;
         }
     }
 }
