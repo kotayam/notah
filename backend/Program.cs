@@ -4,6 +4,8 @@ using backend.Interfaces;
 using backend.Repository;
 using Microsoft.EntityFrameworkCore;
 
+var AllowedOrigins = "allowedOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,6 +18,12 @@ builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseInMemoryD
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INoteBookRepository, NoteBookRepository>();
 builder.Services.AddScoped<IPageRepository, PageRepository>();
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: AllowedOrigins, 
+    policy => {
+        policy.WithOrigins("http://localhost:5173");
+    });
+});
 
 var app = builder.Build();
 
@@ -27,6 +35,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(AllowedOrigins);
 
 app.UseAuthorization();
 
