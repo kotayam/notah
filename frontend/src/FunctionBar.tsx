@@ -138,7 +138,7 @@ export function ShapeFunctionBar() {
     )
 }
 
-export function TableFunctionBar( { }: TableFunctionBarProps ) {
+export function TableFunctionBar() {
     const dispatch = useDispatch();
     const { createTable } = bindActionCreators(actionCreators, dispatch);
 

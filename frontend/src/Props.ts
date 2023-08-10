@@ -1,12 +1,9 @@
 import { CanvasElement, TextBoxElement, TableElement, ShapeElement } from "./Classes";
 
 export type ToolbarProps = {
-    createTable: (row: number, col: number) => void;
  }
 
 export type CanvasProps = {
-    tableContent: string[][];
-    updateHistory: (elts: CanvasElement[]) => void;
 }
 
 export type TextBoxProps = {

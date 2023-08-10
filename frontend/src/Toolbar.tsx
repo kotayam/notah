@@ -6,7 +6,7 @@ import { jsPDF } from "jspdf";
 import { useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 
-export default function Toolbar({ createTable }: ToolbarProps) {
+export default function Toolbar() {
     const mode = useSelector((state: rootState) => state.mode);
 
     const returnFunctionBar = () => {
@@ -17,9 +17,7 @@ export default function Toolbar({ createTable }: ToolbarProps) {
                 return (<ShapeFunctionBar/>)
             case 'table':
                 return (
-                <TableFunctionBar
-                    createTable={createTable}
-                />
+                <TableFunctionBar/>
                 )
         }
     }
@@ -58,20 +56,26 @@ export default function Toolbar({ createTable }: ToolbarProps) {
     return (
         <>
         <div className="w-full border-b-2">
-            <div className="bg-amber-400 h-10 text-center">
+            <div className="relative bg-amber-400 h-10 text-center">
                 <button 
-                className="float-left p-2 bg-amber-300"
-                onClick={() => undo()}
+                    className="float-left p-2 bg-amber-300"
+                    onClick={() => undo()}
                 >
                 Undo
                 </button>
                 <button 
-                className="float-left p-2 bg-amber-300"
-                onClick={() => save()}
+                    className="float-left p-2 bg-amber-300"
+                    onClick={() => save()}
                 >
                 Save
                 </button>
                 <h1 className="font-bold">Notah</h1>
+                <button 
+                    className="absolute p-2 right-0 top-0 bg-amber-300"
+                    // onClick={() => login()}
+                >
+                    Login
+                </button>
             </div>
             <div className="bg-gray-100 p-px">
                 <ModeSelector thisMode={'Text'}/>

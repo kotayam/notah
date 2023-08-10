@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 
-export default function Canvas({tableContent}: CanvasProps) {
+export default function Canvas() {
     const dispatch = useDispatch();
     const { addCanvasElement, deleteCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
 
