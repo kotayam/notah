@@ -10,4 +10,6 @@ export enum ActionType {
     MODE = 'mode',
     SHAPE = 'shape',
     TABLE = 'table',
+    NOTEBOOK = 'notebook',
+    PAGE = 'page',
 }

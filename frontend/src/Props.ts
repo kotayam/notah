@@ -44,3 +44,13 @@ export type ShapeFunctionBarProps = {
 export type TableFunctionBarProps = {
     createTable: (row: number, col: number) => void;
 }
+
+export type NoteBookProps = {
+    id: string;
+    title: string;
+}
+
+export type PageProps = {
+    id: string;
+    title: string;
+}

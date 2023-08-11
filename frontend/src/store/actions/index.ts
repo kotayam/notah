@@ -1,5 +1,6 @@
 import { CanvasElement } from "src/Classes";
 import { ActionType } from "../action-types";
+import { Action } from "redux";
 
 interface AddCanvasElementAction {
     type: ActionType.ADD;
@@ -58,4 +59,14 @@ export type ShapeAction = {
 export type TableAction = {
     type: ActionType.TABLE;
     payload: {row: number, col: number};
+}
+
+export type NoteBookAction = {
+    type: ActionType.NOTEBOOK;
+    payload: {id: string, title: string};
+}
+
+export type PageAction = {
+    type: ActionType.PAGE;
+    payload: {id: string, title: string};
 }

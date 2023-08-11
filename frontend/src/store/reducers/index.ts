@@ -4,13 +4,17 @@ import textStyleReducer from "./textStyleReducer";
 import modeReducer from "./modeReducer";
 import shapeReducer from "./shapeReducer";
 import tableReducer from "./tableReducer";
+import noteBookReducer from "./noteBookReducer";
+import pageReducer from "./pageReducer";
 
 const rootReducer = combineReducers({
     canvasElements: canvasElementReducer,
     textStyle: textStyleReducer,
     shape: shapeReducer,
     table: tableReducer,
-    mode: modeReducer
+    mode: modeReducer,
+    noteBook: noteBookReducer,
+    page: pageReducer,
 });
 
 export default rootReducer;
