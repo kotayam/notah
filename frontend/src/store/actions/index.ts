@@ -70,3 +70,8 @@ export type PageAction = {
     type: ActionType.PAGE;
     payload: {id: string, title: string};
 }
+
+export type AccountAction = {
+    type: ActionType.ACOUNT;
+    payload: {id: string, fullName: string};
+}

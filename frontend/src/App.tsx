@@ -1,20 +1,20 @@
 import "./App.css";
-import { useState } from "react";
-import Toolbar from "./Toolbar.tsx";
-import Canvas from "./Canvas.tsx";
-import Notes from "./Notes.tsx";
-import { CanvasElement } from "./Classes.ts";
+import { Route, Routes } from "react-router-dom";
+import Home from "./Home.tsx";
+import Login from "./Login.tsx";
+import CreateAccount from "./CreateAccount.tsx";
+import NotFound from "./NotFound.tsx";
 
 function App() {
   return (
     <>
-    <div>
-      <Toolbar />
-      <div className="flex h-full">
-        <Notes />
-        <Canvas />
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home/>}/>
+      <Route path="/:id" element={<Home/>}/>
+      <Route path="/login" element={<Login/>}/>
+      <Route path="/create-account" element={<CreateAccount/>}/>
+      <Route path="*" element={<NotFound/>}/>
+    </Routes>
     
     </>
   )

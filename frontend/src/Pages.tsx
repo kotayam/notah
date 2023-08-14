@@ -14,11 +14,12 @@ export default function Pages() {
     const noteBook = useSelector((state: rootState) => state.noteBook);
     const page = useSelector((state: rootState) => state.page);
     const [pages, setPages] = useState<Page[]>([]);
+    const [fetchSwitch, setFetchSwitch] = useState(false);
     
     useEffect(() => {
-        if (noteBook.id === "quick-note") {
-            setPages([{id: "page-1", title: "Page 1"}, {id: "page-2", title: "Page 2"}]);
-        }
+        // if (noteBook.id === "quick-note") {
+        //     setPages([{id: "page-1", title: "Page 1"}, {id: "page-2", title: "Page 2"}]);
+        // }
         fetch(notahApi + "byNoteBookId/" + noteBook.id)
         .then(res => res.json())
         .then(data => data as Page[])
@@ -27,18 +28,40 @@ export default function Pages() {
             const pgs = new Array<Page>();
             data.forEach(p => pgs.push({id: p.id, title: p.title}));
             setPages(pgs);
-        });
-    }, [])
+        })
+        .catch(e => {
+            console.error(e);
+        })
+    }, [fetchSwitch, noteBook])
+
+    const addPage = () => {
+        fetch(notahApi + noteBook.id, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({title: `Page ${pages.length}`})
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            setFetchSwitch(prevState => !prevState);
+        })
+        .catch(e => {
+            console.log("Failed to add page");
+        })
+    }
 
     return (
         <>
         <div className="h-full flex-1">
-            <button className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap border-b-2 p-1 w-full font-bold text-amber-500">
+            <button className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap border-b-2 p-1 w-full font-bold text-amber-500" onClick={() => addPage()}>
                 + Add Page
             </button>
-            <div className="">
+            <div>
                 <ul>
-                    {pages.map(p => <Page id={p.id} title={p.title}/>)}
+                    {pages.map(p => <Page key={p.id} id={p.id} title={p.title}/>)}
                 </ul>
             </div>
         </div>

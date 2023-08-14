@@ -18,9 +18,8 @@ export default function NoteBook({ id, title }: NoteBookProps) {
     return (
         <>
         <li 
-            key={id} 
             className={`${hoverStyle} active:bg-gray-300 p-1 ${bgStyle}`}
-            onClick={() => setNoteBook({id: id, title: title})}
+            onClick={() => {setNoteBook({id: id, title: title})}}
         >{title}</li>
         </>
     )

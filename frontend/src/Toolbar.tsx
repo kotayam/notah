@@ -1,5 +1,4 @@
 import "./App.css";
-import { ToolbarProps } from "./Props.ts";
 import ModeSelector from "./ModeSelector.tsx";
 import { TextFunctionBar, ShapeFunctionBar, TableFunctionBar } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
@@ -8,6 +7,7 @@ import { rootState } from "./store/index.ts";
 
 export default function Toolbar() {
     const mode = useSelector((state: rootState) => state.mode);
+    const account = useSelector((state: rootState) => state.account);
 
     const returnFunctionBar = () => {
         switch(mode) {
@@ -70,12 +70,10 @@ export default function Toolbar() {
                 Save
                 </button>
                 <h1 className="font-bold">Notah</h1>
-                <button 
-                    className="absolute p-2 right-0 top-0 bg-amber-300"
-                    // onClick={() => login()}
-                >
-                    Login
-                </button>
+                <a href="/login">
+                    <button className="absolute p-2 right-0 top-0 bg-amber-300">{account.id == "0"? "Login" : "Logout"}</button>
+                </a>
+                
             </div>
             <div className="bg-gray-100 p-px">
                 <ModeSelector thisMode={'Text'}/>

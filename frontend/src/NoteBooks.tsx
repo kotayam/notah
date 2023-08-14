@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import NoteBook from "./NoteBook";
+import { useSelector } from "react-redux";
+import { rootState } from "./store";
 
-const accountId = "cc64a369-5d7c-4db6-a19f-f849db5d782c";
 const notahApi = "http://localhost:5245/api/v1/NoteBooks/"
 
 type NoteBook = {
@@ -11,9 +12,15 @@ type NoteBook = {
 
 export default function NoteBooks() {
     const [noteBooks, setNoteBooks] = useState<NoteBook[]>([]);
+    const [isEditing, setIsEditing] = useState(false);
+    const [fetchSwitch, setFetchSwitch] = useState(false);
+    const account = useSelector((state: rootState) => state.account);
 
     useEffect(() => {
-        fetch(notahApi + "byOwnerId/" + accountId)
+        // if (!itemAdded && noteBooks.length) {
+        //     return;
+        // }
+        fetch(notahApi + "byOwnerId/" + account.id)
         .then(res => res.json())
         .then(data => data as NoteBook[])
         .then(data => {
@@ -21,16 +28,37 @@ export default function NoteBooks() {
             const nbs = new Array<NoteBook>();
             data.forEach(nb => nbs.push({id: nb.id, title: nb.title}));
             setNoteBooks(nbs);
+        })
+        .catch(e => {
+            console.error(e);
         });
-    }, noteBooks)
+    }, [fetchSwitch])
 
     const addNoteBook = () => {
-        fetch(notahApi + accountId + "?title=Notebook1", {
+        fetch(notahApi + account.id, {
             method: "POST",
-            
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({title: `Notebook ${noteBooks.length}`})
         })
         .then(res => res.json())
-        .then(data => console.log(data));
+        .then(data => {
+            console.log(data);
+            setFetchSwitch(prevState => !prevState);
+        })
+        .catch(e => {
+            console.log("Failed to add notebook");
+        })
+    }
+    
+    const returnEditedNoteBook = () => {
+        if (isEditing) {
+            return (
+                <li className="w-full"><input type="text" placeholder="New Notebook"/></li>
+            )
+        }
     }
 
     return (
@@ -41,9 +69,7 @@ export default function NoteBooks() {
             </button>
             <div className="">
                 <ul>
-                    <NoteBook id={"quick-note"} title={"Quick Note"}/>
-                    <NoteBook id={"test"} title={"test"}/>
-                    {noteBooks.map(nb => <NoteBook id={nb.id} title={nb.title}/>)}
+                    {noteBooks.map(nb => <NoteBook key={nb.id} id={nb.id} title={nb.title}/>)}
                 </ul>
             </div>
         </div>

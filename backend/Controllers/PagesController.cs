@@ -71,9 +71,9 @@ namespace backend.Controllers
 
         [HttpPost]
         [Route("{noteBookId:guid}")]
-        public async Task<IActionResult> AddPage([FromRoute] Guid noteBookId, String title = "New Page")
+        public async Task<IActionResult> AddPage([FromRoute] Guid noteBookId, [FromBody] PageReqDto p)
         {
-            var page = await pageRepository.AddPageAsync(noteBookId, title);
+            var page = await pageRepository.AddPageAsync(noteBookId, p.Title);
             if (page != null)
             {
                 var pageDto = new PageDto()
@@ -88,9 +88,9 @@ namespace backend.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdatePage([FromRoute] Guid id, string title = "New Title")
+        public async Task<IActionResult> UpdatePage([FromRoute] Guid id, [FromBody] PageReqDto p)
         {
-            var page = await pageRepository.UpdatePageAsync(id, title);
+            var page = await pageRepository.UpdatePageAsync(id, p.Title);
             if (page != null)
             {
                 var pageDto = new PageDto()

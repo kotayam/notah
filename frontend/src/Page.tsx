@@ -18,9 +18,8 @@ export default function Page({ id, title }: PageProps) {
     return (
         <>
         <li 
-            key={id} 
             className={`${hoverStyle} active:bg-gray-300 p-1 ${bgStyle}`}
-            onClick={() => setPage({id: id, title: title})}
+            onClick={() => {setPage({id: id, title: title})}}
             >{title}</li>
         </>
     )

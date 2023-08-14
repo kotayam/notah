@@ -6,6 +6,7 @@ import shapeReducer from "./shapeReducer";
 import tableReducer from "./tableReducer";
 import noteBookReducer from "./noteBookReducer";
 import pageReducer from "./pageReducer";
+import accountReducer from "./accountReducer";
 
 const rootReducer = combineReducers({
     canvasElements: canvasElementReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
     mode: modeReducer,
     noteBook: noteBookReducer,
     page: pageReducer,
+    account: accountReducer,
 });
 
 export default rootReducer;

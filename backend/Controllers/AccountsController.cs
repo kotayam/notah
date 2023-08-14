@@ -70,17 +70,17 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAccount(String fullName = "Full Name", String email = "notah@gmail.com", String password = "password")
+        public async Task<IActionResult> AddAccount([FromBody] AccountReqDto acc)
         {
-            var account = await accountRepository.AddAccountAsync(fullName, email, password);
+            var account = await accountRepository.AddAccountAsync(acc.FullName, acc.Email, acc.Password);
             if (account != null)
             {
                 var accountDto = new AccountDto()
                 {
                     Id = account.Id,
-                    FullName = fullName,
-                    Email = email,
-                    Password = password
+                    FullName = acc.FullName,
+                    Email = acc.Email,
+                    Password = acc.Password
                 };
                 return Ok(accountDto);
             }
@@ -89,18 +89,18 @@ namespace backend.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, String fullName = "New Name", String email = "new@gmail.com", String password = "new_pass")
+        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, [FromBody] AccountReqDto acc)
         {
-            var account = await accountRepository.UpdateAccountAsync(id, fullName, email, password);
+            var account = await accountRepository.UpdateAccountAsync(id, acc.FullName, acc.Email, acc.Password);
 
             if (account != null)
             {
                 var accountDto = new AccountDto()
                 {
                     Id = account.Id,
-                    FullName = fullName,
-                    Email = email,
-                    Password = password
+                    FullName = acc.FullName,
+                    Email = acc.Email,
+                    Password = acc.Password
                 };
                 return Ok(accountDto);
             }

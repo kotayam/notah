@@ -92,9 +92,9 @@ namespace backend.Controllers
 
         [HttpPost]
         [Route("{ownerId:guid}")]
-        public async Task<IActionResult> AddNoteBook([FromRoute] Guid ownerId, String title = "New Notebook")
+        public async Task<IActionResult> AddNoteBook([FromRoute] Guid ownerId, [FromBody] NoteBookReqDto nb)
         {
-            var noteBook = await noteBookRepository.AddNoteBookAsync(ownerId, title);
+            var noteBook = await noteBookRepository.AddNoteBookAsync(ownerId, nb.Title);
             if (noteBook != null)
             {
                 var noteBookDto = new NoteBookDto()
@@ -109,9 +109,9 @@ namespace backend.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateNoteBook([FromRoute] Guid id, string title = "New Title")
+        public async Task<IActionResult> UpdateNoteBook([FromRoute] Guid id, [FromBody] NoteBookReqDto nb)
         {
-            var noteBook = await noteBookRepository.UpdateNoteBookAsync(id, title);
+            var noteBook = await noteBookRepository.UpdateNoteBookAsync(id, nb.Title);
             if (noteBook != null)
             {
                 var noteBookDto = new NoteBookDto()
