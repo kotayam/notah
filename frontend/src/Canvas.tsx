@@ -9,6 +9,15 @@ import Shape from "./Shape.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
+import parse from "html-react-parser";
+
+const notahApi = "http://localhost:5245/api/v1/CanvasElements/"
+
+type APICanvasElement = {
+    x: number;
+    y: number;
+    html: string;
+}
 
 export default function Canvas() {
     const dispatch = useDispatch();
@@ -19,11 +28,13 @@ export default function Canvas() {
     const shape = useSelector((state: rootState) => state.shape);
     const table = useSelector((state: rootState) => state.table);
     const mode = useSelector((state: rootState) => state.mode);
+    const page = useSelector((state: rootState) => state.page);
 
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
     const [drawing, setDrawing] = useState(false);
     const [selectedElt, setSelectedElt] = useState({id: -1, r: -1, c: -1});
+    const [initialLoad, setInitialLoad] = useState("");
 
     // useEffect(() => {
     //     const handleResize = () => {
@@ -32,6 +43,18 @@ export default function Canvas() {
     //     window.addEventListener('resize', handleResize);
     //     return () => {window.removeEventListener('resize', handleResize)};
     // })
+
+    useEffect(() => {
+        fetch(notahApi + "byPageId/" + page.id)
+        .then(res => res.json())
+        .then(data => data as APICanvasElement[])
+        .then(data => {
+            console.log(data);
+            if(data.length > 0) setInitialLoad(data[0].html);
+            else setInitialLoad("");
+        })
+        .catch(e => console.error(e));
+    }, [page])
 
     const handleMouseDown = (e: MouseEvent, parent: HTMLDivElement) => {
         let newElt: CanvasElement;
@@ -138,7 +161,11 @@ export default function Canvas() {
             }
         })
         return elts;
-        
+    }
+
+    const returnInitialLoad = () => {
+        console.log(initialLoad);
+        return initialLoad? parse(initialLoad): <></>;
     }
 
     return (
@@ -154,6 +181,7 @@ export default function Canvas() {
             onMouseMove={(e) => {handleMouseMove(e, e.currentTarget)}}
             onMouseUp={_ => {handleMouseUp()}} 
             >
+                {returnInitialLoad()}
                 {returnCanvasElement()}
             </div>
         </div>

@@ -18,6 +18,7 @@ builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseInMemoryD
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INoteBookRepository, NoteBookRepository>();
 builder.Services.AddScoped<IPageRepository, PageRepository>();
+builder.Services.AddScoped<ICanvasElementRepository, CanvasElementRepository>();
 builder.Services.AddCors(options => {
     options.AddPolicy(name: AllowedOrigins, 
     policy => {

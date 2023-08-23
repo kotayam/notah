@@ -17,6 +17,7 @@ namespace backend.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<NoteBook> NoteBooks { get; set; }
         public DbSet<Page> Pages { get; set; }
+        public DbSet<CanvasElement> CanvasElements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,11 @@ namespace backend.Data
                 .HasMany(e => e.Pages)
                 .WithOne(e => e.NoteBook)
                 .HasForeignKey(e => e.NoteBookId)
+                .IsRequired();
+            modelBuilder.Entity<Page>()
+                .HasMany(e => e.CanvasElements)
+                .WithOne(e => e.Page)
+                .HasForeignKey(e => e.PageId)
                 .IsRequired();
         }
     }
