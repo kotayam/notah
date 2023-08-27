@@ -1,6 +1,5 @@
 import { CanvasElement } from "src/Classes";
 import { ActionType } from "../action-types";
-import { Action } from "redux";
 
 interface AddCanvasElementAction {
     type: ActionType.ADD;

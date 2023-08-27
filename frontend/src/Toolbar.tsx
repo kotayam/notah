@@ -11,7 +11,7 @@ import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { setNoteBook } from "./store/action-creators/noteBookActionCreator.ts";
 
-const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
+const notahApi = "http://localhost:5245/api/v1/Pages/";
 
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
@@ -39,12 +39,12 @@ export default function Toolbar() {
     const canvas = document.getElementById("canvas");
     if (!canvas) return;
     fetch(notahApi + page.id, {
-      method: "POST",
+      method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ x: 0, y: 0, html: canvas.innerHTML }),
+      body: JSON.stringify({ html: canvas.innerHTML }),
     })
       .then((res) => res.json())
       .then((data) => {

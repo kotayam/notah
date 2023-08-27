@@ -48,9 +48,11 @@ export type TableFunctionBarProps = {
 export type NoteBookProps = {
     id: string;
     title: string;
+    deleteNotebook: (id: string) => void;
 }
 
 export type PageProps = {
     id: string;
     title: string;
+    deletePage: (id: string) => void;
 }

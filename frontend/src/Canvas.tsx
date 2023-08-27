@@ -11,11 +11,9 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import parse from "html-react-parser";
 
-const notahApi = "http://localhost:5245/api/v1/CanvasElements/"
+const notahApi = "http://localhost:5245/api/v1/Pages/"
 
-type APICanvasElement = {
-    x: number;
-    y: number;
+type Page = {
     html: string;
 }
 
@@ -45,13 +43,12 @@ export default function Canvas() {
     // })
 
     useEffect(() => {
-        fetch(notahApi + "byPageId/" + page.id)
+        fetch(notahApi + page.id)
         .then(res => res.json())
-        .then(data => data as APICanvasElement[])
+        .then(data => data as Page)
         .then(data => {
             console.log(data);
-            if(data.length > 0) setInitialLoad(data[0].html);
-            else setInitialLoad("");
+            setInitialLoad(data.html);
         })
         .catch(e => console.error(e));
     }, [page])
@@ -164,7 +161,6 @@ export default function Canvas() {
     }
 
     const returnInitialLoad = () => {
-        console.log(initialLoad);
         return initialLoad? parse(initialLoad): <></>;
     }
 

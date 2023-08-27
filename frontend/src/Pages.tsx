@@ -53,6 +53,20 @@ export default function Pages() {
         })
     }
 
+    const deletePage = (id: string) => {
+        fetch(notahApi + id, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            setFetchSwitch((prevState) => !prevState);
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      };
+
     return (
         <>
         <div className="h-full flex-1">
@@ -61,7 +75,7 @@ export default function Pages() {
             </button>
             <div>
                 <ul>
-                    {pages.map(p => <Page key={p.id} id={p.id} title={p.title}/>)}
+                    {pages.map(p => <Page key={p.id} id={p.id} title={p.title} deletePage={deletePage}/>)}
                 </ul>
             </div>
         </div>

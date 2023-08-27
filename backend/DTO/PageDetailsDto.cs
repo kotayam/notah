@@ -8,8 +8,9 @@ namespace backend.DTO
     public class PageDetailsDto
     {
         public Guid Id { get; set; }
-        public string Title { get; set; } = null!;
+        public string Title { get; set; } = "";
         public ICollection<CanvasElementDto> CanvasElements { get; set; } = new List<CanvasElementDto>();
+        public string HTML { get; set; } = "";
         public Guid NoteBookId { get; set; }
     }
 }

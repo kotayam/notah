@@ -46,6 +46,7 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
+                    HTML = page.HTML,
                     NoteBookId = page.NoteBookId
                 };
                 return Ok(pageDto);
@@ -90,13 +91,14 @@ namespace backend.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdatePage([FromRoute] Guid id, [FromBody] PageReqDto p)
         {
-            var page = await pageRepository.UpdatePageAsync(id, p.Title);
+            var page = await pageRepository.UpdatePageAsync(id, p.Title, p.HTML);
             if (page != null)
             {
                 var pageDto = new PageDto()
                 {
                     Id = page.Id,
-                    Title = page.Title
+                    Title = page.Title,
+                    HTML = page.HTML
                 };
                 return Ok(pageDto);
             }

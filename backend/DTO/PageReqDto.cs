@@ -7,6 +7,7 @@ namespace backend.DTO
 {
     public class PageReqDto
     {
-        public string Title { get; set; } = null!;
+        public string Title { get; set; } = "";
+        public string HTML { get; set; } = "";
     }
 }

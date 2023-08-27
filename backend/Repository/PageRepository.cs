@@ -50,12 +50,17 @@ namespace backend.Repository
             return null;
         }
 
-        public async Task<Page?> UpdatePageAsync(Guid id, String title)
+        public async Task<Page?> UpdatePageAsync(Guid id, String title, String html)
         {
             var page = await dbContext.Pages.FindAsync(id);
             if (page != null)
             {
-                page.Title = title;
+                if (title != "") {
+                    page.Title = title;
+                }
+                if (html != "") {
+                    page.HTML = html;
+                }
                 await dbContext.SaveChangesAsync();
             }
             return page;
