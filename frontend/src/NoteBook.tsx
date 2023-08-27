@@ -21,9 +21,10 @@ export default function NoteBook({ id, title }: NoteBookProps) {
   }
 
   const handleClick = (e: MouseEvent) => {
+    setNoteBook({ id: id, title: title });
     switch (e.button) {
       case 0:
-        setNoteBook({ id: id, title: title });
+        setRename(false);
         break;
       case 2:
         console.log("right click");
@@ -59,7 +60,19 @@ export default function NoteBook({ id, title }: NoteBookProps) {
   };
 
   const returnNoteBook = () => {
-    if (!rename) {
+    if (rename && id === noteBook.id) {
+      return (
+        <li className={`p-1 ${bgStyle}`}>
+          <input
+            id={id}
+            className="w-2/3"
+            type="text"
+            onKeyDown={(e) => handleKeyDown(e)}
+            placeholder={ttl}
+          />
+        </li>
+      );
+    } else {
       return (
         <li
           className={`${hoverStyle} active:bg-gray-300 p-1 ${bgStyle}`}
@@ -72,18 +85,6 @@ export default function NoteBook({ id, title }: NoteBookProps) {
           }}
         >
           {ttl}
-        </li>
-      );
-    } else {
-      return (
-        <li className={`p-1 ${bgStyle}`}>
-          <input
-            id={id}
-            className="w-2/3"
-            type="text"
-            onKeyDown={(e) => handleKeyDown(e)}
-            placeholder={ttl}
-          />
         </li>
       );
     }

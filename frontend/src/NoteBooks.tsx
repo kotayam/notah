@@ -41,7 +41,7 @@ export default function NoteBooks() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({title: `Notebook ${noteBooks.length}`})
+            body: JSON.stringify({title: `Notebook ${noteBooks.length + 1}`})
         })
         .then(res => res.json())
         .then(data => {
@@ -51,14 +51,6 @@ export default function NoteBooks() {
         .catch(e => {
             console.log("Failed to add notebook");
         })
-    }
-    
-    const returnEditedNoteBook = () => {
-        if (isEditing) {
-            return (
-                <li className="w-full"><input type="text" placeholder="New Notebook"/></li>
-            )
-        }
     }
 
     return (

@@ -41,7 +41,7 @@ export default function Pages() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({title: `Page ${pages.length}`})
+            body: JSON.stringify({title: `Page ${pages.length + 1}`})
         })
         .then(res => res.json())
         .then(data => {

@@ -9,17 +9,20 @@ import { jsPDF } from "jspdf";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import { setNoteBook } from "./store/action-creators/noteBookActionCreator.ts";
 
-const notahApi = "http://localhost:5245/api/v1/CanvasElements/"
+const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
   const account = useSelector((state: rootState) => state.account);
   const page = useSelector((state: rootState) => state.page);
 
-  
   const dispatch = useDispatch();
-  const { setAccount } = bindActionCreators(actionCreators, dispatch);
+  const { setAccount, setNoteBook } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
 
   const returnFunctionBar = () => {
     switch (mode) {
@@ -38,18 +41,18 @@ export default function Toolbar() {
     fetch(notahApi + page.id, {
       method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({x: 0, y: 0, html:canvas.innerHTML})
+      body: JSON.stringify({ x: 0, y: 0, html: canvas.innerHTML }),
     })
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(e => {
-      console.error(e);
-    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   const saveAsPdf = async () => {
@@ -79,21 +82,28 @@ export default function Toolbar() {
   const showLogButton = () => {
     if (account.id == "0") {
       return (
-      <a href="/login">
+        <a href="/login">
           <button className="absolute p-2 right-0 top-0 bg-amber-300">
             Login
           </button>
-      </a>)
+        </a>
+      );
     } else {
       return (
         <a href="/login">
-          <button className="absolute p-2 right-0 top-0 bg-amber-300" onClick={() => setAccount({id: "0", fullName: "Guest"})}>
+          <button
+            className="absolute p-2 right-0 top-0 bg-amber-300"
+            onClick={() => {
+              setAccount({ id: "0", fullName: "Guest" });
+              setNoteBook({ id: "0", title: "Temp" });
+            }}
+          >
             Logout
           </button>
         </a>
-      )
+      );
     }
-  }
+  };
 
   return (
     <>
