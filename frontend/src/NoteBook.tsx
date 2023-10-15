@@ -69,7 +69,10 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
             onKeyDown={(e) => handleKeyDown(e)}
             placeholder={ttl}
           />
-          <button className="float-right mr-2" onClick={() => deleteNotebook(id)}>
+          <button
+            className="float-right mr-2"
+            onClick={() => deleteNotebook(id)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
@@ -86,7 +89,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
     } else {
       return (
         <li
-          className={`${hoverStyle} active:bg-gray-300 p-1 ${bgStyle}`}
+          className={`${hoverStyle} overflow-auto whitespace-nowrap active:bg-gray-300 p-1 ${bgStyle}`}
           onClick={(e) => {
             handleClick(e);
           }}

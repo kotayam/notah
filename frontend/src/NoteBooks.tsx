@@ -41,11 +41,15 @@ export default function NoteBooks() {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title: `Notebook ${noteBooks.length + 1}` }),
+      body: JSON.stringify({ title: `Notebook ${noteBooks.length}` }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        if (data.status === 404) {
+          alert("Login to add notebook!");
+          return;
+        }
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((e) => {
@@ -71,12 +75,12 @@ export default function NoteBooks() {
     <>
       <div className="h-full flex-1 border-r-2">
         <button
-          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap p-1 border-b-2 w-full font-bold text-amber-500"
+          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap overflow-auto p-1 border-b-2 w-full font-bold text-amber-500"
           onClick={() => addNoteBook()}
         >
           + Add Notebook
         </button>
-        <div className="">
+        <div>
           <ul>
             {noteBooks.map((nb) => (
               <NoteBook

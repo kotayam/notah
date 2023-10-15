@@ -65,7 +65,7 @@ export default function Toolbar() {
       pdf.html(note, {
         callback: function (doc) {
           // Save the PDF
-          doc.save("note.pdf");
+          doc.save(page.title);
         },
         x: 15,
         y: 15,

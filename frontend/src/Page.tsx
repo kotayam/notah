@@ -61,7 +61,7 @@ export default function Page({ id, title, deletePage }: PageProps) {
       const returnPage = () => {
         if (rename && id === page.id) {
           return (
-            <li className={`p-1 ${bgStyle}`}>
+            <li className={`p-1 overflow-hidden ${bgStyle}`}>
               <input
                 id={id}
                 className="w-2/3"
@@ -86,7 +86,7 @@ export default function Page({ id, title, deletePage }: PageProps) {
         } else {
           return (
             <li
-              className={`${hoverStyle} active:bg-gray-300 p-1 ${bgStyle}`}
+              className={`${hoverStyle} overflow-auto whitespace-nowrap active:bg-gray-300 p-1 ${bgStyle}`}
               onClick={(e) => {
                 handleClick(e);
               }}

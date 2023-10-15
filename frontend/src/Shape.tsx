@@ -34,8 +34,8 @@ export default function Shape({elt}: ShapeProps) {
                 className="absolute bg-gray-100 border-2 border-black text-center" 
                 style={{top: dim.y, left: dim.x, width: dim.width, height: dim.height}}
                 onMouseDown={e => e.stopPropagation()} 
-                onMouseEnter={_ => setIsEditable(true)} 
-                onMouseLeave={_ => setIsEditable(false)}
+                onMouseEnter={e => {e.stopPropagation(); setIsEditable(true)}} 
+                onMouseLeave={e => {e.stopPropagation(); setIsEditable(false)}}
                 >
                 </div>
             )
@@ -46,8 +46,8 @@ export default function Shape({elt}: ShapeProps) {
                 className="absolute bg-gray-100 border-black border-2 text-center" 
                 style={{top: dim.y, left: dim.x, width: dim.width, height: dim.height, borderRadius: '50%'}}
                 onMouseDown={e => e.stopPropagation()}
-                onMouseEnter={_ => setIsEditable(true)} 
-                onMouseLeave={_ => setIsEditable(false)}
+                onMouseEnter={e => {e.stopPropagation(); setIsEditable(true)}} 
+                onMouseLeave={e => {e.stopPropagation(); setIsEditable(false)}}
                 >
                 </div>
             )

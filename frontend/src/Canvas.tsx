@@ -91,6 +91,7 @@ export default function Canvas() {
 
     const handleMouseMove = (e: MouseEvent, parent: HTMLDivElement) => {
         if (!drawing) return;
+        e.preventDefault();
         const x = (e.pageX - parent.offsetLeft);
         const y = (e.pageY - parent.offsetTop);
         // console.log(`x: ${x}, y: ${y}`);
