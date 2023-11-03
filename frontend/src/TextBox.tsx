@@ -1,8 +1,8 @@
 import { TextBoxProps } from "./Props";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState, MouseEvent } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { actionCreators } from "./store/index.ts";
+import { actionCreators, rootState } from "./store/index.ts";
 
 export default function TextBox({
   elt,
@@ -10,9 +10,12 @@ export default function TextBox({
   selectedElt,
 }: TextBoxProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement } = bindActionCreators(actionCreators, dispatch);
-
+  const { deleteCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
+  const canvasElements = useSelector((state: rootState) => state.canvasElements);
   const [display, setDisplay] = useState("flex");
+  const [drag, setDrag] = useState(false);
+
+
   let border = "border-0";
   if (selectedElt.id === elt.id) {
     border = "border-2";
@@ -26,10 +29,25 @@ export default function TextBox({
   //   }
   // }, []);
 
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!drag) return;
+    const canvas = document.getElementById("canvas");
+    if (!canvas) return;
+    e.preventDefault();
+    const newX = e.pageX - canvas.offsetLeft;
+    const newY = e.pageY - canvas.offsetTop;
+    console.log(newX);
+    const curr = canvasElements.filter(ce => elt.id === ce.id)[0];
+    const other = canvasElements.filter(ce => elt.id !== ce.id);
+    curr.x = newX;
+    curr.y = newY;
+    updateCanvasElement([...other, curr]);
+  }
+
   return (
     <>
       <div
-        className="absolute hover:border-2"
+        className="absolute"
         style={{ top: elt.y, left: elt.x }}
         onClick={(_) => {
           selectTextBox(elt);
@@ -46,7 +64,10 @@ export default function TextBox({
           style={{ display: display }}
           className="bg-gray-100 border-b-2 flex justify-between"
         >
-          <button name="move-elt">
+          <button name="move-elt" 
+          onMouseDown={_ => setDrag(true)}
+          onMouseMove={(e) => handleMouseMove(e)}
+          onMouseUp={_ => setDrag(false)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"

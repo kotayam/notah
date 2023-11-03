@@ -18,9 +18,14 @@ namespace backend.Controllers
     public class AccountsController : Controller
     {
         private readonly IAccountRepository accountRepository;
-        public AccountsController(IAccountRepository accountRepository)
+        private readonly INoteBookRepository noteBookRepository;
+        private readonly IPageRepository pageRepository;
+
+        public AccountsController(IAccountRepository accountRepository, INoteBookRepository noteBookRepository, IPageRepository pageRepository)
         {
             this.accountRepository = accountRepository;
+            this.noteBookRepository = noteBookRepository;
+            this.pageRepository = pageRepository;
         }
 
         [HttpGet]
@@ -75,14 +80,20 @@ namespace backend.Controllers
             var account = await accountRepository.AddAccountAsync(acc.FullName, acc.Email, acc.Password);
             if (account != null)
             {
-                var accountDto = new AccountDto()
-                {
-                    Id = account.Id,
-                    FullName = acc.FullName,
-                    Email = acc.Email,
-                    Password = acc.Password
-                };
-                return Ok(accountDto);
+                var noteBook = await noteBookRepository.AddNoteBookAsync(account.Id, "Quick Notes");
+                if (noteBook != null) {
+                    var page = await pageRepository.AddPageAsync(noteBook.Id, "Unititled Page");
+                    if (page != null) {
+                        var accountDto = new AccountDto()
+                        {
+                            Id = account.Id,
+                            FullName = acc.FullName,
+                            Email = acc.Email,
+                            Password = acc.Password
+                        };
+                        return Ok(accountDto);
+                    }
+                }
             }
             return NotFound();
         }
