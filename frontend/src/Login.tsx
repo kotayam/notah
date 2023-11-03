@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { redirect } from "react-router-dom";
 
 const notahApi = "http://localhost:5245/api/v1/Login";
 

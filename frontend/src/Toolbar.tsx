@@ -108,34 +108,33 @@ export default function Toolbar() {
   return (
     <>
       <div className="w-full border-b-2">
-        <div className="relative bg-amber-400 h-10 text-center">
-          <button
-            className="float-left p-2 bg-amber-300"
-            onClick={() => undo()}
-          >
-            Undo
-          </button>
-          <button
-            className="float-left p-2 bg-amber-300"
-            onClick={() => save()}
-          >
-            Save
-          </button>
-          <h1 className="font-bold">Notah</h1>
+        <div className="flex justify-between items-enter bg-amber-400">
+          <div>
+            <button className="p-2 bg-amber-300" onClick={() => undo()}>
+              Undo
+            </button>
+            <button className="p-2 bg-amber-300" onClick={() => save()}>
+              Save
+            </button>
+          </div>
+          <h1 className=" font-semibold text-2xl">Notah</h1>
           {showLogButton()}
         </div>
-        <div className="bg-gray-100 p-px">
-          <ModeSelector thisMode={"Text"} />
-          <ModeSelector thisMode={"Shape"} />
-          <ModeSelector thisMode={"Table"} />
-          <ModeSelector thisMode={"Draw"} />
+        <div className="flex justify-between items-enter bg-gray-100">
+          <div className="">
+            <ModeSelector thisMode={"Text"} />
+            <ModeSelector thisMode={"Shape"} />
+            <ModeSelector thisMode={"Table"} />
+            <ModeSelector thisMode={"Draw"} />
+          </div>
           <button
-            className="float-right h-full bg-gray-200 p-2"
+            className=" h-full bg-gray-200 p-2"
             onClick={(_) => saveAsPdf()}
           >
             Save as PDF
           </button>
         </div>
+
         <div className="bg-gray-100 h-10 px-4">{returnFunctionBar()}</div>
       </div>
     </>

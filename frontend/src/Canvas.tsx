@@ -19,7 +19,7 @@ type Page = {
 
 export default function Canvas() {
     const dispatch = useDispatch();
-    const { addCanvasElement, deleteCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
+    const { addCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
 
     const canvasElements = useSelector((state: rootState) => state.canvasElements);
     const textStyle = useSelector((state: rootState) => state.textStyle);
