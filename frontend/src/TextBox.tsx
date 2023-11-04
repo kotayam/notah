@@ -10,11 +10,15 @@ export default function TextBox({
   selectedElt,
 }: TextBoxProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
-  const canvasElements = useSelector((state: rootState) => state.canvasElements);
+  const { deleteCanvasElement, updateCanvasElement } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
+  const canvasElements = useSelector(
+    (state: rootState) => state.canvasElements
+  );
   const [display, setDisplay] = useState("flex");
   const [drag, setDrag] = useState(false);
-
 
   let border = "border-0";
   if (selectedElt.id === elt.id) {
@@ -29,25 +33,35 @@ export default function TextBox({
   //   }
   // }, []);
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseDown = () => {
+    setDrag(true);
+  };
+
+  const handleMouseMove = (e: MouseEvent, parent: HTMLButtonElement) => {
+    e.preventDefault();
     if (!drag) return;
     const canvas = document.getElementById("canvas");
     if (!canvas) return;
-    e.preventDefault();
-    const newX = e.pageX - canvas.offsetLeft;
-    const newY = e.pageY - canvas.offsetTop;
-    console.log(newX);
-    const curr = canvasElements.filter(ce => elt.id === ce.id)[0];
-    const other = canvasElements.filter(ce => elt.id !== ce.id);
+    const midX = parent.offsetLeft + parent.offsetWidth / 2;
+    const midY = parent.offsetTop + parent.offsetHeight / 2;
+    const newX = e.pageX - midX - canvas.offsetLeft;
+    const newY = e.pageY - midY - canvas.offsetTop;
+    console.log("dragging");
+    const curr = canvasElements.filter((ce) => elt.id === ce.id)[0];
+    const other = canvasElements.filter((ce) => elt.id !== ce.id);
     curr.x = newX;
     curr.y = newY;
     updateCanvasElement([...other, curr]);
-  }
+  };
+
+  const handleMouseUp = () => {
+    setDrag(false);
+  };
 
   return (
     <>
       <div
-        className="absolute"
+        className="absolute hover:border-2"
         style={{ top: elt.y, left: elt.x }}
         onClick={(_) => {
           selectTextBox(elt);
@@ -64,15 +78,17 @@ export default function TextBox({
           style={{ display: display }}
           className="bg-gray-100 border-b-2 flex justify-between"
         >
-          <button name="move-elt" 
-          onMouseDown={_ => setDrag(true)}
-          onMouseMove={(e) => handleMouseMove(e)}
-          onMouseUp={_ => setDrag(false)}>
+          <button
+            name="move-elt"
+            onMouseDown={(_) => handleMouseDown()}
+            onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
+            onMouseUp={(_) => handleMouseUp()}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="h-5"
+              className="h-6"
             >
               <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
             </svg>
@@ -84,7 +100,7 @@ export default function TextBox({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="h-5"
+              className="h-6"
             >
               <path
                 strokeLinecap="round"
