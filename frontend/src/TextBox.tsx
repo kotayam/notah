@@ -17,21 +17,19 @@ export default function TextBox({
   const canvasElements = useSelector(
     (state: rootState) => state.canvasElements
   );
+  const [border, setBorder] = useState("border-0");
   const [display, setDisplay] = useState("flex");
   const [drag, setDrag] = useState(false);
 
-  let border = "border-0";
-  if (selectedElt.id === elt.id) {
-    border = "border-2";
-  }
-  // useEffect(() => {
-  //   if (selectedElt.id === elt.id) {
-  //     border = "border-2";
-  //     setHidden(false);
-  //   } else {
-  //     setHidden(true);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (selectedElt.id === elt.id) {
+      setBorder("border-2");
+      setDisplay("flex");
+    } else {
+      setBorder("border-0");
+      setDisplay("none");
+    }
+  }, [selectedElt.id]);
 
   const handleMouseDown = () => {
     setDrag(true);
@@ -61,17 +59,23 @@ export default function TextBox({
   return (
     <>
       <div
-        className="absolute hover:border-2"
+        className={`absolute ${border}`}
         style={{ top: elt.y, left: elt.x }}
         onClick={(_) => {
           selectTextBox(elt);
         }}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseEnter={(_) => {
-          setDisplay("flex");
+          if (display === "none") {
+            setDisplay("flex");
+            setBorder("border-2")
+          } 
         }}
         onMouseLeave={(_) => {
-          setDisplay("none");
+          if (selectedElt.id !== elt.id) {
+            setBorder("border-0");
+            setDisplay("none");
+          }
         }}
       >
         <div
@@ -113,7 +117,7 @@ export default function TextBox({
         <div
           contentEditable="true"
           key={elt.id}
-          className={`min-w-[100px] ${border}`}
+          className={`min-w-[100px]`}
           style={{
             fontFamily: elt.font,
             fontSize: elt.fontSize,
