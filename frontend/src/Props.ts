@@ -17,6 +17,7 @@ export type ShapeProps = {
     elt: ShapeElement;
     selectShape: (elt: ShapeElement) => void;
     selectedElt: {id: number, r: number, c: number};
+    drawing: boolean;
 }
 
 export type TableProps = {

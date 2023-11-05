@@ -4,7 +4,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 
-export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
+type Line = {
+  x1: string | number;
+  y1: string | number;
+  x2: string | number;
+  y2: string | number;
+};
+
+export default function Shape({
+  elt,
+  selectShape,
+  selectedElt,
+  drawing,
+}: ShapeProps) {
   const dispatch = useDispatch();
   const { deleteCanvasElement, updateCanvasElement } = bindActionCreators(
     actionCreators,
@@ -14,17 +26,23 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
     (state: rootState) => state.canvasElements
   );
   const [border, setBorder] = useState("border-0");
-  const [display, setDisplay] = useState("flex");
+  const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
 
-  let dim = {
+  const dim = {
     x: elt.x,
     y: elt.y,
     width: Math.abs(elt.width),
     height: Math.abs(elt.height),
   };
-  let line: any = { x1: 0, y1: 0, x2: "100%", y2: "100%" };
+
+  const line: Line = {
+    x1: 0,
+    y1: 0,
+    x2: "100%",
+    y2: "100%",
+  };
 
   if (elt.width < 0 && elt.height < 0) {
     dim.x += elt.width;
@@ -43,6 +61,20 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
     line.y2 = 0;
   }
 
+  useEffect(() => {
+    if (drawing) {
+      setBorder("border-0");
+      setVisibility("hidden");
+    }
+    else if (selectedElt.id === elt.id) {
+      setBorder("border-2");
+      setVisibility("visible");
+    } else {
+      setBorder("border-0");
+      setVisibility("hidden");
+    }
+  }, [selectedElt.id]);
+
   const returnShape = () => {
     switch (elt.shape) {
       case "rect":
@@ -51,18 +83,14 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
             contentEditable={isEditable}
             className="relative bg-gray-100 border-2 border-black text-center"
             style={{
-            //   top: dim.y,
-            //   left: dim.x,
               width: dim.width,
               height: dim.height,
             }}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseEnter={(e) => {
-              e.stopPropagation();
               setIsEditable(true);
             }}
             onMouseLeave={(e) => {
-              e.stopPropagation();
               setIsEditable(false);
             }}
           ></div>
@@ -73,19 +101,15 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
             contentEditable={isEditable}
             className="relative bg-gray-100 border-black border-2 text-center"
             style={{
-            //   top: dim.y,
-            //   left: dim.x,
               width: dim.width,
               height: dim.height,
               borderRadius: "50%",
             }}
             onMouseDown={(e) => e.stopPropagation()}
-            onMouseEnter={(e) => {
-              e.stopPropagation();
+            onMouseEnter={(_) => {
               setIsEditable(true);
             }}
-            onMouseLeave={(e) => {
-              e.stopPropagation();
+            onMouseLeave={(_) => {
               setIsEditable(false);
             }}
           ></div>
@@ -94,7 +118,6 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
         return (
           <svg
             className="relative stroke-black"
-            // style={{ top: dim.y, left: dim.x }}
             width={dim.width}
             height={dim.height}
           >
@@ -104,21 +127,12 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
     }
   };
 
-  useEffect(() => {
-    if (selectedElt.id === elt.id) {
-      setBorder("border-2");
-      setDisplay("flex");
-    } else {
-      setBorder("border-0");
-      setDisplay("none");
-    }
-  }, [selectedElt.id]);
-
   const handleMouseDown = () => {
     setDrag(true);
   };
 
   const handleMouseMove = (e: MouseEvent, parent: HTMLButtonElement) => {
+    console.log(elt);
     e.preventDefault();
     if (!drag) return;
     const canvas = document.getElementById("canvas");
@@ -130,7 +144,7 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
     const curr = canvasElements.filter((ce) => elt.id === ce.id)[0];
     const other = canvasElements.filter((ce) => elt.id !== ce.id);
     curr.x = newX;
-    curr.y = newY;
+    curr.y = newY + 26;
     updateCanvasElement([...other, curr]);
   };
 
@@ -139,10 +153,33 @@ export default function Shape({ elt, selectShape, selectedElt }: ShapeProps) {
   };
 
   return (
-    <div className="absolute" style={{top: dim.y, left:dim.x}}>
+    <div
+      className={`absolute border-dotted ${border}`}
+      style={{ top: dim.y - 26, left: dim.x }}
+      onClick={(_) => {
+        selectShape(elt);
+      }}
+      onMouseDown={(e) => e.stopPropagation()}
+      onMouseEnter={(_) => {
+        if (drawing) {
+          return;
+        }
+        if (visibility === "hidden") {
+          setVisibility("visible");
+          setBorder("border-2");
+        }
+      }}
+      onMouseLeave={(e) => {
+        e.preventDefault();
+        if (selectedElt.id !== elt.id) {
+          setBorder("border-0");
+          setVisibility("hidden");
+        }
+      }}
+    >
       <div
-        style={{ display: display }}
-        className="bg-gray-100 border-b-2 flex justify-between"
+        style={{ visibility: visibility }}
+        className="bg-gray-100 flex justify-between"
       >
         <button
           name="move-elt"

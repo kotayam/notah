@@ -161,7 +161,7 @@ export default function Canvas() {
                 elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }
             else if (elt instanceof ShapeElement) {
-                elts.push(<Shape key={elt.id} elt={elt} selectShape={selectShape} selectedElt={selectedElt}/>)
+                elts.push(<Shape key={elt.id} elt={elt} selectShape={selectShape} selectedElt={selectedElt} drawing={drawing}/>)
             }
             else if (elt instanceof TableElement) {
                 elts.push(<Table key={elt.id} elt={elt} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);

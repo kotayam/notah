@@ -19,14 +19,14 @@ export default function Table({
   const canvasElements = useSelector(
     (state: rootState) => state.canvasElements
   );
-  const [display, setDisplay] = useState("flex");
+  const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
 
   useEffect(() => {
     if (selectedElt.id === elt.id) {
-      setDisplay("flex");
+      setVisibility("visible");
     } else {
-      setDisplay("none");
+      setVisibility("hidden");
     }
   }, [selectedElt.id]);
 
@@ -46,7 +46,7 @@ export default function Table({
     const curr = canvasElements.filter((ce) => elt.id === ce.id)[0];
     const other = canvasElements.filter((ce) => elt.id !== ce.id);
     curr.x = newX;
-    curr.y = newY;
+    curr.y = newY + 26;
     updateCanvasElement([...other, curr]);
   };
 
@@ -56,21 +56,21 @@ export default function Table({
   return (
     <div
       className="absolute"
-      style={{ top: elt.y, left: elt.x }}
+      style={{ top: elt.y - 26, left: elt.x }}
       onMouseDown={(e) => e.stopPropagation()}
       onMouseEnter={(_) => {
-        if (display === "none") {
-          setDisplay("flex");
+        if (visibility === "hidden") {
+          setVisibility("visible");
         }
       }}
       onMouseLeave={(_) => {
         if (selectedElt.id !== elt.id) {
-          setDisplay("none");
+          setVisibility("hidden");
         }
       }}
     >
       <div
-        style={{ display: display }}
+        style={{ visibility: visibility }}
         className="bg-gray-100 border-gray-800 border-[1px] border-b-0 flex justify-between"
       >
         <button

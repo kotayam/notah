@@ -18,16 +18,16 @@ export default function TextBox({
     (state: rootState) => state.canvasElements
   );
   const [border, setBorder] = useState("border-0");
-  const [display, setDisplay] = useState("flex");
+  const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
 
   useEffect(() => {
     if (selectedElt.id === elt.id) {
       setBorder("border-2");
-      setDisplay("flex");
+      setVisibility("visible");
     } else {
       setBorder("border-0");
-      setDisplay("none");
+      setVisibility("hidden");
     }
   }, [selectedElt.id]);
 
@@ -47,7 +47,7 @@ export default function TextBox({
     const curr = canvasElements.filter((ce) => elt.id === ce.id)[0];
     const other = canvasElements.filter((ce) => elt.id !== ce.id);
     curr.x = newX;
-    curr.y = newY;
+    curr.y = newY + 26;
     updateCanvasElement([...other, curr]);
   };
 
@@ -59,27 +59,27 @@ export default function TextBox({
     <>
       <div
         className={`absolute ${border}`}
-        style={{ top: elt.y, left: elt.x }}
+        style={{ top: elt.y -26, left: elt.x }}
         onClick={(_) => {
           selectTextBox(elt);
         }}
         onMouseDown={(e) => e.stopPropagation()}
         onMouseEnter={(_) => {
-          if (display === "none") {
-            setDisplay("flex");
-            setBorder("border-2")
-          } 
+          if (visibility === "hidden") {
+            setVisibility("visible");
+            setBorder("border-2");
+          }
         }}
         onMouseLeave={(_) => {
           if (selectedElt.id !== elt.id) {
             setBorder("border-0");
-            setDisplay("none");
+            setVisibility("hidden");
           }
         }}
       >
         <div
-          style={{ display: display }}
           className="bg-gray-100 border-b-2 flex justify-between"
+          style={{ visibility: visibility }}
         >
           <button
             name="move-elt"
@@ -116,7 +116,7 @@ export default function TextBox({
         <div
           contentEditable="true"
           key={elt.id}
-          className={`min-w-[100px]`}
+          className="min-w-[100px]"
           style={{
             fontFamily: elt.font,
             fontSize: elt.fontSize,
