@@ -15,6 +15,8 @@ export type TextBoxProps = {
 
 export type ShapeProps = {
     elt: ShapeElement;
+    selectShape: (elt: ShapeElement) => void;
+    selectedElt: {id: number, r: number, c: number};
 }
 
 export type TableProps = {

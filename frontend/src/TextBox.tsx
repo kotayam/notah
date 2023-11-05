@@ -44,7 +44,6 @@ export default function TextBox({
     const midY = parent.offsetTop + parent.offsetHeight / 2;
     const newX = e.pageX - midX - canvas.offsetLeft;
     const newY = e.pageY - midY - canvas.offsetTop;
-    console.log("dragging");
     const curr = canvasElements.filter((ce) => elt.id === ce.id)[0];
     const other = canvasElements.filter((ce) => elt.id !== ce.id);
     curr.x = newX;

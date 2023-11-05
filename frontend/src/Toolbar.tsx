@@ -125,7 +125,7 @@ export default function Toolbar() {
             <ModeSelector thisMode={"Text"} />
             <ModeSelector thisMode={"Shape"} />
             <ModeSelector thisMode={"Table"} />
-            <ModeSelector thisMode={"Draw"} />
+            <ModeSelector thisMode={"AI"} />
           </div>
           <button
             className=" h-full bg-gray-200 p-2"

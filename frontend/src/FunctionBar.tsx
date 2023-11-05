@@ -198,7 +198,7 @@ export function TableFunctionBar() {
     return (
         <>
         <button 
-            className="hover:bg-gray-300 active:bg-gray-400 border-[1px] py-1 px-2"
+            className="hover:bg-gray-300 active:bg-gray-400 border-[1px] border-gray-500 py-1 px-2"
             style={{fontWeight: boldClicked(), backgroundColor: bgClicked()}}
             onClick={e => {setClicked(prev => !prev); setRect(e.currentTarget.getBoundingClientRect())}}
         >

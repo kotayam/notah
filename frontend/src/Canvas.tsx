@@ -123,6 +123,15 @@ export default function Canvas() {
         });
     }
 
+    const selectShape = (elt: ShapeElement) => {
+        console.log(`shape: ${elt.id} selected.`);
+        setSelectedElt(prev => {
+            const newState = prev;
+            newState.id = elt.id;
+            return newState;
+        })
+    }
+
     const selectTableText = (elt: TableElement, row: number, col: number) => {
         console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
         setText(elt.tableContent[row][col])
@@ -152,7 +161,7 @@ export default function Canvas() {
                 elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }
             else if (elt instanceof ShapeElement) {
-                elts.push(<Shape key={elt.id} elt={elt}/>)
+                elts.push(<Shape key={elt.id} elt={elt} selectShape={selectShape} selectedElt={selectedElt}/>)
             }
             else if (elt instanceof TableElement) {
                 elts.push(<Table key={elt.id} elt={elt} selectTableText={selectTableText} selectedElt={selectedElt} updateText={updateText}/>);
