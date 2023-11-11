@@ -1,9 +1,9 @@
 export class CanvasElement {
-    id: number;
+    id: string;
     x: number;
     y: number;
     
-    constructor(id: number, x: number, y: number) {
+    constructor(id: string, x: number, y: number) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -18,7 +18,7 @@ export class TextBoxElement extends CanvasElement {
     fontWeight: string;
     fontStyle: string;
 
-    constructor(id: number, x: number, y: number, content: string, font: string, fontSize: number, fontColor: string, fontWeight: string, fontStyle: string) {
+    constructor(id: string, x: number, y: number, content: string, font: string, fontSize: number, fontColor: string, fontWeight: string, fontStyle: string) {
             super(id, x, y);
             this.content = content;
             this.font = font;
@@ -34,7 +34,7 @@ export class ShapeElement extends CanvasElement {
     width: number;
     height: number;
 
-    constructor(id: number, x: number, y: number, shape: string, width: number, height: number) {
+    constructor(id: string, x: number, y: number, shape: string, width: number, height: number) {
         super(id, x, y);
         this.shape = shape;
         this.width = width;
@@ -47,7 +47,7 @@ export class TableElement extends CanvasElement {
     col: number;
     tableContent: string[][]
 
-    constructor(id: number, x: number, y: number, row: number, col: number, tableContent: string[][]) {
+    constructor(id: string, x: number, y: number, row: number, col: number, tableContent: string[][]) {
         super(id, x, y);
         this.row = row;
         this.col = col;

@@ -1,4 +1,6 @@
 import "./App.css";
+import { CanvasElement } from "./Classes.ts";
+import { useState } from "react";
 import ModeSelector from "./ModeSelector.tsx";
 import {
   TextFunctionBar,
@@ -10,19 +12,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { setNoteBook } from "./store/action-creators/noteBookActionCreator.ts";
+import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
+import Canvas from "./Canvas.tsx";
 
-const notahApi = "http://localhost:5245/api/v1/Pages/";
+const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
   const account = useSelector((state: rootState) => state.account);
   const page = useSelector((state: rootState) => state.page);
+  let canvasElements = useSelector(
+    (state: rootState) => state.canvasElements
+  );
+  canvasElements = new Map(canvasElements);
 
   const dispatch = useDispatch();
   const { setAccount, setNoteBook } = bindActionCreators(
     actionCreators,
     dispatch
   );
+
+  const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
 
   const returnFunctionBar = () => {
     switch (mode) {
@@ -36,23 +46,55 @@ export default function Toolbar() {
   };
 
   const save = () => {
-    const canvas = document.getElementById("canvas");
-    if (!canvas) return;
-    fetch(notahApi + page.id, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ html: canvas.innerHTML }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+    console.log(canvasElts);
+    canvasElts.forEach((elt) => {
+      const body = {
+        type: "",
+        x: elt.x,
+        y: elt.y,
+        innerHTML: "",
+        font: "",
+        fontSize: 0,
+        fontColor: "",
+        shape: "",
+        width: 0,
+        height: 0,
+        row: 0,
+        column: 0
+      }
+      if (elt instanceof TextBoxElement) {
+        body.type = "text";
+        body.font = elt.font;
+        body.fontSize = elt.fontSize;
+        body.fontColor = elt.fontColor;
+      }
+      else if (elt instanceof ShapeElement) {
+        body.type = "shape";
+        body.shape = elt.shape;
+        body.width = elt.width;
+        body.height = elt.height
+      }
+      else if (elt instanceof TableElement) {
+        body.type = "table";
+        body.row = elt.row;
+        body.column = elt.col
+      }
+      fetch(notahApi + page.id, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
       })
-      .catch((e) => {
-        console.error(e);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    });
   };
 
   const saveAsPdf = async () => {

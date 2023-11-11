@@ -9,21 +9,21 @@ export type CanvasProps = {
 export type TextBoxProps = {
     elt: TextBoxElement;
     selectTextBox: (elt: TextBoxElement) => void;
-    selectedElt: {id: number, r: number, c: number};
+    selectedElt: {id: string, r: number, c: number};
     updateText: (newText: string) => void;
 }
 
 export type ShapeProps = {
     elt: ShapeElement;
     selectShape: (elt: ShapeElement) => void;
-    selectedElt: {id: number, r: number, c: number};
+    selectedElt: {id: string, r: number, c: number};
     drawing: boolean;
 }
 
 export type TableProps = {
     elt: TableElement;
     selectTableText: (elt: TableElement, row: number, col: number) => void;
-    selectedElt: {id: number, r: number, c: number};
+    selectedElt: {id: string, r: number, c: number};
     updateText: (newText: string) => void;
 }
 

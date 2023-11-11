@@ -11,7 +11,7 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import parse from "html-react-parser";
 
-const notahApi = "http://localhost:5245/api/v1/Pages/"
+const notahApi = "http://localhost:5245/api/v1/CanvasElements/"
 
 type Page = {
     html: string;
@@ -21,7 +21,8 @@ export default function Canvas() {
     const dispatch = useDispatch();
     const { addCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
 
-    const canvasElements = useSelector((state: rootState) => state.canvasElements);
+    let canvasElements = useSelector((state: rootState) => state.canvasElements);
+    canvasElements = new Map(canvasElements);
     const textStyle = useSelector((state: rootState) => state.textStyle);
     const shape = useSelector((state: rootState) => state.shape);
     const table = useSelector((state: rootState) => state.table);
@@ -30,8 +31,9 @@ export default function Canvas() {
 
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
+    const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>());
     const [drawing, setDrawing] = useState(false);
-    const [selectedElt, setSelectedElt] = useState({id: -1, r: -1, c: -1});
+    const [selectedElt, setSelectedElt] = useState({id: "none", r: -1, c: -1});
     const [initialLoad, setInitialLoad] = useState("");
 
     // useEffect(() => {
@@ -43,7 +45,7 @@ export default function Canvas() {
     // })
 
     useEffect(() => {
-        fetch(notahApi + page.id)
+        fetch(notahApi + "/byPageId/" + page.id)
         .then(res => res.json())
         .then(data => data as Page)
         .then(data => {
@@ -54,16 +56,18 @@ export default function Canvas() {
     }, [page])
 
     const handleMouseDown = (e: MouseEvent, parent: HTMLDivElement) => {
+        console.log(canvasElements);
         let newElt: CanvasElement;
+        const id = crypto.randomUUID();
         const x = (e.pageX - parent.offsetLeft);
         const y = (e.pageY - parent.offsetTop);
         if (mode === "text") {
             // setText("");
-            newElt = new TextBoxElement(canvasElements.length, x, y, "", textStyle.font, textStyle.fontSize, textStyle.fontColor, textStyle.fontWeight, textStyle.fontStyle);
+            newElt = new TextBoxElement(id, x, y, "", textStyle.font, textStyle.fontSize, textStyle.fontColor, textStyle.fontWeight, textStyle.fontStyle);
         } 
         else if (mode === "shape") {
             setDrawing(true);
-            newElt = new ShapeElement(canvasElements.length, x, y, shape, 0, 0);
+            newElt = new ShapeElement(id, x, y, shape, 0, 0);
         }
         else if (mode === "table") {
             const tableContent = new Array(table.row);
@@ -73,15 +77,15 @@ export default function Canvas() {
                     tableContent[r][c] = '';
                 }
             }
-            newElt = new TableElement(canvasElements.length, x, y, table.row, table.col, tableContent);
+            newElt = new TableElement(id, x, y, table.row, table.col, tableContent);
         }
         else {
             return;
         }
-        addCanvasElement(newElt);
+        addCanvasElement(page.id, newElt);
         setSelectedElt(prevState => {
             const newState = prevState;
-            newState.id = canvasElements.length;
+            newState.id = id;
             return newState;
         });
         // setCanvasElts(canvasElts => {
@@ -95,11 +99,10 @@ export default function Canvas() {
         const x = (e.pageX - parent.offsetLeft);
         const y = (e.pageY - parent.offsetTop);
         // console.log(`x: ${x}, y: ${y}`);
-        const tgt = canvasElements.filter(elt => elt.id === selectedElt.id)[0];
-        const other = canvasElements.filter(elt => elt.id !== selectedElt.id);
+        const tgt = canvasElts.filter(elt => elt.id === selectedElt.id)[0];
         (tgt as ShapeElement).width = x - tgt.x;
         (tgt as ShapeElement).height = y - tgt.y;
-        updateCanvasElement([...other, tgt]);
+        updateCanvasElement(page.id, selectedElt.id, tgt);
         // setCanvasElts(prevState => {
         //     const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
         //     const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
@@ -156,7 +159,7 @@ export default function Canvas() {
 
     const returnCanvasElement = () => {
         const elts: JSX.Element[] = [];
-        canvasElements.map(elt => {
+        canvasElts.map(elt => {
             if (elt instanceof TextBoxElement) {
                 elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }

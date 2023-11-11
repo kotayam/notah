@@ -36,6 +36,11 @@ namespace backend.Data
                 .WithOne(e => e.Page)
                 .HasForeignKey(e => e.PageId)
                 .IsRequired();
+            modelBuilder.Entity<CanvasElement>()
+                .HasOne(e => e.Page)
+                .WithMany(e => e.CanvasElements)
+                .HasForeignKey(e => e.PageId)
+                .IsRequired();
         }
     }
 }

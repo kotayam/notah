@@ -3,17 +3,17 @@ import { ActionType } from "../action-types";
 
 interface AddCanvasElementAction {
   type: ActionType.ADD;
-  payload: CanvasElement;
+  payload: {pageId: string, canvasElement: CanvasElement};
 }
 
 interface DeleteCanvasElementAction {
   type: ActionType.DELETE;
-  payload: CanvasElement;
+  payload: {pageId: string, id: string, canvasElement: CanvasElement};
 }
 
 interface UpdateCanvasElementAction {
   type: ActionType.UPDATE;
-  payload: CanvasElement[];
+  payload: {pageId: string, id: string, canvasElement: CanvasElement}
 }
 
 export type CanvasElementAction =

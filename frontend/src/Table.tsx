@@ -1,4 +1,5 @@
 import { TableProps } from "./Props.ts";
+import { CanvasElement } from "./Classes.ts";
 import TableRow from "./TableRow.tsx";
 import { useState, useEffect, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,9 +17,12 @@ export default function Table({
     actionCreators,
     dispatch
   );
-  const canvasElements = useSelector(
+  let canvasElements = useSelector(
     (state: rootState) => state.canvasElements
   );
+  canvasElements = new Map(canvasElements);
+  const page = useSelector((state: rootState) => state.page);
+  const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
 
@@ -43,11 +47,10 @@ export default function Table({
     const midY = parent.offsetTop + parent.offsetHeight / 2;
     const newX = e.pageX - midX - canvas.offsetLeft;
     const newY = e.pageY - midY - canvas.offsetTop;
-    const curr = canvasElements.filter((ce) => elt.id === ce.id)[0];
-    const other = canvasElements.filter((ce) => elt.id !== ce.id);
+    const curr = canvasElts.filter((ce) => elt.id === ce.id)[0];
     curr.x = newX;
     curr.y = newY + 26;
-    updateCanvasElement([...other, curr]);
+    updateCanvasElement(page.id, curr.id, curr);
   };
 
   const handleMouseUp = () => {
@@ -88,7 +91,7 @@ export default function Table({
             <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
           </svg>
         </button>
-        <button name="delete-elt" onClick={(_) => deleteCanvasElement(elt)}>
+        <button name="delete-elt" onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

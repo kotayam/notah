@@ -27,9 +27,18 @@ namespace backend.Controllers
                            select new CanvasElementDto()
                            {
                                Id = ce.Id,
+                               Type = ce.Type,
                                X = ce.X,
                                Y = ce.Y,
-                               HTML = ce.HTML,
+                               InnerHTML = ce.InnerHTML,
+                               Font = ce.Font,
+                               FontSize = ce.FontSize,
+                               FontColor = ce.FontColor,
+                               Shape = ce.Shape,
+                               Width = ce.Width,
+                               Height = ce.Height,
+                               Row = ce.Row,
+                               Column = ce.Column,
                                PageId = ce.PageId
                            };
             return Ok(canvasEltsDto);
@@ -45,9 +54,18 @@ namespace backend.Controllers
                 var canvasEltDto = new CanvasElementDto()
                 {
                     Id = canvasElt.Id,
+                    Type = canvasElt.Type,
                     X = canvasElt.X,
                     Y = canvasElt.Y,
-                    HTML = canvasElt.HTML,
+                    InnerHTML = canvasElt.InnerHTML,
+                    Font = canvasElt.Font,
+                    FontSize = canvasElt.FontSize,
+                    FontColor = canvasElt.FontColor,
+                    Shape = canvasElt.Shape,
+                    Width = canvasElt.Width,
+                    Height = canvasElt.Height,
+                    Row = canvasElt.Row,
+                    Column = canvasElt.Column,
                     PageId = canvasElt.PageId
                 };
                 return Ok(canvasEltDto);
@@ -58,16 +76,25 @@ namespace backend.Controllers
 
         [HttpGet]
         [Route("byPageId/{pageId:guid}")]
-        public async Task<IActionResult> GetCanvasElementsByNoteBookId([FromRoute] Guid pageId)
+        public async Task<IActionResult> GetCanvasElementsByPageId([FromRoute] Guid pageId)
         {
             var canvasElts = await canvasElementRepository.GetCanvasElementsByPageIdAsync(pageId);
             var canvasEltsDto = from ce in canvasElts
                            select new CanvasElementDto()
                            {
                                Id = ce.Id,
+                               Type = ce.Type,
                                X = ce.X,
                                Y = ce.Y,
-                               HTML = ce.HTML,
+                               InnerHTML = ce.InnerHTML,
+                               Font = ce.Font,
+                               FontSize = ce.FontSize,
+                               FontColor = ce.FontColor,
+                               Shape = ce.Shape,
+                               Width = ce.Width,
+                               Height = ce.Height,
+                               Row = ce.Row,
+                               Column = ce.Column,
                                PageId = ce.PageId
                            };
             return Ok(canvasEltsDto);
@@ -75,17 +102,26 @@ namespace backend.Controllers
 
         [HttpPost]
         [Route("{pageId:guid}")]
-        public async Task<IActionResult> AddCanvasElement([FromRoute] Guid pageId, [FromBody] CanvasElementReqDto ce)
+        public async Task<IActionResult> AddCanvasElement([FromRoute] Guid pageId, [FromBody] CanvasElementAddReqDto ce)
         {
-            var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.X, ce.Y, ce.HTML);
+            var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.Type, ce.X, ce.Y, ce.InnerHTML, ce.Font, ce.FontSize, ce.FontColor, ce.Shape, ce.Width, ce.Height, ce.Row, ce.Column);
             if (canvasElt != null)
             {
                 var canvasEltDto = new CanvasElementDto()
                 {
                     Id = canvasElt.Id,
+                    Type = canvasElt.Type,
                     X = canvasElt.X,
                     Y = canvasElt.Y,
-                    HTML = canvasElt.HTML,
+                    InnerHTML = canvasElt.InnerHTML,
+                    Font = canvasElt.Font,
+                    FontSize = canvasElt.FontSize,
+                    FontColor = canvasElt.FontColor,
+                    Shape = canvasElt.Shape,
+                    Width = canvasElt.Width,
+                    Height = canvasElt.Height,
+                    Row = canvasElt.Row,
+                    Column = canvasElt.Column,
                     PageId = canvasElt.PageId
                 };
                 return Ok(canvasEltDto);
@@ -95,17 +131,26 @@ namespace backend.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateCanvasElement([FromRoute] Guid id, [FromBody] CanvasElementReqDto ce)
+        public async Task<IActionResult> UpdateCanvasElement([FromRoute] Guid id, [FromBody] CanvasElementUpdateReqDto ce)
         {
-            var canvasElt = await canvasElementRepository.UpdateCanvasElementAsync(id, ce.X, ce.Y, ce.HTML);
+            var canvasElt = await canvasElementRepository.UpdateCanvasElementAsync(id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height);
             if (canvasElt != null)
             {
                 var cavnasEltDto = new CanvasElementDto()
                 {
                     Id = canvasElt.Id,
+                    Type = canvasElt.Type,
                     X = canvasElt.X,
                     Y = canvasElt.Y,
-                    HTML = canvasElt.HTML,
+                    InnerHTML = canvasElt.InnerHTML,
+                    Font = canvasElt.Font,
+                    FontSize = canvasElt.FontSize,
+                    FontColor = canvasElt.FontColor,
+                    Shape = canvasElt.Shape,
+                    Width = canvasElt.Width,
+                    Height = canvasElt.Height,
+                    Row = canvasElt.Row,
+                    Column = canvasElt.Column,
                     PageId = canvasElt.PageId
                 };
                 return Ok(cavnasEltDto);
@@ -123,9 +168,18 @@ namespace backend.Controllers
                 var canvasEltDto = new CanvasElementDto()
                 {
                     Id = canvasElt.Id,
+                    Type = canvasElt.Type,
                     X = canvasElt.X,
                     Y = canvasElt.Y,
-                    HTML = canvasElt.HTML,
+                    InnerHTML = canvasElt.InnerHTML,
+                    Font = canvasElt.Font,
+                    FontSize = canvasElt.FontSize,
+                    FontColor = canvasElt.FontColor,
+                    Shape = canvasElt.Shape,
+                    Width = canvasElt.Width,
+                    Height = canvasElt.Height,
+                    Row = canvasElt.Row,
+                    Column = canvasElt.Column,
                     PageId = canvasElt.PageId
                 };
                 return Ok(canvasEltDto);

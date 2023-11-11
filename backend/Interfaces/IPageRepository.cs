@@ -12,7 +12,7 @@ namespace backend.Interfaces
         Task<Page?> GetPageByIdAsync(Guid id);
         Task<ICollection<Page>> GetPagesByNoteBookIdAsync(Guid noteBookId);
         Task<Page?> AddPageAsync(Guid noteBookId, String title);
-        Task<Page?> UpdatePageAsync(Guid id, String title, String html);
+        Task<Page?> UpdatePageAsync(Guid id, String title);
         Task<Page?> DeletePageAsync(Guid id);
     }
 }

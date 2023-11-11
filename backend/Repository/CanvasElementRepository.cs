@@ -32,15 +32,24 @@ namespace backend.Repository
             return await dbContext.CanvasElements.Where(ce => ce.PageId == pageId).ToListAsync();
         }
 
-        public async Task<CanvasElement?> AddCanvasElementAsync(Guid pageId, double x, double y, string html)
+        public async Task<CanvasElement?> AddCanvasElementAsync(Guid pageId, string type, double x, double y, string innerHtml, string font, int fontSize, string FontColor, string shape, double width, double height, int row, int col)
         {
             var page = await dbContext.Pages.FindAsync(pageId);
             if (page != null) {
                 var canvasElement = new CanvasElement() {
                     Id = Guid.NewGuid(),
+                    Type = type,
                     X = x,
                     Y = y,
-                    HTML = html,
+                    InnerHTML = innerHtml,
+                    Font = font,
+                    FontSize = fontSize,
+                    FontColor = FontColor,
+                    Shape = shape,
+                    Width = width,
+                    Height = height,
+                    Row = row,
+                    Column = col,
                     PageId = page.Id,
                     Page = page
                 };
@@ -51,13 +60,15 @@ namespace backend.Repository
             return null;
         }
 
-        public async Task<CanvasElement?> UpdateCanvasElementAsync(Guid id, double x, double y, string html)
+        public async Task<CanvasElement?> UpdateCanvasElementAsync(Guid id, double x, double y, string innerHtml, double width, double height)
         {
             var canvasElement = await dbContext.CanvasElements.FindAsync(id);
             if (canvasElement != null) {
                 canvasElement.X = x;
                 canvasElement.Y = y;
-                canvasElement.HTML = html;
+                canvasElement.InnerHTML = innerHtml;
+                canvasElement.Width = width;
+                canvasElement.Height = height;
                 await dbContext.SaveChangesAsync();
             }
             return canvasElement;

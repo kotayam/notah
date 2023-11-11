@@ -9,6 +9,5 @@ namespace backend.DTO
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
-        public string HTML { get; set; } = null!;
     }
 }

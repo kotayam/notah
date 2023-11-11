@@ -3,29 +3,29 @@ import { Dispatch } from "redux";
 import { CanvasElement } from "src/Classes";
 import { CanvasElementAction } from "../actions";
 
-export const addCanvasElement = (canvasElement: CanvasElement) => {
+export const addCanvasElement = (pageId: string, canvasElement: CanvasElement) => {
     return (dispatch: Dispatch<CanvasElementAction>) => {
         dispatch({
             type: ActionType.ADD,
-            payload: canvasElement
+            payload: {pageId: pageId, canvasElement: canvasElement}
         })
     }
 }
 
-export const deleteCanvasElement = (canvasElement: CanvasElement) => {
+export const deleteCanvasElement = (pageId: string, id: string, canvasElement: CanvasElement) => {
     return (dispatch: Dispatch<CanvasElementAction>) => {
         dispatch({
             type: ActionType.DELETE,
-            payload: canvasElement
+            payload: {pageId: pageId, id: id, canvasElement: canvasElement}
         })
     }
 }
 
-export const updateCanvasElement = (canvasElements: CanvasElement[]) => {
+export const updateCanvasElement = (pageId: string, id: string, canvasElement: CanvasElement) => {
     return (dispatch: Dispatch<CanvasElementAction>) => {
         dispatch({
             type: ActionType.UPDATE,
-            payload: canvasElements
+            payload: {pageId: pageId, id: id, canvasElement: canvasElement}
         })
     }
 }
