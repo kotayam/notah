@@ -29,3 +29,12 @@ export const updateCanvasElement = (pageId: string, id: string, canvasElement: C
         })
     }
 }
+
+export const clearCanvasElements = (pageId: string) => {
+    return (dispatch: Dispatch<CanvasElementAction>) => {
+        dispatch({
+            type: ActionType.CLEAR,
+            payload: {pageId: pageId}
+        })
+    }
+}

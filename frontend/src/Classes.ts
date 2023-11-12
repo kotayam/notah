@@ -45,12 +45,10 @@ export class ShapeElement extends CanvasElement {
 export class TableElement extends CanvasElement {
     row: number;
     col: number;
-    tableContent: string[][]
 
-    constructor(id: string, x: number, y: number, row: number, col: number, tableContent: string[][]) {
+    constructor(id: string, x: number, y: number, row: number, col: number) {
         super(id, x, y);
         this.row = row;
         this.col = col;
-        this.tableContent = tableContent;
     }
 }

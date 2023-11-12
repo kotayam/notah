@@ -56,6 +56,15 @@ export default function Table({
   const handleMouseUp = () => {
     setDrag(false);
   };
+
+  const returnTableRow = () => {
+    let tbRow: JSX.Element[] = [];
+    for (let r = 0; r < elt.row; r++) {
+      tbRow.push(<TableRow key={r} rowId={r} elt={elt} selectTableText={selectTableText}
+      updateText={updateText}/>)
+    }
+    return tbRow;
+  }
   return (
     <div
       className="absolute"
@@ -110,16 +119,7 @@ export default function Table({
       </div>
       <table className="border-gray-800 table-collapse table-auto text-left">
         <tbody>
-          {elt.tableContent.map((rowContent, rowId) => (
-            <TableRow
-              key={rowId}
-              rowId={rowId}
-              rowContent={rowContent}
-              elt={elt}
-              selectTableText={selectTableText}
-              updateText={updateText}
-            />
-          ))}
+          {returnTableRow()}
         </tbody>
       </table>
     </div>

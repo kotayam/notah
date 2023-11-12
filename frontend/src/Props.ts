@@ -30,7 +30,6 @@ export type TableProps = {
 export type TableRowProps = {
     rowId: number;
     elt: TableElement;
-    rowContent: string[];
     selectTableText: (elt: TableElement, row: number, col: number) => void;
     updateText: (newText: string) => void;
 }

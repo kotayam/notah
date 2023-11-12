@@ -13,13 +13,25 @@ import parse from "html-react-parser";
 
 const notahApi = "http://localhost:5245/api/v1/CanvasElements/"
 
-type Page = {
-    html: string;
+type CanvasElementDTO = {
+    id: string;
+    type: string;
+    x: number;
+    y: number;
+    innerHtml: string;
+    font: string;
+    fontSize: number;
+    fontColor: string;
+    shape: string;
+    width: number;
+    height: number;
+    row: number;
+    column: number;
 }
 
 export default function Canvas() {
     const dispatch = useDispatch();
-    const { addCanvasElement, updateCanvasElement } = bindActionCreators(actionCreators, dispatch);
+    const { addCanvasElement, updateCanvasElement, clearCanvasElements } = bindActionCreators(actionCreators, dispatch);
 
     let canvasElements = useSelector((state: rootState) => state.canvasElements);
     canvasElements = new Map(canvasElements);
@@ -44,17 +56,33 @@ export default function Canvas() {
     // })
 
     useEffect(() => {
-        fetch(notahApi + "/byPageId/" + page.id)
+        fetch(notahApi + "byPageId/" + page.id)
         .then(res => res.json())
+        .then(data => data as CanvasElementDTO[])
         .then(data => {
             console.log(data);
-            // setInitialLoad(data.html);
+            clearCanvasElements(page.id);
+            data.forEach(elt => {
+                let newElt: CanvasElement;
+                if (elt.type === "text") {
+                    newElt = new TextBoxElement(elt.id, elt.x, elt.y, "", elt.font, elt.fontSize, elt.fontColor, textStyle.fontWeight, textStyle.fontStyle);
+                }
+                else if (elt.type === "shape") {
+                    newElt = new ShapeElement(elt.id, elt.x, elt.y, elt.shape, elt.width, elt.height);
+                }
+                else if (elt.type === "table") {
+                    newElt = new TableElement(elt.id, elt.x, elt.y, elt.row, elt.column);
+                }
+                else {
+                    return;
+                }
+                addCanvasElement(page.id, newElt);
+            })
         })
         .catch(e => console.error(e));
     }, [page])
 
     const handleMouseDown = (e: MouseEvent, parent: HTMLDivElement) => {
-        console.log(canvasElements);
         let newElt: CanvasElement;
         const id = crypto.randomUUID();
         const x = (e.pageX - parent.offsetLeft);
@@ -68,14 +96,7 @@ export default function Canvas() {
             newElt = new ShapeElement(id, x, y, shape, 0, 0);
         }
         else if (mode === "table") {
-            const tableContent = new Array(table.row);
-            tableContent.fill(new Array(table.col));
-            for (let r = 0; r < tableContent.length; r++) {
-                for (let c = 0; c < tableContent[r].length; c++) {
-                    tableContent[r][c] = '';
-                }
-            }
-            newElt = new TableElement(id, x, y, table.row, table.col, tableContent);
+            newElt = new TableElement(id, x, y, table.row, table.col);
         }
         else {
             return;
@@ -137,7 +158,6 @@ export default function Canvas() {
 
     const selectTableText = (elt: TableElement, row: number, col: number) => {
         console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
-        setText(elt.tableContent[row][col])
         setSelectedElt({id: elt.id, r: row, c: col});
     }
 

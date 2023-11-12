@@ -16,10 +16,16 @@ interface UpdateCanvasElementAction {
   payload: {pageId: string, id: string, canvasElement: CanvasElement}
 }
 
+interface ClearCanvasElementsAction {
+  type: ActionType.CLEAR;
+  payload: {pageId: string}
+}
+
 export type CanvasElementAction =
   | AddCanvasElementAction
   | DeleteCanvasElementAction
-  | UpdateCanvasElementAction;
+  | UpdateCanvasElementAction
+  | ClearCanvasElementsAction;
 
 interface ChangeFontAction {
   type: ActionType.FONT;

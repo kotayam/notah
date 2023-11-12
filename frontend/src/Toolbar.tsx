@@ -11,9 +11,7 @@ import { jsPDF } from "jspdf";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { setNoteBook } from "./store/action-creators/noteBookActionCreator.ts";
 import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
-import Canvas from "./Canvas.tsx";
 
 const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 

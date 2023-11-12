@@ -8,7 +8,7 @@ const canvasElementReducer = (
   state: Map<string, CanvasElement[]> = initialState,
   action: CanvasElementAction
 ) => {
-    state = new Map(state);
+  state = new Map(state);
   switch (action.type) {
     case ActionType.ADD:
       if (!state.has(action.payload.pageId)) {
@@ -37,10 +37,18 @@ const canvasElementReducer = (
       else {
         let canvasElts = state.get(action.payload.pageId);
         if (canvasElts) {
-            const other = canvasElts.filter(elt => elt.id !== action.payload.id);
-            canvasElts = [...other, action.payload.canvasElement];
-            state.set(action.payload.pageId, canvasElts);
+          const other = canvasElts.filter(
+            (elt) => elt.id !== action.payload.id
+          );
+          canvasElts = [...other, action.payload.canvasElement];
+          state.set(action.payload.pageId, canvasElts);
         }
+      }
+      return state;
+    case ActionType.CLEAR:
+      if (!state.has(action.payload.pageId)) return state;
+      else {
+        state.set(action.payload.pageId, []);
       }
       return state;
     default:
