@@ -32,8 +32,6 @@ export default function Toolbar() {
     dispatch
   );
 
-  const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
-
   const returnFunctionBar = () => {
     switch (mode) {
       case "text":
@@ -46,6 +44,8 @@ export default function Toolbar() {
   };
 
   const save = () => {
+    const canvasElts = canvasElements.get(page.id);
+    if (!canvasElts) return;
     console.log(canvasElts);
     canvasElts.forEach((elt) => {
       const body = {

@@ -31,7 +31,6 @@ export default function Canvas() {
 
     const [scale, setScale] = useState(window.devicePixelRatio);
     const [text, setText] = useState("");
-    const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>());
     const [drawing, setDrawing] = useState(false);
     const [selectedElt, setSelectedElt] = useState({id: "none", r: -1, c: -1});
     const [initialLoad, setInitialLoad] = useState("");
@@ -47,10 +46,9 @@ export default function Canvas() {
     useEffect(() => {
         fetch(notahApi + "/byPageId/" + page.id)
         .then(res => res.json())
-        .then(data => data as Page)
         .then(data => {
             console.log(data);
-            setInitialLoad(data.html);
+            // setInitialLoad(data.html);
         })
         .catch(e => console.error(e));
     }, [page])
@@ -99,7 +97,9 @@ export default function Canvas() {
         const x = (e.pageX - parent.offsetLeft);
         const y = (e.pageY - parent.offsetTop);
         // console.log(`x: ${x}, y: ${y}`);
-        const tgt = canvasElts.filter(elt => elt.id === selectedElt.id)[0];
+        const ce = canvasElements.get(page.id);
+        if (!ce) return;
+        const tgt = ce.filter(elt => elt.id === selectedElt.id)[0];
         (tgt as ShapeElement).width = x - tgt.x;
         (tgt as ShapeElement).height = y - tgt.y;
         updateCanvasElement(page.id, selectedElt.id, tgt);
@@ -159,7 +159,9 @@ export default function Canvas() {
 
     const returnCanvasElement = () => {
         const elts: JSX.Element[] = [];
-        canvasElts.map(elt => {
+        const ce = canvasElements.get(page.id);
+        if (!ce) return;
+        ce.map(elt => {
             if (elt instanceof TextBoxElement) {
                 elts.push(<TextBox key={elt.id}  elt={elt} selectTextBox={selectTextBox} selectedElt={selectedElt} updateText={updateText}/>);
             }
