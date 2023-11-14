@@ -1,4 +1,4 @@
-import { CanvasElement, TextBoxElement, TableElement, ShapeElement } from "./Classes";
+import { TextBoxElement, TableElement, ShapeElement } from "./Classes";
 
 export type ToolbarProps = {
  }

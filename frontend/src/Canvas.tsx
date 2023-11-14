@@ -1,15 +1,13 @@
 import "./App.css";
-import { useRef, useEffect, useState } from "react";
-import { MouseEvent, KeyboardEvent } from "react";
+import { useEffect, useState } from "react";
+import { MouseEvent } from "react";
 import { CanvasElement, TextBoxElement, ShapeElement, TableElement } from "./Classes.ts";
-import { CanvasProps } from "./Props.ts";
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
 import Shape from "./Shape.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
-import parse from "html-react-parser";
 
 const notahApi = "http://localhost:5245/api/v1/CanvasElements/"
 
@@ -41,11 +39,8 @@ export default function Canvas() {
     const mode = useSelector((state: rootState) => state.mode);
     const page = useSelector((state: rootState) => state.page);
 
-    const [scale, setScale] = useState(window.devicePixelRatio);
-    const [text, setText] = useState("");
     const [drawing, setDrawing] = useState(false);
     const [selectedElt, setSelectedElt] = useState({id: "none", r: -1, c: -1});
-    const [initialLoad, setInitialLoad] = useState("");
 
     // useEffect(() => {
     //     const handleResize = () => {
@@ -139,7 +134,6 @@ export default function Canvas() {
 
     const selectTextBox = (elt: TextBoxElement) => {
         console.log(`text box: ${elt.id} selected.`);
-        setText(elt.content);
         setSelectedElt(prevState => {
             const newState = prevState;
             newState.id = elt.id;
@@ -162,8 +156,7 @@ export default function Canvas() {
     }
 
     const updateText = (newText: string) => {
-        let txt = '';
-        newText? txt = newText : txt = 'enter text';
+        return newText;
         // setCanvasElts(prevState => {
         //     const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
         //     const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
@@ -195,10 +188,6 @@ export default function Canvas() {
         return elts;
     }
 
-    const returnInitialLoad = () => {
-        return initialLoad? parse(initialLoad): <></>;
-    }
-
     return (
         <>
         <div 
@@ -212,7 +201,6 @@ export default function Canvas() {
             onMouseMove={(e) => {handleMouseMove(e, e.currentTarget)}}
             onMouseUp={_ => {handleMouseUp()}} 
             >
-                {returnInitialLoad()}
                 {returnCanvasElement()}
             </div>
         </div>

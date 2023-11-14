@@ -12,7 +12,6 @@ type NoteBook = {
 
 export default function NoteBooks() {
   const [noteBooks, setNoteBooks] = useState<NoteBook[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
   const [fetchSwitch, setFetchSwitch] = useState(false);
   const account = useSelector((state: rootState) => state.account);
 
@@ -52,7 +51,7 @@ export default function NoteBooks() {
         }
         setFetchSwitch((prevState) => !prevState);
       })
-      .catch((e) => {
+      .catch((_) => {
         console.log("Failed to add notebook");
       });
   };

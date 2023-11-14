@@ -22,7 +22,7 @@ export default function Table({
   );
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page);
-  const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
+  const [canvasElts, _] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
 

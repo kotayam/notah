@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { TableFunctionBarProps } from "./Props.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";

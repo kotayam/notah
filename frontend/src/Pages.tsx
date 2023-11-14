@@ -12,7 +12,6 @@ type Page = {
 
 export default function Pages() {
   const noteBook = useSelector((state: rootState) => state.noteBook);
-  const page = useSelector((state: rootState) => state.page);
   const [pages, setPages] = useState<Page[]>([]);
   const [fetchSwitch, setFetchSwitch] = useState(false);
 
@@ -52,7 +51,7 @@ export default function Pages() {
         }
         setFetchSwitch((prevState) => !prevState);
       })
-      .catch((e) => {
+      .catch((_) => {
         console.log("Failed to add page");
       });
   };

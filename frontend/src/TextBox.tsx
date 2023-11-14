@@ -20,7 +20,7 @@ export default function TextBox({
   );
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page)
-  const [canvasElts, setCanvasElts] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
+  const [canvasElts, _] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
   const [border, setBorder] = useState("border-0");
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);

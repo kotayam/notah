@@ -1,6 +1,4 @@
 import "./App.css";
-import { CanvasElement } from "./Classes.ts";
-import { useState } from "react";
 import ModeSelector from "./ModeSelector.tsx";
 import {
   TextFunctionBar,
