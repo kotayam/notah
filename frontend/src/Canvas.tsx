@@ -16,7 +16,7 @@ type CanvasElementDTO = {
     type: string;
     x: number;
     y: number;
-    innerHtml: string;
+    innerHTML: string;
     font: string;
     fontSize: number;
     fontColor: string;
@@ -60,13 +60,13 @@ export default function Canvas() {
             data.forEach(elt => {
                 let newElt: CanvasElement;
                 if (elt.type === "text") {
-                    newElt = new TextBoxElement(elt.id, elt.x, elt.y, "", elt.font, elt.fontSize, elt.fontColor, textStyle.fontWeight, textStyle.fontStyle);
+                    newElt = new TextBoxElement(elt.id, elt.x, elt.y, elt.innerHTML, elt.font, elt.fontSize, elt.fontColor, textStyle.fontWeight, textStyle.fontStyle);
                 }
                 else if (elt.type === "shape") {
-                    newElt = new ShapeElement(elt.id, elt.x, elt.y, elt.shape, elt.width, elt.height);
+                    newElt = new ShapeElement(elt.id, elt.x, elt.y, elt.innerHTML, elt.shape, elt.width, elt.height);
                 }
                 else if (elt.type === "table") {
-                    newElt = new TableElement(elt.id, elt.x, elt.y, elt.row, elt.column);
+                    newElt = new TableElement(elt.id, elt.x, elt.y, elt.innerHTML, elt.row, elt.column);
                 }
                 else {
                     return;
@@ -88,10 +88,10 @@ export default function Canvas() {
         } 
         else if (mode === "shape") {
             setDrawing(true);
-            newElt = new ShapeElement(id, x, y, shape, 0, 0);
+            newElt = new ShapeElement(id, x, y,"", shape, 0, 0);
         }
         else if (mode === "table") {
-            newElt = new TableElement(id, x, y, table.row, table.col);
+            newElt = new TableElement(id, x, y, "", table.row, table.col);
         }
         else {
             return;

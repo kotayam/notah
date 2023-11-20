@@ -4,6 +4,7 @@ import { useEffect, useState, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
+import parse from "html-react-parser";
 
 export default function TextBox({
   elt,
@@ -26,6 +27,7 @@ export default function TextBox({
   const [drag, setDrag] = useState(false);
 
   useEffect(() => {
+    console.log(elt);
     if (selectedElt.id === elt.id) {
       setBorder("border-2");
       setVisibility("visible");
@@ -126,7 +128,7 @@ export default function TextBox({
             fontSize: elt.fontSize,
             color: elt.fontColor,
           }}
-        ></div>
+        >{elt.innerHtml}</div>
       </div>
     </>
   );
