@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace backend.DTO
 {
-    public class CanvasElementAddReqDto
+    public class CanvasElementReqDto
     {
+        public Guid Id { get; set; } 
         public string Type { get; set; } = "";
         public double X { get; set; }
         public double Y { get; set; }

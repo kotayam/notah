@@ -23,12 +23,12 @@ export default function Shape({
     actionCreators,
     dispatch
   );
-  let canvasElements = useSelector(
-    (state: rootState) => state.canvasElements
-  );
+  let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page);
-  const [canvasElts, _] = useState(canvasElements.get(page.id) || new Array<CanvasElement>());
+  const [canvasElts, _] = useState(
+    canvasElements.get(page.id) || new Array<CanvasElement>()
+  );
   const [border, setBorder] = useState("border-0");
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
@@ -83,6 +83,7 @@ export default function Shape({
       case "rect":
         return (
           <div
+            id={elt.id}
             contentEditable={isEditable}
             className="relative bg-gray-100 border-2 border-black text-center"
             style={{
@@ -101,6 +102,7 @@ export default function Shape({
       case "circle":
         return (
           <div
+            id={elt.id}
             contentEditable={isEditable}
             className="relative bg-gray-100 border-black border-2 text-center"
             style={{
@@ -120,6 +122,7 @@ export default function Shape({
       case "line":
         return (
           <svg
+            id={elt.id}
             className="relative stroke-black"
             width={dim.width}
             height={dim.height}
@@ -198,7 +201,10 @@ export default function Shape({
             <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
           </svg>
         </button>
-        <button name="delete-elt" onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}>
+        <button
+          name="delete-elt"
+          onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

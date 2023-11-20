@@ -45,6 +45,7 @@ export default function Toolbar() {
     console.log(canvasElts);
     canvasElts.forEach((elt) => {
       const body = {
+        id: elt.id,
         type: "",
         x: elt.x,
         y: elt.y,
@@ -58,20 +59,25 @@ export default function Toolbar() {
         row: 0,
         column: 0
       }
+      const div = document.getElementById(elt.id);
+      const innerHtml = div?.innerHTML || "";
       if (elt instanceof TextBoxElement) {
         body.type = "text";
+        body.innerHTML = innerHtml;
         body.font = elt.font;
         body.fontSize = elt.fontSize;
         body.fontColor = elt.fontColor;
       }
       else if (elt instanceof ShapeElement) {
         body.type = "shape";
+        body.innerHTML = innerHtml;
         body.shape = elt.shape;
         body.width = elt.width;
         body.height = elt.height
       }
       else if (elt instanceof TableElement) {
         body.type = "table";
+        body.innerHTML = innerHtml;
         body.row = elt.row;
         body.column = elt.col
       }

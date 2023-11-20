@@ -9,6 +9,7 @@ using backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
 
 namespace backend.Controllers
 {
@@ -32,7 +33,7 @@ namespace backend.Controllers
                 var accountDto = new AccountDto()
                 {
                     Id = account.Id,
-                    FullName = account.FullName,
+                    Username = account.Username,
                     Email = account.Email,
                     Password = account.Password
                 };

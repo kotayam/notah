@@ -102,8 +102,12 @@ namespace backend.Controllers
 
         [HttpPost]
         [Route("{pageId:guid}")]
-        public async Task<IActionResult> AddCanvasElement([FromRoute] Guid pageId, [FromBody] CanvasElementAddReqDto ce)
+        public async Task<IActionResult> AddCanvasElement([FromRoute] Guid pageId, [FromBody] CanvasElementReqDto ce)
         {
+            var exist = await canvasElementRepository.GetCanvasElementByIdAsync(ce.Id);
+            if (exist != null) {
+                return await UpdateCanvasElement(ce.Id, ce);
+            }
             var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.Type, ce.X, ce.Y, ce.InnerHTML, ce.Font, ce.FontSize, ce.FontColor, ce.Shape, ce.Width, ce.Height, ce.Row, ce.Column);
             if (canvasElt != null)
             {
@@ -131,7 +135,7 @@ namespace backend.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateCanvasElement([FromRoute] Guid id, [FromBody] CanvasElementUpdateReqDto ce)
+        public async Task<IActionResult> UpdateCanvasElement([FromRoute] Guid id, [FromBody] CanvasElementReqDto ce)
         {
             var canvasElt = await canvasElementRepository.UpdateCanvasElementAsync(id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height);
             if (canvasElt != null)

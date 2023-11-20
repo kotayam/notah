@@ -36,7 +36,7 @@ namespace backend.Controllers
                               select new AccountDetailsDto()
                               {
                                   Id = a.Id,
-                                  FullName = a.FullName,
+                                  Username = a.Username,
                                   Email = a.Email,
                                   Password = a.Password,
                                   NoteBooks = (from nb in a.NoteBooks
@@ -59,7 +59,7 @@ namespace backend.Controllers
                 var accountDetailsDto = new AccountDetailsDto()
                 {
                     Id = account.Id,
-                    FullName = account.FullName,
+                    Username = account.Username,
                     Email = account.Email,
                     Password = account.Password,
                     NoteBooks = (from nb in account.NoteBooks
@@ -77,7 +77,11 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAccount([FromBody] AccountReqDto acc)
         {
-            var account = await accountRepository.AddAccountAsync(acc.FullName, acc.Email, acc.Password);
+            var exist = await accountRepository.GetAccountByUsernameAsync(acc.Username);
+            if (exist != null) {
+                return BadRequest();
+            }
+            var account = await accountRepository.AddAccountAsync(acc.Username, acc.Email, acc.Password);
             if (account != null)
             {
                 var noteBook = await noteBookRepository.AddNoteBookAsync(account.Id, "Quick Notes");
@@ -87,7 +91,7 @@ namespace backend.Controllers
                         var accountDto = new AccountDto()
                         {
                             Id = account.Id,
-                            FullName = acc.FullName,
+                            Username = acc.Username,
                             Email = acc.Email,
                             Password = acc.Password
                         };
@@ -102,14 +106,14 @@ namespace backend.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, [FromBody] AccountReqDto acc)
         {
-            var account = await accountRepository.UpdateAccountAsync(id, acc.FullName, acc.Email, acc.Password);
+            var account = await accountRepository.UpdateAccountAsync(id, acc.Username, acc.Email, acc.Password);
 
             if (account != null)
             {
                 var accountDto = new AccountDto()
                 {
                     Id = account.Id,
-                    FullName = acc.FullName,
+                    Username = acc.Username,
                     Email = acc.Email,
                     Password = acc.Password
                 };
@@ -129,7 +133,7 @@ namespace backend.Controllers
                 var accountDto = new AccountDto()
                 {
                     Id = account.Id,
-                    FullName = account.FullName,
+                    Username = account.Username,
                     Email = account.Email,
                     Password = account.Password
                 };

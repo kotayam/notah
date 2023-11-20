@@ -11,8 +11,9 @@ namespace backend.Interfaces
     {
         Task<ICollection<Account>> GetAllAccountsAsync();
         Task<Account?> GetAccountByIdAsync(Guid id);
-        Task<Account?> AddAccountAsync(String fullName, String email, String password);
-        Task<Account?> UpdateAccountAsync(Guid id, String fullName, String email, String password);
+        Task<Account?> GetAccountByUsernameAsync(String username);
+        Task<Account?> AddAccountAsync(String username, String email, String password);
+        Task<Account?> UpdateAccountAsync(Guid id, String username, String email, String password);
         Task<Account?> DeleteAccountAsync(Guid id);
     }
 }

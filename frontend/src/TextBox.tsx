@@ -117,6 +117,7 @@ export default function TextBox({
           </button>
         </div>
         <div
+          id={elt.id}
           contentEditable="true"
           key={elt.id}
           className="min-w-[100px]"

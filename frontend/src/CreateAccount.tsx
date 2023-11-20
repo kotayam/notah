@@ -7,26 +7,31 @@ export default function CreateAccount() {
     const [errMsg, setErrMsg] = useState("");
 
     const createAccount = () => {
-        const fullName = document.getElementById("full-name") as HTMLInputElement | null;
+        const username = document.getElementById("username") as HTMLInputElement | null;
         const email = document.getElementById("email") as HTMLInputElement | null;
         const password = document.getElementById("password") as HTMLInputElement | null;
-        if (!(fullName && email && password)) {
+        if (!(username && email && password)) {
             setErrMsg("Failed to create account");
             setDisplay(true);
             return;
         }
-        if (fullName.value && email.value && password.value) {
+        if (username.value && email.value && password.value) {
             fetch(notahApi, {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                   },
-                body: JSON.stringify({fullName: fullName.value, email: email.value, password: password.value})
+                body: JSON.stringify({username: username.value, email: email.value, password: password.value})
             })
             .then(res => res.json())
             .then(data => {
                 console.log(data);
+                if (data.status === 400) {
+                    setErrMsg("Username already exists");
+                    setDisplay(true);
+                    return;
+                }
                 window.location.href = "/login";
             })
             .catch(e => {
@@ -46,8 +51,8 @@ export default function CreateAccount() {
         <div className="bg-amber-50 w-1/2 m-auto">
             <div className="flex items-center">
                 <p className="text-red-600" style={{display: display? "block" : "none"}}>{errMsg}</p>
-                <label htmlFor="full-name">Full Name</label>
-                <input className="border-2" id="full-name" type="text" placeholder="Full Name"/>
+                <label htmlFor="username">Username</label>
+                <input className="border-2" id="username" type="text" placeholder="Username"/>
                 <label htmlFor="email">Email</label>
                 <input className="border-2" id="email" type="text" placeholder="Email" />
                 <label htmlFor="password">Password</label>

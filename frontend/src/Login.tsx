@@ -6,7 +6,7 @@ const notahApi = "http://localhost:5245/api/v1/Login";
 
 type Account = {
     id: string;
-    fullName: string;
+    username: string;
     email: string;
     password: string;
 }
@@ -34,7 +34,7 @@ export default function Login() {
             .then(data => data as Account)
             .then(data => {
                 console.log(data);
-                setAccount({id: data.id, fullName: data.fullName})
+                setAccount({id: data.id, fullName: data.username})
                 window.location.href = `/${data.id}`;
             })
             .catch(e => {

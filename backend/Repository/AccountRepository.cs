@@ -29,12 +29,16 @@ namespace backend.Repository
             return await dbContext.Accounts.Include(a => a.NoteBooks).Where(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<Account?> AddAccountAsync(String fullName, String email, String password)
+        public async Task<Account?> GetAccountByUsernameAsync(String username) {
+            return await dbContext.Accounts.Where(a => a.Username == username).FirstOrDefaultAsync();
+        }
+
+        public async Task<Account?> AddAccountAsync(String username, String email, String password)
         {
             var account = new Account()
             {
                 Id = Guid.NewGuid(),
-                FullName = fullName,
+                Username = username,
                 Email = email,
                 Password = password,
                 NoteBooks = new List<NoteBook>()
@@ -44,12 +48,12 @@ namespace backend.Repository
             return account;
         }
 
-        public async Task<Account?> UpdateAccountAsync(Guid id, String fullName, String email, String password)
+        public async Task<Account?> UpdateAccountAsync(Guid id, String username, String email, String password)
         {
             var account = await dbContext.Accounts.FindAsync(id);
             if (account != null)
             {
-                account.FullName = fullName;
+                account.Username = username;
                 account.Email = email;
                 account.Password = password;
                 await dbContext.SaveChangesAsync();

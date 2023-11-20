@@ -117,7 +117,7 @@ export default function Table({
           </svg>
         </button>
       </div>
-      <table className="border-gray-800 table-collapse table-auto text-left">
+      <table id={elt.id} className="border-gray-800 table-collapse table-auto text-left">
         <tbody>
           {returnTableRow()}
         </tbody>
