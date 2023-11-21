@@ -121,8 +121,6 @@ export default function Toolbar() {
     }
   };
 
-  const undo = () => {};
-
   const showLogButton = () => {
     if (account.id == "0") {
       return (
@@ -154,9 +152,6 @@ export default function Toolbar() {
       <div className="w-full border-b-2">
         <div className="flex justify-between items-enter bg-amber-400">
           <div>
-            <button className="p-2 bg-amber-300" onClick={() => undo()}>
-              Undo
-            </button>
             <button className="p-2 bg-amber-300" onClick={() => save()}>
               Save
             </button>
