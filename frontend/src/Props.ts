@@ -1,9 +1,18 @@
 import { TextBoxElement, TableElement, ShapeElement } from "./Classes";
 
+export type HomeProps = {
+    access: string;
+}
 export type ToolbarProps = {
+    access: string;
  }
 
 export type CanvasProps = {
+    access: string;
+}
+
+export type NotesProps = {
+    access: string;
 }
 
 export type TextBoxProps = {

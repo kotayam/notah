@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import Page from "./Page";
-import { useSelector } from "react-redux";
-import { rootState } from "./store";
+import { useSelector, useDispatch } from "react-redux";
+import { rootState, actionCreators } from "./store";
+import { bindActionCreators } from "@reduxjs/toolkit";
 
 const notahApi = "http://localhost:5245/api/v1/Pages/";
 
@@ -12,13 +13,13 @@ type Page = {
 
 export default function Pages() {
   const noteBook = useSelector((state: rootState) => state.noteBook);
+  const page = useSelector((state: rootState) => state.page);
+  const dispatch = useDispatch();
+  const { setPage } = bindActionCreators(actionCreators, dispatch);
   const [pages, setPages] = useState<Page[]>([]);
   const [fetchSwitch, setFetchSwitch] = useState(false);
 
   useEffect(() => {
-    // if (noteBook.id === "quick-note") {
-    //     setPages([{id: "page-1", title: "Page 1"}, {id: "page-2", title: "Page 2"}]);
-    // }
     fetch(notahApi + "byNoteBookId/" + noteBook.id)
       .then((res) => res.json())
       .then((data) => data as Page[])
@@ -27,6 +28,9 @@ export default function Pages() {
         const pgs = new Array<Page>();
         data.forEach((p) => pgs.push({ id: p.id, title: p.title }));
         setPages(pgs);
+        if (pgs.length > 0 && page.id === "-1") {
+          setPage({id: pgs[0].id, title: pgs[0].title});
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -43,12 +47,16 @@ export default function Pages() {
       body: JSON.stringify({ title: `Page ${pages.length}` }),
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then(data => {
         if (data.status === 404) {
           alert("Select a notebook to add a new page!");
           return;
         }
+        else return data as Page;
+      })
+      .then((data) => {
+        console.log(data);
+        if (data) setPage({id: data.id, title: data.title});
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((_) => {

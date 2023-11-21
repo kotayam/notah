@@ -9,8 +9,8 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route path="/:id" element={<Home/>}/>
+      <Route path="/" element={<Home access={"guest"}/>}/>
+      <Route path="/:id" element={<Home access={"user"}/>}/>
       <Route path="/login" element={<Login/>}/>
       <Route path="/create-account" element={<CreateAccount/>}/>
       <Route path="*" element={<NotFound/>}/>

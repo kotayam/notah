@@ -5,6 +5,7 @@ import {
   ShapeFunctionBar,
   TableFunctionBar,
 } from "./FunctionBar.tsx";
+import { ToolbarProps } from "./Props.ts";
 import { jsPDF } from "jspdf";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
@@ -13,7 +14,7 @@ import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
 
 const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 
-export default function Toolbar() {
+export default function Toolbar({ access } : ToolbarProps) {
   const mode = useSelector((state: rootState) => state.mode);
   const account = useSelector((state: rootState) => state.account);
   const page = useSelector((state: rootState) => state.page);
@@ -23,7 +24,7 @@ export default function Toolbar() {
   canvasElements = new Map(canvasElements);
 
   const dispatch = useDispatch();
-  const { setAccount, setNoteBook } = bindActionCreators(
+  const { setAccount, setNoteBook, setPage } = bindActionCreators(
     actionCreators,
     dispatch
   );
@@ -136,8 +137,9 @@ export default function Toolbar() {
           <button
             className="absolute p-2 right-0 top-0 bg-amber-300"
             onClick={() => {
-              setAccount({ id: "0", fullName: "Guest" });
-              setNoteBook({ id: "0", title: "Temp" });
+              setAccount({ id: "-1", username: "default", access: "guest" });
+              setNoteBook({ id: "-1", title: "default" });
+              setPage({ id: "-1", title: "default"});
             }}
           >
             Logout

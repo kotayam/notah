@@ -18,10 +18,12 @@ namespace backend.Controllers
     public class NoteBooksController : Controller
     {
         public INoteBookRepository noteBookRepository;
+        public IPageRepository pageRepository;
 
-        public NoteBooksController(INoteBookRepository noteBookRepository)
+        public NoteBooksController(INoteBookRepository noteBookRepository, IPageRepository pageRepository)
         {
             this.noteBookRepository = noteBookRepository;
+            this.pageRepository = pageRepository;
         }
 
         [HttpGet]
@@ -97,12 +99,15 @@ namespace backend.Controllers
             var noteBook = await noteBookRepository.AddNoteBookAsync(ownerId, nb.Title);
             if (noteBook != null)
             {
-                var noteBookDto = new NoteBookDto()
-                {
+                var page = await pageRepository.AddPageAsync(noteBook.Id, "Untitled");
+                if (page != null) {
+                    var noteBookDto = new NoteBookDto()
+                    {
                     Id = noteBook.Id,
                     Title = noteBook.Title
-                };
-                return Ok(noteBookDto);
+                    };
+                    return Ok(noteBookDto);
+                }
             }
             return NotFound();
         }

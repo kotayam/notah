@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import NoteBook from "./NoteBook";
-import { useSelector } from "react-redux";
-import { rootState } from "./store";
+import { useSelector, useDispatch } from "react-redux";
+import { rootState, actionCreators } from "./store";
+import { bindActionCreators } from "@reduxjs/toolkit";
 
 const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
 
@@ -14,6 +15,9 @@ export default function NoteBooks() {
   const [noteBooks, setNoteBooks] = useState<NoteBook[]>([]);
   const [fetchSwitch, setFetchSwitch] = useState(false);
   const account = useSelector((state: rootState) => state.account);
+  const noteBook = useSelector((state: rootState) => state.noteBook);
+  const dispatch = useDispatch();
+  const { setNoteBook } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     // if (!itemAdded && noteBooks.length) {
@@ -27,6 +31,9 @@ export default function NoteBooks() {
         const nbs = new Array<NoteBook>();
         data.forEach((nb) => nbs.push({ id: nb.id, title: nb.title }));
         setNoteBooks(nbs);
+        if (nbs.length > 0 && noteBook.id === "-1") {
+          setNoteBook({id: nbs[0].id, title: nbs[0].title});
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -43,12 +50,18 @@ export default function NoteBooks() {
       body: JSON.stringify({ title: `Notebook ${noteBooks.length}` }),
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then(data => {
         if (data.status === 404) {
           alert("Login to add notebook!");
           return;
         }
+        else {
+          return data as NoteBook;
+        }
+        })
+      .then((data) => {
+        console.log(data);
+        if (data) setNoteBook({id: data.id, title: data.title});
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((_) => {

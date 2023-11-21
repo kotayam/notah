@@ -9,7 +9,7 @@ const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
 export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
   const noteBook = useSelector((state: rootState) => state.noteBook);
   const dispatch = useDispatch();
-  const { setNoteBook } = bindActionCreators(actionCreators, dispatch);
+  const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
   const [rename, setRename] = useState(false);
   const [ttl, setTtl] = useState(title);
 
@@ -22,6 +22,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
 
   const handleClick = (e: MouseEvent) => {
     setNoteBook({ id: id, title: title });
+    setPage({id: "-1", title: "default"});
     switch (e.button) {
       case 0:
         setRename(false);

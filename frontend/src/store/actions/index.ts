@@ -86,5 +86,5 @@ export type PageAction = {
 
 export type AccountAction = {
   type: ActionType.ACOUNT;
-  payload: { id: string; fullName: string };
+  payload: { id: string; username: string; access: string };
 };

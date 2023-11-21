@@ -141,7 +141,6 @@ export default function Shape({
   };
 
   const handleMouseMove = (e: MouseEvent, parent: HTMLButtonElement) => {
-    console.log(elt);
     e.preventDefault();
     if (!drag) return;
     const canvas = document.getElementById("canvas");

@@ -1,7 +1,7 @@
 import { NoteBookAction } from "../actions";
 import { ActionType } from "../action-types";
 
-const initialState = {id: "quick-note", title: "Quick Note"}
+const initialState = {id: "-1", title: "Quick Note"}
 
 const noteBookReducer = (state = initialState , action: NoteBookAction) => {
     switch(action.type) {
