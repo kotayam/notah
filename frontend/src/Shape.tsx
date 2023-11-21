@@ -4,6 +4,7 @@ import { useState, useEffect, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
+import DOMPurify from "isomorphic-dompurify";
 
 type Line = {
   x1: string | number;
@@ -97,6 +98,7 @@ export default function Shape({
             onMouseLeave={(_) => {
               setIsEditable(false);
             }}
+            dangerouslySetInnerHTML={{ __html : DOMPurify.sanitize(elt.innerHtml)}}
           ></div>
         );
       case "circle":
@@ -117,6 +119,7 @@ export default function Shape({
             onMouseLeave={(_) => {
               setIsEditable(false);
             }}
+            dangerouslySetInnerHTML={{ __html : DOMPurify.sanitize(elt.innerHtml)}}
           ></div>
         );
       case "line":

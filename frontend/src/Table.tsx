@@ -17,12 +17,12 @@ export default function Table({
     actionCreators,
     dispatch
   );
-  let canvasElements = useSelector(
-    (state: rootState) => state.canvasElements
-  );
+  let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page);
-  const [canvasElts, _] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
+  const [canvasElts, _] = useState(
+    canvasElements.get(page.id) || new Array<CanvasElement>()
+  );
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
 
@@ -60,11 +60,19 @@ export default function Table({
   const returnTableRow = () => {
     let tbRow: JSX.Element[] = [];
     for (let r = 0; r < elt.row; r++) {
-      tbRow.push(<TableRow key={r} rowId={r} elt={elt} selectTableText={selectTableText}
-      updateText={updateText}/>)
+      tbRow.push(
+        <TableRow
+          key={r}
+          rowId={r}
+          elt={elt}
+          selectTableText={selectTableText}
+          updateText={updateText}
+        />
+      );
     }
     return tbRow;
-  }
+  };
+
   return (
     <div
       className="absolute"
@@ -100,7 +108,10 @@ export default function Table({
             <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
           </svg>
         </button>
-        <button name="delete-elt" onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}>
+        <button
+          name="delete-elt"
+          onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -117,10 +128,11 @@ export default function Table({
           </svg>
         </button>
       </div>
-      <table id={elt.id} className="border-gray-800 table-collapse table-auto text-left">
-        <tbody>
-          {returnTableRow()}
-        </tbody>
+      <table
+        id={elt.id}
+        className="border-gray-800 table-collapse table-auto text-left"
+      >
+        <tbody>{returnTableRow()}</tbody>
       </table>
     </div>
   );
