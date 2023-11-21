@@ -1,16 +1,22 @@
 import { TableRowProps } from "./Props.ts";
+import DOMPurify from "isomorphic-dompurify";
 
 export default function TableRow({ elt, rowId }: TableRowProps) {
     const returnTableCol = () => {
-        const regex = new RegExp('.*<div contenteditable="true">(.*)</div>.*');
-        const ins = elt.innerHtml.match(regex);
-        console.log(ins);
+        const splitter = new RegExp('<td');
+        const splitted = elt.innerHtml.split(splitter);
+        const matcher = new RegExp('<div contenteditable="true">(.*)</div>');
+        splitted.forEach((reg, i) => {
+            const content = reg.match(matcher);
+            if (content) splitted[i] = content[1];
+        })
         let tbCol: JSX.Element[] = [];
         for (let c = 0; c < elt.col; c++) {
-            tbCol.push(<td className="border border-gray-800 min-w-[75px]" key={`${rowId}-${c}`} onMouseDown={e => e.stopPropagation()}>
+            tbCol.push(<td className="border border-gray-800 min-w-[75px]" key={`${rowId}-${c}`} id={`${rowId}-${c}`} onMouseDown={e => e.stopPropagation()}>
             <div 
             contentEditable='true' 
             onMouseMove={e => e.stopPropagation()}
+            dangerouslySetInnerHTML={{__html : DOMPurify.sanitize(splitted[c + elt.col * rowId +1])}}
             >  
             </div>
         </td>);
