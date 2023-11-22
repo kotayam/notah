@@ -6,7 +6,7 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 
 const notahApi = "http://localhost:5245/api/v1/Pages/"
 
-export default function Page({ id, title, deletePage }: PageProps) {
+export default function Page({ id, title, dateCreated, lastEdited, deletePage }: PageProps) {
     const page = useSelector((state: rootState) => state.page);
     const dispatch = useDispatch();
     const { setPage } = bindActionCreators(actionCreators, dispatch);
@@ -21,7 +21,7 @@ export default function Page({ id, title, deletePage }: PageProps) {
     }
 
     const handleClick = (e: MouseEvent) => {
-        setPage({ id: id, title: title });
+        setPage({ id: id, title: title, dateCreated: dateCreated, lastEdited: lastEdited });
         switch (e.button) {
           case 0:
             setRename(false);
@@ -51,6 +51,7 @@ export default function Page({ id, title, deletePage }: PageProps) {
               console.log(data);
               setRename(false);
               setTtl(input.value);
+              setPage({id: data.id, title: data.title, dateCreated: data.dateCreated, lastEdited: data.lastEdited});
             })
             .catch((e) => {
               console.error(e);

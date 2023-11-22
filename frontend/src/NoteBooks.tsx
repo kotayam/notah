@@ -9,6 +9,8 @@ const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
 type NoteBook = {
   id: string;
   title: string;
+  dateCreated: string;
+  lastEdited: string;
 };
 
 export default function NoteBooks() {
@@ -17,7 +19,7 @@ export default function NoteBooks() {
   const account = useSelector((state: rootState) => state.account);
   const noteBook = useSelector((state: rootState) => state.noteBook);
   const dispatch = useDispatch();
-  const { setNoteBook } = bindActionCreators(actionCreators, dispatch);
+  const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
     // if (!itemAdded && noteBooks.length) {
@@ -29,10 +31,10 @@ export default function NoteBooks() {
       .then((data) => {
         console.log(data);
         const nbs = new Array<NoteBook>();
-        data.forEach((nb) => nbs.push({ id: nb.id, title: nb.title }));
+        data.forEach((nb) => nbs.push({ id: nb.id, title: nb.title, dateCreated: nb.dateCreated, lastEdited: nb.lastEdited }));
         setNoteBooks(nbs);
         if (nbs.length > 0 && noteBook.id === "-1") {
-          setNoteBook({id: nbs[0].id, title: nbs[0].title});
+          setNoteBook({id: nbs[0].id, title: nbs[0].title, dateCreated: nbs[0].dateCreated, lastEdited: nbs[0].lastEdited});
         }
       })
       .catch((e) => {
@@ -61,7 +63,8 @@ export default function NoteBooks() {
         })
       .then((data) => {
         console.log(data);
-        if (data) setNoteBook({id: data.id, title: data.title});
+        if (data) setNoteBook({id: data.id, title: data.title, dateCreated: data.dateCreated, lastEdited: data.lastEdited});
+        setPage({id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((_) => {
@@ -99,6 +102,8 @@ export default function NoteBooks() {
                 key={nb.id}
                 id={nb.id}
                 title={nb.title}
+                dateCreated={nb.dateCreated}
+                lastEdited={nb.lastEdited}
                 deleteNotebook={deleteNotebook}
               />
             ))}

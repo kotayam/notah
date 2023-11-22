@@ -137,9 +137,9 @@ export default function Toolbar({ access } : ToolbarProps) {
           <button
             className="absolute p-2 right-0 top-0 bg-amber-300"
             onClick={() => {
-              setAccount({ id: "-1", username: "default", access: "guest" });
-              setNoteBook({ id: "-1", title: "default" });
-              setPage({ id: "-1", title: "default"});
+              setAccount({ id: "-1", username: "default", access: "guest", dateCreated: "default", lastEdited: "default"});
+              setNoteBook({ id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
+              setPage({ id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
             }}
           >
             Logout

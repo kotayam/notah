@@ -22,7 +22,7 @@ namespace backend.Repository
 
         public async Task<ICollection<NoteBook>> GetAllNoteBooksAsync()
         {
-            return await dbContext.NoteBooks.Include(nb => nb.Pages).ToListAsync();
+            return await dbContext.NoteBooks.Include(nb => nb.Pages).OrderBy(nb => nb.DateCreated).ToListAsync();
         }
 
         public async Task<NoteBook?> GetNoteBookByIdAsync(Guid id)
@@ -31,7 +31,7 @@ namespace backend.Repository
         }
         public async Task<ICollection<NoteBook>> GetNoteBooksByOwnerIdAsync(Guid ownerId)
         {
-            return await dbContext.NoteBooks.Include(nb => nb.Pages).Where(nb => nb.OwnerId == ownerId).ToListAsync();
+            return await dbContext.NoteBooks.Include(nb => nb.Pages).Where(nb => nb.OwnerId == ownerId).OrderBy(nb => nb.DateCreated).ToListAsync();
         }
         public async Task<NoteBook?> AddNoteBookAsync(Guid ownerId, String title)
         {
@@ -42,6 +42,8 @@ namespace backend.Repository
                 {
                     Id = Guid.NewGuid(),
                     Title = title,
+                    DateCreated = DateTime.Now,
+                    LastEdited = DateTime.Now,
                     OwnerId = owner.Id,
                     Owner = owner
                 };
@@ -57,6 +59,7 @@ namespace backend.Repository
             var noteBook = await dbContext.NoteBooks.FindAsync(id);
             if (noteBook != null) {
                 noteBook.Title = title;
+                noteBook.LastEdited = DateTime.Now;
                 await dbContext.SaveChangesAsync();
             }
             return noteBook;

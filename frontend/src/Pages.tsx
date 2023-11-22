@@ -9,6 +9,8 @@ const notahApi = "http://localhost:5245/api/v1/Pages/";
 type Page = {
   id: string;
   title: string;
+  dateCreated: string;
+  lastEdited: string;
 };
 
 export default function Pages() {
@@ -26,10 +28,10 @@ export default function Pages() {
       .then((data) => {
         console.log(data);
         const pgs = new Array<Page>();
-        data.forEach((p) => pgs.push({ id: p.id, title: p.title }));
+        data.forEach((p) => pgs.push({ id: p.id, title: p.title, dateCreated: p.dateCreated, lastEdited: p.lastEdited }));
         setPages(pgs);
         if (pgs.length > 0 && page.id === "-1") {
-          setPage({id: pgs[0].id, title: pgs[0].title});
+          setPage({id: pgs[0].id, title: pgs[0].title, dateCreated: pgs[0].dateCreated, lastEdited: pgs[0].lastEdited});
         }
       })
       .catch((e) => {
@@ -56,7 +58,7 @@ export default function Pages() {
       })
       .then((data) => {
         console.log(data);
-        if (data) setPage({id: data.id, title: data.title});
+        if (data) setPage({id: data.id, title: data.title, dateCreated: data.dateCreated, lastEdited: data.lastEdited});
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((_) => {
@@ -94,6 +96,8 @@ export default function Pages() {
                 key={p.id}
                 id={p.id}
                 title={p.title}
+                dateCreated={p.dateCreated}
+                lastEdited={p.lastEdited}
                 deletePage={deletePage}
               />
             ))}

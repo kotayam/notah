@@ -20,7 +20,7 @@ namespace backend.Repository
 
         public async Task<ICollection<Page>> GetAllPagesAsync()
         {
-            return await dbContext.Pages.Include(p => p.NoteBook).ToListAsync();
+            return await dbContext.Pages.Include(p => p.NoteBook).OrderBy(p => p.DateCreated).ToListAsync();
         }
 
         public async Task<Page?> GetPageByIdAsync(Guid id)
@@ -29,7 +29,7 @@ namespace backend.Repository
         }
         public async Task<ICollection<Page>> GetPagesByNoteBookIdAsync(Guid noteBookId)
         {
-            return await dbContext.Pages.Include(p => p.NoteBook).Where(p => p.NoteBookId == noteBookId).ToListAsync();
+            return await dbContext.Pages.Include(p => p.NoteBook).Where(p => p.NoteBookId == noteBookId).OrderBy(p => p.DateCreated).ToListAsync();
         }
         public async Task<Page?> AddPageAsync(Guid noteBookId, String title)
         {
@@ -40,6 +40,8 @@ namespace backend.Repository
                 {
                     Id = Guid.NewGuid(),
                     Title = title,
+                    DateCreated = DateTime.Now,
+                    LastEdited = DateTime.Now,
                     NoteBookId = noteBook.Id,
                     NoteBook = noteBook
                 };
@@ -57,6 +59,7 @@ namespace backend.Repository
             {
                 if (title != "") {
                     page.Title = title;
+                    page.LastEdited = DateTime.Now;
                 }
                 await dbContext.SaveChangesAsync();
             }

@@ -35,6 +35,8 @@ namespace backend.Controllers
                                {
                                    Id = nb.Id,
                                    Title = nb.Title,
+                                   DateCreated = nb.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                                   LastEdited = nb.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                    Pages = (from n in nb.Pages
                                             select new PageDto()
                                             {
@@ -57,11 +59,13 @@ namespace backend.Controllers
                 {
                     Id = noteBook.Id,
                     Title = noteBook.Title,
+                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     Pages = (from n in noteBook.Pages
                              select new PageDto()
                              {
                                  Id = n.Id,
-                                 Title = n.Title
+                                 Title = n.Title,
                              }).ToList(),
                     OwnerId = noteBook.OwnerId
                 };
@@ -81,6 +85,8 @@ namespace backend.Controllers
                                {
                                    Id = nb.Id,
                                    Title = nb.Title,
+                                   DateCreated = nb.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                                   LastEdited = nb.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                    Pages = (from n in nb.Pages
                                             select new PageDto()
                                             {
@@ -104,7 +110,9 @@ namespace backend.Controllers
                     var noteBookDto = new NoteBookDto()
                     {
                     Id = noteBook.Id,
-                    Title = noteBook.Title
+                    Title = noteBook.Title,
+                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     };
                     return Ok(noteBookDto);
                 }
@@ -122,7 +130,9 @@ namespace backend.Controllers
                 var noteBookDto = new NoteBookDto()
                 {
                     Id = noteBook.Id,
-                    Title = noteBook.Title
+                    Title = noteBook.Title,
+                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(noteBookDto);
             }
@@ -139,7 +149,9 @@ namespace backend.Controllers
                 var noteBookDto = new NoteBookDto()
                 {
                     Id = noteBook.Id,
-                    Title = noteBook.Title
+                    Title = noteBook.Title,
+                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(noteBookDto);
             }

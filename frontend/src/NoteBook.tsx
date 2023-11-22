@@ -6,7 +6,7 @@ import { MouseEvent, KeyboardEvent, useState } from "react";
 
 const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
 
-export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
+export default function NoteBook({ id, title, dateCreated, lastEdited, deleteNotebook }: NoteBookProps) {
   const noteBook = useSelector((state: rootState) => state.noteBook);
   const dispatch = useDispatch();
   const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
@@ -21,8 +21,8 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
   }
 
   const handleClick = (e: MouseEvent) => {
-    setNoteBook({ id: id, title: title });
-    setPage({id: "-1", title: "default"});
+    setNoteBook({ id: id, title: title, dateCreated: noteBook.dateCreated, lastEdited: noteBook.lastEdited });
+    setPage({id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
     switch (e.button) {
       case 0:
         setRename(false);

@@ -50,6 +50,7 @@ export default function Canvas({ access }: CanvasProps) {
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
   if (access === "user") {
     useEffect(() => {
+      if (page.id === "-1") return;
       fetch(notahApi + "byPageId/" + page.id)
         .then((res) => res.json())
         .then((data) => data as CanvasElementDTO[])
@@ -255,6 +256,10 @@ export default function Canvas({ access }: CanvasProps) {
             handleMouseUp();
           }}
         >
+            <div id="page-title" className="pl-3 pt-2">
+                <h3 className="text-3xl underline underline-offset-8 decoration-gray-500 decoration-2">{page.title}</h3>
+                <p className="pt-2 text-gray-500">Last Edited: {page.lastEdited}</p>
+            </div>
           {returnCanvasElement()}
         </div>
       </div>

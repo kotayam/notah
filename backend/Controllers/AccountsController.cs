@@ -39,6 +39,8 @@ namespace backend.Controllers
                                   Username = a.Username,
                                   Email = a.Email,
                                   Password = a.Password,
+                                  DateCreated = a.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                                  LastEdited = a.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                   NoteBooks = (from nb in a.NoteBooks
                                                select new NoteBookDto()
                                                {
@@ -62,6 +64,8 @@ namespace backend.Controllers
                     Username = account.Username,
                     Email = account.Email,
                     Password = account.Password,
+                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     NoteBooks = (from nb in account.NoteBooks
                                  select new NoteBookDto()
                                  {
@@ -93,7 +97,9 @@ namespace backend.Controllers
                             Id = account.Id,
                             Username = acc.Username,
                             Email = acc.Email,
-                            Password = acc.Password
+                            Password = acc.Password,
+                            DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                            LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                         };
                         return Ok(accountDto);
                     }
@@ -115,7 +121,9 @@ namespace backend.Controllers
                     Id = account.Id,
                     Username = acc.Username,
                     Email = acc.Email,
-                    Password = acc.Password
+                    Password = acc.Password,
+                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(accountDto);
             }
@@ -135,7 +143,9 @@ namespace backend.Controllers
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
-                    Password = account.Password
+                    Password = account.Password,
+                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(accountDto);
             }

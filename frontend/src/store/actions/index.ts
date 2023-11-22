@@ -76,15 +76,15 @@ export type TableAction = {
 
 export type NoteBookAction = {
   type: ActionType.NOTEBOOK;
-  payload: { id: string; title: string };
+  payload: { id: string; title: string; dateCreated: string; lastEdited: string };
 };
 
 export type PageAction = {
   type: ActionType.PAGE;
-  payload: { id: string; title: string };
+  payload: { id: string; title: string; dateCreated: string; lastEdited: string };
 };
 
 export type AccountAction = {
   type: ActionType.ACOUNT;
-  payload: { id: string; username: string; access: string };
+  payload: { id: string; username: string; access: string; dateCreated: string; lastEdited: string };
 };

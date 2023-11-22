@@ -30,6 +30,8 @@ namespace backend.Controllers
                            {
                                Id = p.Id,
                                Title = p.Title,
+                               DateCreated = p.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                               LastEdited = p.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                NoteBookId = p.NoteBookId
                            };
             return Ok(pagesDto);
@@ -46,6 +48,8 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
+                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = page.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     NoteBookId = page.NoteBookId
                 };
                 return Ok(pageDto);
@@ -64,6 +68,8 @@ namespace backend.Controllers
                            {
                                Id = p.Id,
                                Title = p.Title,
+                               DateCreated = p.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                               LastEdited = p.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                NoteBookId = p.NoteBookId
                            };
             return Ok(pagesDto);
@@ -80,6 +86,8 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
+                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = page.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(pageDto);
             }
@@ -96,7 +104,9 @@ namespace backend.Controllers
                 var pageDto = new PageDto()
                 {
                     Id = page.Id,
-                    Title = page.Title
+                    Title = page.Title,
+                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = page.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(pageDto);
             }
@@ -113,7 +123,9 @@ namespace backend.Controllers
                 var pageDto = new PageDto()
                 {
                     Id = page.Id,
-                    Title = page.Title
+                    Title = page.Title,
+                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = page.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(pageDto);
             }

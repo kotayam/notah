@@ -41,6 +41,8 @@ namespace backend.Repository
                 Username = username,
                 Email = email,
                 Password = password,
+                DateCreated = DateTime.Now,
+                LastEdited = DateTime.Now,
                 NoteBooks = new List<NoteBook>()
             };
             await dbContext.Accounts.AddAsync(account);
@@ -56,6 +58,7 @@ namespace backend.Repository
                 account.Username = username;
                 account.Email = email;
                 account.Password = password;
+                account.LastEdited = DateTime.Now;
                 await dbContext.SaveChangesAsync();
             }
             return account;

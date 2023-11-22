@@ -9,6 +9,8 @@ type Account = {
   username: string;
   email: string;
   password: string;
+  dateCreated: string;
+  lastEdited: string;
 };
 
 export default function Login() {
@@ -39,7 +41,7 @@ export default function Login() {
         })
         .then((data) => {
           console.log(data);
-          setAccount({ id: data.id, username: data.username, access: "user" });
+          setAccount({ id: data.id, username: data.username, access: "user", dateCreated: data.dateCreated, lastEdited: data.lastEdited });
           window.location.href = `/${data.username}`;
         })
         .catch((e) => {
