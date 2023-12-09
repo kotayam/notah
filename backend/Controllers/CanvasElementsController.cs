@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using backend.DTO;
 using backend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -45,6 +46,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> GetCanvasElementById([FromRoute] Guid id)
         {
@@ -75,6 +77,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("byPageId/{pageId:guid}")]
         public async Task<IActionResult> GetCanvasElementsByPageId([FromRoute] Guid pageId)
         {
@@ -101,6 +104,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("{pageId:guid}")]
         public async Task<IActionResult> AddCanvasElement([FromRoute] Guid pageId, [FromBody] CanvasElementReqDto ce)
         {
@@ -134,6 +138,7 @@ namespace backend.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateCanvasElement([FromRoute] Guid id, [FromBody] CanvasElementReqDto ce)
         {
@@ -163,6 +168,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> DeleteCanvasElement([FromRoute] Guid id)
         {

@@ -7,6 +7,7 @@ using backend.Data;
 using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -52,6 +53,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> GetAccountById([FromRoute] Guid id)
         {
@@ -78,6 +80,7 @@ namespace backend.Controllers
             return NotFound();
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> AddAccount([FromBody] AccountReqDto acc)
         {
@@ -109,6 +112,7 @@ namespace backend.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, [FromBody] AccountReqDto acc)
         {
@@ -131,6 +135,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> DeleteAccount([FromRoute] Guid id)
         {

@@ -7,6 +7,7 @@ using backend.Data;
 using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -49,6 +50,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> GetNoteBookById([FromRoute] Guid id)
         {
@@ -76,6 +78,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("byOwnerId/{ownerId:guid}")]
         public async Task<IActionResult> GetNoteBooksByOwnerId([FromRoute] Guid ownerId)
         {
@@ -99,6 +102,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("{ownerId:guid}")]
         public async Task<IActionResult> AddNoteBook([FromRoute] Guid ownerId, [FromBody] NoteBookReqDto nb)
         {
@@ -121,6 +125,7 @@ namespace backend.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateNoteBook([FromRoute] Guid id, [FromBody] NoteBookReqDto nb)
         {
@@ -140,6 +145,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> DeleteNoteBook([FromRoute] Guid id)
         {

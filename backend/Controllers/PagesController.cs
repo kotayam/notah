@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using backend.DTO;
 using backend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -38,6 +39,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> GetPageById([FromRoute] Guid id)
         {
@@ -59,6 +61,7 @@ namespace backend.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("byNoteBookId/{noteBookId:guid}")]
         public async Task<IActionResult> GetpagesByNoteBookId([FromRoute] Guid noteBookId)
         {
@@ -76,6 +79,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("{noteBookId:guid}")]
         public async Task<IActionResult> AddPage([FromRoute] Guid noteBookId, [FromBody] PageReqDto p)
         {
@@ -95,6 +99,7 @@ namespace backend.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdatePage([FromRoute] Guid id, [FromBody] PageReqDto p)
         {
@@ -114,6 +119,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{id:guid}")]
         public async Task<IActionResult> DeletePage([FromRoute] Guid id)
         {
