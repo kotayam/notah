@@ -40,6 +40,7 @@ export default function Page({ id, title, dateCreated, lastEdited, deletePage }:
           if (!input) return;
           fetch(notahApi + id, {
             method: "PUT",
+            credentials: 'include',
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",

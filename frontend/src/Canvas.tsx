@@ -51,7 +51,9 @@ export default function Canvas({ access }: CanvasProps) {
   if (access === "user") {
     useEffect(() => {
       if (page.id === "-1") return;
-      fetch(notahApi + "byPageId/" + page.id)
+      fetch(notahApi + "byPageId/" + page.id, {
+        credentials: 'include'
+      })
         .then((res) => res.json())
         .then((data) => data as CanvasElementDTO[])
         .then((data) => {
@@ -149,13 +151,6 @@ export default function Canvas({ access }: CanvasProps) {
     (tgt as ShapeElement).width = x - tgt.x;
     (tgt as ShapeElement).height = y - tgt.y;
     updateCanvasElement(page.id, selectedElt.id, tgt);
-    // setCanvasElts(prevState => {
-    //     const selected = prevState.filter(elt => elt.id === selectedElt.id)[0];
-    //     const nonSelected = prevState.filter(elt => elt.id !== selectedElt.id);
-    //     (selected as ShapeElement).width = x - selected.x;
-    //     (selected as ShapeElement).height = y - selected.y;
-    //     return [...nonSelected, selected];
-    // });
   };
 
   const handleMouseUp = () => {

@@ -41,6 +41,7 @@ export default function NoteBook({ id, title, dateCreated, lastEdited, deleteNot
       if (!input) return;
       fetch(notahApi + id, {
         method: "PUT",
+        credentials: 'include',
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",

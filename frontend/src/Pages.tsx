@@ -22,7 +22,9 @@ export default function Pages() {
   const [fetchSwitch, setFetchSwitch] = useState(false);
 
   useEffect(() => {
-    fetch(notahApi + "byNoteBookId/" + noteBook.id)
+    fetch(notahApi + "byNoteBookId/" + noteBook.id, {
+      credentials: 'include'
+    })
       .then((res) => res.json())
       .then((data) => data as Page[])
       .then((data) => {
@@ -42,6 +44,7 @@ export default function Pages() {
   const addPage = () => {
     fetch(notahApi + noteBook.id, {
       method: "POST",
+      credentials: 'include',
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -69,6 +72,7 @@ export default function Pages() {
   const deletePage = (id: string) => {
     fetch(notahApi + id, {
       method: "DELETE",
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => {

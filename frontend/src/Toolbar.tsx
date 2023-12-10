@@ -84,6 +84,7 @@ export default function Toolbar({ access } : ToolbarProps) {
       }
       fetch(notahApi + page.id, {
         method: "POST",
+        credentials: 'include',
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -154,7 +155,7 @@ export default function Toolbar({ access } : ToolbarProps) {
       <div className="w-full border-b-2">
         <div className="flex justify-between items-enter bg-amber-400">
           <div>
-            <button className="p-2 bg-amber-300" onClick={() => save()}>
+            <button className="p-2 bg-amber-300 hover:bg-amber-400 active:bg-amber-500" onClick={() => save()}>
               Save
             </button>
           </div>

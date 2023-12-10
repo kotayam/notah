@@ -49,6 +49,7 @@ export default function NoteBooks() {
   const addNoteBook = () => {
     fetch(notahApi + account.id, {
       method: "POST",
+      credentials: 'include',
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -79,6 +80,7 @@ export default function NoteBooks() {
   const deleteNotebook = (id: string) => {
     fetch(notahApi + id, {
       method: "DELETE",
+      credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => {
