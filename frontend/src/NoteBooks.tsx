@@ -25,7 +25,11 @@ export default function NoteBooks() {
     // if (!itemAdded && noteBooks.length) {
     //     return;
     // }
-    fetch(notahApi + "byOwnerId/" + account.id)
+    fetch(notahApi + "byOwnerId/" + account.id, {
+      mode: 'cors',
+      credentials: 'include'
+      
+    })
       .then((res) => res.json())
       .then((data) => data as NoteBook[])
       .then((data) => {

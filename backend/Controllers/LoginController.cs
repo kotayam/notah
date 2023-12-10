@@ -19,6 +19,8 @@ using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.DataProtection;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.OpenApi.Any;
+using Microsoft.Extensions.Options;
 
 namespace backend.Controllers
 {
@@ -27,9 +29,7 @@ namespace backend.Controllers
     public class LoginController : Controller
     {
         private readonly NotahAPIDbContext dbContext;
-        private IConfigurationRoot config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false)
-            .Build();
+        private IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 
         public LoginController(NotahAPIDbContext dbContext)
         {
@@ -43,21 +43,20 @@ namespace backend.Controllers
             var account = await dbContext.Accounts.Where(a => a.Email == log.Email && a.Password == log.Password).FirstOrDefaultAsync();
             if (account != null)
             {
-                var token = Generate(account);
+                GenerateToken(account);
                 var accountDto = new AccountDto()
                 {
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
-                    Password = account.Password,
-                    AccessToken = token
+                    Password = account.Password
                 };
                 return Ok(accountDto);
             }
             return NotFound("Account not found");
         }
 
-        private string Generate(Account account) {
+        private void GenerateToken(Account account) {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
@@ -66,13 +65,23 @@ namespace backend.Controllers
                 new Claim(ClaimTypes.Email, account.Email)
             };
 
-            var token = new JwtSecurityToken(config["Jwt:Issuer"], 
+            var token = new JwtSecurityToken(
+                config["Jwt:Issuer"],
                 config["Jwt:Audience"], 
                 claims, 
                 expires: DateTime.Now.AddMinutes(15), 
                 signingCredentials: credentials);
             
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            HttpContext.Response.Cookies.Append("accessToken", accessToken, 
+                new CookieOptions {
+                    Expires = DateTime.Now.AddMinutes(14),
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None
+            });
         }
     }
 }

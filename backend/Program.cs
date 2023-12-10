@@ -9,11 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 
 var AllowedOrigins = "allowedOrigins";
 
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: false)
-    .Build();
-
 var builder = WebApplication.CreateBuilder(args);
+
+var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 
 // Add services to the container.
 
@@ -21,7 +19,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
-    
 );
 builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseInMemoryDatabase("NotahDb"));
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -33,10 +30,14 @@ builder.Services.AddCors(options => {
     policy => {
         policy.WithOrigins("http://localhost:5173")
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddCookie(options => {
+        options.Cookie.Name = "accessToken";
+    })
     .AddJwtBearer(options => {
         options.TokenValidationParameters = new TokenValidationParameters {
             ValidateIssuer = true,
@@ -46,6 +47,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = config["Jwt:Issuer"],
             ValidAudience = config["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["accessToken"];
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -62,8 +71,8 @@ app.UseHttpsRedirection();
 
 app.UseCors(AllowedOrigins);
 
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

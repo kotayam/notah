@@ -28,6 +28,7 @@ export default function Login() {
     if (email.value && password.value) {
       fetch(notahApi, {
         method: "POST",
+        credentials: 'include',
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",

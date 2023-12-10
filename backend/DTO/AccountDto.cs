@@ -13,6 +13,5 @@ namespace backend.DTO
         public string Password { get; set; } = null!;
         public string DateCreated {get; set;} = null!;
         public string LastEdited {get; set;} = null!;
-        public string AccessToken {get; set;} = null;
     }
 }
