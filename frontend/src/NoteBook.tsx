@@ -8,6 +8,7 @@ const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
 
 export default function NoteBook({ id, title, dateCreated, lastEdited, deleteNotebook }: NoteBookProps) {
   const noteBook = useSelector((state: rootState) => state.noteBook);
+  const isSaved = useSelector((state: rootState) => state.isSaved);
   const dispatch = useDispatch();
   const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
   const [rename, setRename] = useState(false);
@@ -21,6 +22,10 @@ export default function NoteBook({ id, title, dateCreated, lastEdited, deleteNot
   }
 
   const handleClick = (e: MouseEvent) => {
+    if (!isSaved) {
+      alert("save before switching notebooks!");
+      return;
+    }
     setNoteBook({ id: id, title: title, dateCreated: noteBook.dateCreated, lastEdited: noteBook.lastEdited });
     setPage({id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
     switch (e.button) {

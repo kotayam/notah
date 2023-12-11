@@ -13,5 +13,6 @@ export enum ActionType {
     TABLE = 'table',
     NOTEBOOK = 'notebook',
     PAGE = 'page',
-    ACOUNT = 'account'
+    ACOUNT = 'account',
+    SAVE = "save"
 }

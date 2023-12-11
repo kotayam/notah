@@ -16,6 +16,7 @@ type Page = {
 export default function Pages() {
   const noteBook = useSelector((state: rootState) => state.noteBook);
   const page = useSelector((state: rootState) => state.page);
+  const isSaved = useSelector((state: rootState) => state.isSaved);
   const dispatch = useDispatch();
   const { setPage } = bindActionCreators(actionCreators, dispatch);
   const [pages, setPages] = useState<Page[]>([]);
@@ -43,6 +44,10 @@ export default function Pages() {
   }, [fetchSwitch, noteBook, page]);
 
   const addPage = () => {
+    if (!isSaved) {
+      alert("save before adding a new page!");
+      return;
+    }
     fetch(notahApi + noteBook.id, {
       method: "POST",
       credentials: 'include',

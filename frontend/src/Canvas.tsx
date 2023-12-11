@@ -35,7 +35,7 @@ type CanvasElementDTO = {
 
 export default function Canvas({ access }: CanvasProps) {
   const dispatch = useDispatch();
-  const { addCanvasElement, updateCanvasElement, clearCanvasElements, setPage } =
+  const { addCanvasElement, updateCanvasElement, clearCanvasElements, setPage, setSaved } =
     bindActionCreators(actionCreators, dispatch);
 
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
@@ -131,6 +131,7 @@ export default function Canvas({ access }: CanvasProps) {
     } else {
       return;
     }
+    setSaved(false);
     addCanvasElement(page.id, newElt);
     setSelectedElt((prevState) => {
       const newState = prevState;

@@ -20,7 +20,7 @@ export default function Shape({
   drawing,
 }: ShapeProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement } = bindActionCreators(
+  const { deleteCanvasElement, updateCanvasElement, setSaved } = bindActionCreators(
     actionCreators,
     dispatch
   );
@@ -156,6 +156,7 @@ export default function Shape({
   };
 
   const handleMouseUp = () => {
+    setSaved(false);
     setDrag(false);
   };
 
@@ -205,7 +206,7 @@ export default function Shape({
         </button>
         <button
           name="delete-elt"
-          onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}
+          onClick={(_) => {deleteCanvasElement(page.id, elt.id, elt); setSaved(false);}}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -14,6 +14,7 @@ export default function Page({
   deletePage,
 }: PageProps) {
   const page = useSelector((state: rootState) => state.page);
+  const isSaved = useSelector((state: rootState) => state.isSaved);
   const dispatch = useDispatch();
   const { setPage } = bindActionCreators(actionCreators, dispatch);
   const [rename, setRename] = useState(false);
@@ -26,6 +27,10 @@ export default function Page({
   }
 
   const handleClick = (e: MouseEvent) => {
+    if (!isSaved) {
+      alert("save before switching pages!");
+      return;
+    }
     setPage({
       id: id,
       title: title,

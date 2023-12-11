@@ -13,7 +13,7 @@ export default function Table({
   updateText,
 }: TableProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement } = bindActionCreators(
+  const { deleteCanvasElement, updateCanvasElement, setSaved } = bindActionCreators(
     actionCreators,
     dispatch
   );
@@ -54,6 +54,7 @@ export default function Table({
   };
 
   const handleMouseUp = () => {
+    setSaved(false);
     setDrag(false);
   };
 
@@ -110,7 +111,7 @@ export default function Table({
         </button>
         <button
           name="delete-elt"
-          onClick={(_) => deleteCanvasElement(page.id, elt.id, elt)}
+          onClick={(_) => {deleteCanvasElement(page.id, elt.id, elt); setSaved(false);}}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

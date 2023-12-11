@@ -88,3 +88,8 @@ export type AccountAction = {
   type: ActionType.ACOUNT;
   payload: { id: string; username: string; access: string; dateCreated: string; lastEdited: string };
 };
+
+export type SaveAction = {
+  type: ActionType.SAVE;
+  payload: boolean;
+}

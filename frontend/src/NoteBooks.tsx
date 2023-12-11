@@ -18,6 +18,7 @@ export default function NoteBooks() {
   const [fetchSwitch, setFetchSwitch] = useState(false);
   const account = useSelector((state: rootState) => state.account);
   const noteBook = useSelector((state: rootState) => state.noteBook);
+  const isSaved = useSelector((state: rootState) => state.isSaved);
   const dispatch = useDispatch();
   const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
 
@@ -46,6 +47,10 @@ export default function NoteBooks() {
   }, [fetchSwitch]);
 
   const addNoteBook = () => {
+    if (!isSaved) {
+      alert("save before adding a new notebook!");
+      return;
+    }
     fetch(notahApi + account.id, {
       method: "POST",
       credentials: 'include',
