@@ -37,9 +37,10 @@ export default function Pages() {
         }
       })
       .catch((e) => {
+        setPage({id: "-1", title: "Error", dateCreated: "", lastEdited: "Error"});
         console.error(e);
       });
-  }, [fetchSwitch, noteBook]);
+  }, [fetchSwitch, noteBook, page]);
 
   const addPage = () => {
     fetch(notahApi + noteBook.id, {

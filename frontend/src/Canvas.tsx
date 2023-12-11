@@ -35,7 +35,7 @@ type CanvasElementDTO = {
 
 export default function Canvas({ access }: CanvasProps) {
   const dispatch = useDispatch();
-  const { addCanvasElement, updateCanvasElement, clearCanvasElements } =
+  const { addCanvasElement, updateCanvasElement, clearCanvasElements, setPage } =
     bindActionCreators(actionCreators, dispatch);
 
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
@@ -52,7 +52,7 @@ export default function Canvas({ access }: CanvasProps) {
     useEffect(() => {
       if (page.id === "-1") return;
       fetch(notahApi + "byPageId/" + page.id, {
-        credentials: 'include'
+        credentials: "include",
       })
         .then((res) => res.json())
         .then((data) => data as CanvasElementDTO[])
@@ -98,7 +98,10 @@ export default function Canvas({ access }: CanvasProps) {
             addCanvasElement(page.id, newElt);
           });
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          clearCanvasElements(page.id);
+          console.error(e);
+        });
     }, [page]);
   }
 
@@ -195,6 +198,37 @@ export default function Canvas({ access }: CanvasProps) {
     // })
   };
 
+  const saveTitle = (e: React.KeyboardEvent) => {
+    const div = document.getElementById("page-title");
+    if (div === null) return;
+    if ((e.key === "Enter")) {
+      e.preventDefault();
+      fetch("http://localhost:5245/api/v1/Pages/" + page.id, {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title: div.innerText }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setPage({
+            id: data.id,
+            title: data.title,
+            dateCreated: data.dateCreated,
+            lastEdited: data.lastEdited,
+          });
+        })
+        .catch((e) => {
+
+          console.error(e);
+        });
+    }
+  };
+
   const returnCanvasElement = () => {
     const elts: JSX.Element[] = [];
     const ce = canvasElements.get(page.id);
@@ -251,11 +285,26 @@ export default function Canvas({ access }: CanvasProps) {
             handleMouseUp();
           }}
         >
-          <div id="page-title" className="pl-3 pt-2">
-            <h3 className="text-3xl underline underline-offset-8 decoration-gray-500 decoration-2">
+          <div className="pl-3 pt-2">
+            <h3
+              id="page-title"
+              suppressContentEditableWarning
+              contentEditable="true"
+              className="text-3xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
+              onKeyDown={(e) => saveTitle(e)}
+            >
               {page.title}
             </h3>
-            <p className="pt-2 text-gray-500">Last Edited: {page.lastEdited}</p>
+            <p
+              id="page-lastedited"
+              className="pt-2 text-gray-500"
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              Last Edited: {page.lastEdited}
+            </p>
           </div>
           {returnCanvasElement()}
         </div>

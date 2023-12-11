@@ -26,9 +26,7 @@ export default function NoteBooks() {
     //     return;
     // }
     fetch(notahApi + "byOwnerId/" + account.id, {
-      mode: 'cors',
       credentials: 'include'
-      
     })
       .then((res) => res.json())
       .then((data) => data as NoteBook[])
@@ -42,6 +40,7 @@ export default function NoteBooks() {
         }
       })
       .catch((e) => {
+        setNoteBook({id: "-1", title: "Error", dateCreated: "", lastEdited: ""})
         console.error(e);
       });
   }, [fetchSwitch]);
