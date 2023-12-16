@@ -6,7 +6,7 @@ import { MouseEvent, KeyboardEvent, useState } from "react";
 
 const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
 
-export default function NoteBook({ id, title, dateCreated, lastEdited, deleteNotebook }: NoteBookProps) {
+export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
   const noteBook = useSelector((state: rootState) => state.noteBook);
   const isSaved = useSelector((state: rootState) => state.isSaved);
   const dispatch = useDispatch();

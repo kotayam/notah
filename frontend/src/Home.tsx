@@ -6,9 +6,9 @@ import Toolbar from "./Toolbar";
 export default function Home({access} : HomeProps) {
   return (
     <div className="bg-amber-50">
-      <Toolbar access={access} />
+      <Toolbar/>
       <div className="flex h-full">
-        <Notes access={access} />
+        <Notes/>
         <Canvas access={access} />
       </div>
     </div>

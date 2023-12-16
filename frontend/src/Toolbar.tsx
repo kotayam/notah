@@ -5,17 +5,15 @@ import {
   ShapeFunctionBar,
   TableFunctionBar,
 } from "./FunctionBar.tsx";
-import { ToolbarProps } from "./Props.ts";
 import { jsPDF } from "jspdf";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
-import { setSaved } from "./store/action-creators/saveActionCreator.ts";
 
 const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 
-export default function Toolbar({ access } : ToolbarProps) {
+export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
   const account = useSelector((state: rootState) => state.account);
   const page = useSelector((state: rootState) => state.page);
