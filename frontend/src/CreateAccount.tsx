@@ -71,7 +71,7 @@ export default function CreateAccount() {
   };
   return (
     <>
-      <div className="bg-amber-100 h-screen flex justify-center pt-10">
+      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center animate-gradient flext justify-content items-center">
         <div className="bg-white p-2 rounded-xl h-fit min-w-[400px]">
           <h2 className="mt-5 mb-5 text-center font-semibold text-2xl">
             Sign Up
@@ -116,7 +116,7 @@ export default function CreateAccount() {
               <hr />
             </div>
             <button
-              className="mt-3 rounded-lg p-2 font-medium hover:bg-amber-200 active:bg-amber-300 bg-amber-100 "
+              className="mt-3 rounded-lg p-2 font-medium hover:bg-amber-300 active:bg-amber-400 bg-amber-200 "
               onClick={() => createAccount()}
             >
               {signupStatus}

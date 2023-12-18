@@ -27,10 +27,16 @@ export default {
         blinker: {
           '0%, 100%': {opacity: '1'},
           '50%': {opacity: '0'}
+        },
+        gradient: {
+          '0%': {backgroundPosition: '0% 50%'},
+          '50%': {backgroundPosition: '100% 50%'},
+          '100%': {backgroundPosition: '0% 50%'}
         }
       },
       animation: {
         blinker: 'blinker 1s infinite step-end',
+        gradient: 'gradient 10s ease-in infinite',
       },
     },
   },
