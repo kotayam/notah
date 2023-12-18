@@ -18,9 +18,7 @@ export default function Toolbar() {
   const account = useSelector((state: rootState) => state.account);
   const page = useSelector((state: rootState) => state.page);
   const isSaved = useSelector((state: rootState) => state.isSaved);
-  let canvasElements = useSelector(
-    (state: rootState) => state.canvasElements
-  );
+  let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
 
   const dispatch = useDispatch();
@@ -59,8 +57,8 @@ export default function Toolbar() {
         width: 0,
         height: 0,
         row: 0,
-        column: 0
-      }
+        column: 0,
+      };
       const div = document.getElementById(elt.id);
       const innerHtml = div?.innerHTML || "";
       if (elt instanceof TextBoxElement) {
@@ -69,23 +67,21 @@ export default function Toolbar() {
         body.font = elt.font;
         body.fontSize = elt.fontSize;
         body.fontColor = elt.fontColor;
-      }
-      else if (elt instanceof ShapeElement) {
+      } else if (elt instanceof ShapeElement) {
         body.type = "shape";
         body.innerHTML = innerHtml;
         body.shape = elt.shape;
         body.width = elt.width;
-        body.height = elt.height
-      }
-      else if (elt instanceof TableElement) {
+        body.height = elt.height;
+      } else if (elt instanceof TableElement) {
         body.type = "table";
         body.innerHTML = innerHtml;
         body.row = elt.row;
-        body.column = elt.col
+        body.column = elt.col;
       }
       fetch(notahApi + page.id, {
         method: "POST",
-        credentials: 'include',
+        credentials: "include",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -140,9 +136,25 @@ export default function Toolbar() {
           <button
             className="absolute p-2 right-0 top-0 bg-amber-300"
             onClick={() => {
-              setAccount({ id: "-1", username: "default", access: "guest", dateCreated: "default", lastEdited: "default"});
-              setNoteBook({ id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
-              setPage({ id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
+              setAccount({
+                id: "-1",
+                username: "default",
+                access: "guest",
+                dateCreated: "default",
+                lastEdited: "default",
+              });
+              setNoteBook({
+                id: "-1",
+                title: "default",
+                dateCreated: "default",
+                lastEdited: "default",
+              });
+              setPage({
+                id: "-1",
+                title: "default",
+                dateCreated: "default",
+                lastEdited: "default",
+              });
             }}
           >
             Logout
@@ -155,31 +167,35 @@ export default function Toolbar() {
   return (
     <>
       <div className="w-full border-b-2">
-        <div className="flex justify-between items-enter bg-amber-400">
+        <div className="flex justify-between items-enter bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400">
           <div>
-            <button className="p-2 bg-amber-300 hover:bg-amber-400 active:bg-amber-500" onClick={() => save()}>
+            <button
+              className="p-2 bg-amber-300 hover:bg-amber-400 active:bg-amber-500"
+              onClick={() => save()}
+            >
               Save
             </button>
           </div>
           <h1 className=" font-semibold text-2xl">Notah</h1>
           {showLogButton()}
         </div>
-        <div className="flex justify-between items-enter bg-gray-100">
-          <div className="">
-            <ModeSelector thisMode={"Text"} />
-            <ModeSelector thisMode={"Shape"} />
-            <ModeSelector thisMode={"Table"} />
-            <ModeSelector thisMode={"AI"} />
+        <div className=" bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200">
+          <div className="flex justify-between items-enter">
+            <div className="">
+              <ModeSelector thisMode={"Text"} />
+              <ModeSelector thisMode={"Shape"} />
+              <ModeSelector thisMode={"Table"} />
+              <ModeSelector thisMode={"AI"} />
+            </div>
+            <button
+              className=" h-full bg-gray-200 p-2"
+              onClick={(_) => saveAsPdf()}
+            >
+              Save as PDF
+            </button>
           </div>
-          <button
-            className=" h-full bg-gray-200 p-2"
-            onClick={(_) => saveAsPdf()}
-          >
-            Save as PDF
-          </button>
+          <div className=" h-10 px-4">{returnFunctionBar()}</div>
         </div>
-
-        <div className="bg-gray-100 h-10 px-4">{returnFunctionBar()}</div>
       </div>
     </>
   );

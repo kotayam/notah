@@ -79,11 +79,11 @@ export default function Login() {
   };
   return (
     <>
-      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center animate-gradient flext justify-content items-center">
+      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center items-center animate-gradient">
         <div className="bg-white p-2 rounded-xl h-fit min-w-[400px]">
-          <h2 className="mt-5 mb-5 text-center font-semibold text-2xl">
+          <h1 className="mt-5 mb-5 text-center font-semibold text-2xl">
             Login
-          </h2>
+          </h1>
           <p
             className="text-red-600 ml-5"
             style={{ display: display ? "block" : "none" }}
@@ -93,22 +93,50 @@ export default function Login() {
           <div className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5">
             <div className="grid grid-cols-1 content-start gap-1">
               <label htmlFor="email">Email</label>
-              <input
-                className=""
-                id="email"
-                type="email"
-                placeholder="Type your email"
-              />
+              <div className="flex justify-content">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  data-slot="icon"
+                  className="w-5 mr-2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                  />
+                </svg>
+                <input id="email" type="email" placeholder="Type your email" />
+              </div>
               <hr />
             </div>
             <div className="grid grid-cols-1 content-start gap-1">
               <label htmlFor="password">Password</label>
-              <input
-                className=""
+              <div className="flex justify-content">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  data-slot="icon"
+                  className="w-5 mr-2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+                  />
+                </svg>
+                <input
                 id="password"
                 type="password"
                 placeholder="Type your password"
               />
+              </div>
               <hr />
             </div>
             <button
@@ -121,7 +149,7 @@ export default function Login() {
               <p>New to Notah?&nbsp;</p>
               <a
                 className="text-center text-blue-600 font-semibold hover:underline"
-                href="/create-account"
+                href="/signup"
               >
                 Sign Up
               </a>

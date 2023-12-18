@@ -32,11 +32,16 @@ export default {
           '0%': {backgroundPosition: '0% 50%'},
           '50%': {backgroundPosition: '100% 50%'},
           '100%': {backgroundPosition: '0% 50%'}
+        },
+        slidein: {
+          '0%': {marginLeft: '-100%'},
+          '100%': {marginLeft: '0%'}
         }
       },
       animation: {
         blinker: 'blinker 1s infinite step-end',
-        gradient: 'gradient 10s ease-in infinite',
+        gradient: 'gradient 10s ease infinite',
+        slidein: 'slidein 2s'
       },
     },
   },

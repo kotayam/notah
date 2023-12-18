@@ -68,7 +68,7 @@ export function TextFunctionBar() {
   return (
     <>
       <select
-        className="hover:bg-gray-300 border-2 text-[18px]"
+        className="hover:bg-gray-300 border-2 border-r-0 border-gray-300 text-[18px]"
         value={textStyle.font}
         onChange={(e) => {
           changeFont(e.target.value);
@@ -83,7 +83,7 @@ export function TextFunctionBar() {
         <option value="georgia">Georgia</option>
       </select>
       <select
-        className="hover:bg-gray-300 border-2 text-[18px]"
+        className="hover:bg-gray-300 border-2 border-gray-300 text-[18px]"
         value={textStyle.fontSize}
         onChange={(e) => {
           changeFontSize(parseInt(e.target.value));

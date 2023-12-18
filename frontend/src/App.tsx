@@ -1,5 +1,6 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import Landing from "./Landing"
 import Home from "./Home.tsx";
 import Login from "./Login.tsx";
 import CreateAccount from "./CreateAccount.tsx";
@@ -9,10 +10,11 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path="/" element={<Home access={"guest"}/>}/>
-      <Route path="/:id" element={<Home access={"user"}/>}/>
+      <Route path="/" element={<Landing/>}/>
+      <Route path="/note/" element={<Home access={"guest"}/>}/>
+      <Route path="/note/:username" element={<Home access={"user"}/>}/>
       <Route path="/login" element={<Login/>}/>
-      <Route path="/create-account" element={<CreateAccount/>}/>
+      <Route path="/signup" element={<CreateAccount/>}/>
       <Route path="*" element={<NotFound/>}/>
     </Routes>
     
