@@ -28,7 +28,7 @@ export default function Login() {
     if (email.value && password.value) {
       fetch(notahApi, {
         method: "POST",
-        credentials: 'include',
+        credentials: "include",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -42,7 +42,13 @@ export default function Login() {
         })
         .then((data) => {
           console.log(data);
-          setAccount({ id: data.id, username: data.username, access: "user", dateCreated: data.dateCreated, lastEdited: data.lastEdited });
+          setAccount({
+            id: data.id,
+            username: data.username,
+            access: "user",
+            dateCreated: data.dateCreated,
+            lastEdited: data.lastEdited,
+          });
           window.location.href = `/${data.username}`;
         })
         .catch((e) => {
@@ -56,32 +62,48 @@ export default function Login() {
   };
   return (
     <>
-      <div className="bg-amber-50 w-1/2 m-auto">
-        <div className="flex items-center">
-          <label htmlFor="email">Email</label>
-          <input
-            className="border-2"
-            id="email"
-            type="text"
-            placeholder="Email"
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            className="border-2"
-            id="password"
-            type="password"
-            placeholder="Password"
-          />
+      <div className="bg-amber-100 h-screen flex justify-center pt-10">
+        <div className="bg-white p-2 rounded-xl h-fit min-w-[400px]">
+          <h2 className="mt-5 mb-5 text-center font-semibold text-2xl">
+            Login
+          </h2>
+          <div className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5">
+            <div className="grid grid-cols-1 content-start gap-1">
+              <label htmlFor="email">Email</label>
+              <input
+                className=""
+                id="email"
+                type="email"
+                placeholder="Type your email"
+              />
+              <hr />
+            </div>
+            <div className="grid grid-cols-1 content-start gap-1">
+              <label htmlFor="password">Password</label>
+              <input
+                className=""
+                id="password"
+                type="password"
+                placeholder="Type your password"
+              />
+              <hr />
+            </div>
+            <button
+              className="mt-3 rounded-lg p-2 font-medium hover:bg-amber-200 active:bg-amber-300 bg-amber-100 "
+              onClick={() => login()}
+            >
+              Login
+            </button>
+            <div className="mt-5 text-center">Or Sign Up Using</div>
+            <a className="text-center hover:underline" href="/create-account">
+              SIGN UP
+            </a>
+            <hr />
+            <a className="text-center hover:underline mb-5" href="/">
+              Return To Home
+            </a>
+          </div>
         </div>
-        <button className="border-2" onClick={() => login()}>
-          Login
-        </button>
-        <a className="border-2" href="/create-account">
-          Create Account
-        </a>
-        <a className="border-2" href="/">
-          return to home
-        </a>
       </div>
     </>
   );
