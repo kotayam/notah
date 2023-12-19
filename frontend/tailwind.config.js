@@ -34,14 +34,20 @@ export default {
           '100%': {backgroundPosition: '0% 50%'}
         },
         slidein: {
-          '0%': {marginLeft: '-100%'},
-          '100%': {marginLeft: '0%'}
+          '0%': {transform: 'translateX(-500px)', opacity: '0'},
+          '40%': {opacity: '1'},
+          '100%': {transform: 'translateX(0)'}
+        },
+        slideup: {
+          '0%': {transform: 'translateY(100px)', opacity: '0'},
+          '100%': {transform: '0%', opacity: '1'}
         }
       },
       animation: {
         blinker: 'blinker 1s infinite step-end',
         gradient: 'gradient 10s ease infinite',
-        slidein: 'slidein 2s'
+        slidein: 'slidein 3s',
+        slideup: 'slideup 2s 2s backwards'
       },
     },
   },
