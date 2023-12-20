@@ -69,79 +69,77 @@ export function TextFunctionBar() {
 
   return (
     <>
-      <div className="flex justify-start items-center">
-        <div className="grid grid-cols-2 place-content-center gap-1">
-          <div className="flex items-center">
-            <select
-              className="hover:bg-gray-300 border-2 border-r-0 border-gray-300"
-              value={textStyle.font}
-              onChange={(e) => {
-                changeFont(e.target.value);
-              }}
-              name="font"
-              id="font"
-            >
-              {fonts.map((font) => (
-                <option value={font.toLowerCase()}>{font}</option>
-              ))}
-            </select>
-            <select
-              className="hover:bg-gray-300 border-2 border-gray-300"
-              value={textStyle.fontSize}
-              onChange={(e) => {
-                changeFontSize(parseInt(e.target.value));
-              }}
-              name="font-size"
-              id="font-size"
-            >
-              {fontSizes.map((size) => (
-                <option value={size}>{size}</option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-4 gap-0 place-content-center">
-            <button
-              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl ${boldStyle}`}
-              onClick={(_) => {
-                if (textStyle.fontWeight === "bold") changeFontWeight("normal");
-                else changeFontWeight("bold");
-              }}
-            >
-              <strong>B</strong>
-            </button>
-            <button
-              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl ${italicStyle}`}
-              onClick={(_) => {
-                if (textStyle.fontStyle === "italic") changeFontStyle("normal");
-                else changeFontStyle("italic");
-              }}
-            >
-              <em style={{ fontFamily: "georgia" }}>I</em>
-            </button>
-            <button
-              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl`}
-            >
-              <span className="underline">U</span>
-            </button>
-            <button
-              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl`}
-              onClick={(e) => {
-                setColorClicked((prev) => !prev);
-                setColorRect(e.currentTarget.getBoundingClientRect());
-              }}
-            >
-              <div className="w-full h-full">
-                <span
-                  className="h-7 underline decoration-4"
-                  style={{ textDecorationColor: textStyle.fontColor }}
-                >
-                  A
-                </span>
-              </div>
-            </button>
-          </div>
-          {showColorOption()}
+      <div className="flex justify-start items-center gap-2">
+        <div className="flex items-center gap-1">
+          <select
+            className="hover:bg-gray-300 border-2 border-gray-300"
+            value={textStyle.font}
+            onChange={(e) => {
+              changeFont(e.target.value);
+            }}
+            name="font"
+            id="font"
+          >
+            {fonts.map((font) => (
+              <option value={font.toLowerCase()}>{font}</option>
+            ))}
+          </select>
+          <select
+            className="hover:bg-gray-300 border-2 border-gray-300"
+            value={textStyle.fontSize}
+            onChange={(e) => {
+              changeFontSize(parseInt(e.target.value));
+            }}
+            name="font-size"
+            id="font-size"
+          >
+            {fontSizes.map((size) => (
+              <option value={size}>{size}</option>
+            ))}
+          </select>
         </div>
+        <div className="grid grid-cols-4 gap-3">
+          <button
+            className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl ${boldStyle} pointer-events-none`}
+            onClick={(_) => {
+              if (textStyle.fontWeight === "bold") changeFontWeight("normal");
+              else changeFontWeight("bold");
+            }}
+          >
+            <strong className="">B</strong>
+          </button>
+          <button
+            className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl ${italicStyle} pointer-events-none`}
+            onClick={(_) => {
+              if (textStyle.fontStyle === "italic") changeFontStyle("normal");
+              else changeFontStyle("italic");
+            }}
+          >
+            <em className="" style={{ fontFamily: "georgia" }}>I</em>
+          </button>
+          <button
+            className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl pointer-events-none`}
+          >
+            <span className="underline">U</span>
+          </button>
+          <button
+            className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl`}
+            onClick={(e) => {
+              setColorClicked((prev) => !prev);
+              setColorRect(e.currentTarget.getBoundingClientRect());
+            }}
+          >
+            <div className="w-full h-full">
+              <span
+                className="h-7 underline decoration-4"
+                style={{ textDecorationColor: textStyle.fontColor }}
+              >
+                A
+              </span>
+            </div>
+          </button>
+        </div>
+        {showColorOption()}
       </div>
     </>
   );
