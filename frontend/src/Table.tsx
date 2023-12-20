@@ -10,7 +10,6 @@ export default function Table({
   elt,
   selectTableText,
   selectedElt,
-  updateText,
 }: TableProps) {
   const dispatch = useDispatch();
   const { deleteCanvasElement, updateCanvasElement, setSaved } = bindActionCreators(
@@ -67,7 +66,6 @@ export default function Table({
           rowId={r}
           elt={elt}
           selectTableText={selectTableText}
-          updateText={updateText}
         />
       );
     }

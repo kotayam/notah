@@ -1,5 +1,5 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MouseEvent } from "react";
 import {
   CanvasElement,
@@ -13,24 +13,6 @@ import Shape from "./Shape.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
-
-const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
-
-type CanvasElementDTO = {
-  id: string;
-  type: string;
-  x: number;
-  y: number;
-  innerHTML: string;
-  font: string;
-  fontSize: number;
-  fontColor: string;
-  shape: string;
-  width: number;
-  height: number;
-  row: number;
-  column: number;
-};
 
 export default function CanvasMemo() {
   const dispatch = useDispatch();
