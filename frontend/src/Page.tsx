@@ -75,6 +75,7 @@ export default function Page({
         })
         .catch((e) => {
           console.error(e);
+          
         });
     }
   };

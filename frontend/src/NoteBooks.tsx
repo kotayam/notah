@@ -87,6 +87,7 @@ export default function NoteBooks() {
       .then((data) => {
         console.log(data);
         setFetchSwitch((prevState) => !prevState);
+        setNoteBook({id: noteBooks[0].id, title: noteBooks[0].title, dateCreated: noteBooks[0].dateCreated, lastEdited: noteBooks[0].lastEdited});
       })
       .catch((e) => {
         console.error(e);

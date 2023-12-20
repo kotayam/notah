@@ -104,6 +104,7 @@ export default function Canvas() {
       .catch((e) => {
         clearCanvasElements(page.id);
         console.error(e);
+        
       });
   }, [page]);
 
@@ -212,6 +213,7 @@ export default function Canvas() {
         })
         .catch((e) => {
           console.error(e);
+          
         });
     }
   };

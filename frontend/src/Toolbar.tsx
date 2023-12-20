@@ -15,14 +15,13 @@ const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
-  const account = useSelector((state: rootState) => state.account);
   const page = useSelector((state: rootState) => state.page);
   const isSaved = useSelector((state: rootState) => state.isSaved);
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
 
   const dispatch = useDispatch();
-  const { setAccount, setNoteBook, setPage, setSaved } = bindActionCreators(
+  const { setSaved } = bindActionCreators(
     actionCreators,
     dispatch
   );
@@ -99,6 +98,15 @@ export default function Toolbar() {
     });
   };
 
+  const logout = () => {
+    if (isSaved) {
+      window.location.href = "/login";
+    }
+    else {
+      alert("Save before you logout");
+    }
+  };
+
   const saveAsPdf = async () => {
     const note = document.getElementById("canvas-container");
     if (note) {
@@ -121,53 +129,10 @@ export default function Toolbar() {
     }
   };
 
-  const showLogButton = () => {
-    if (account.id == "0") {
-      return (
-        <a href="/login">
-          <button className="absolute p-2 right-0 top-0 bg-amber-300">
-            Login
-          </button>
-        </a>
-      );
-    } else {
-      return (
-        <a href="/login">
-          <button
-            className="absolute p-2 right-0 top-0 bg-amber-300"
-            onClick={() => {
-              setAccount({
-                id: "-1",
-                username: "default",
-                access: "guest",
-                dateCreated: "default",
-                lastEdited: "default",
-              });
-              setNoteBook({
-                id: "-1",
-                title: "default",
-                dateCreated: "default",
-                lastEdited: "default",
-              });
-              setPage({
-                id: "-1",
-                title: "default",
-                dateCreated: "default",
-                lastEdited: "default",
-              });
-            }}
-          >
-            Logout
-          </button>
-        </a>
-      );
-    }
-  };
-
   return (
     <>
       <div className="w-full border-b-2">
-        <div className="flex justify-between items-center bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400">
+        <div className="flex justify-between items-center bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400 px-2">
           <div>
             <button
               className="p-2 bg-amber-300 hover:bg-amber-400 active:bg-amber-500"
@@ -177,7 +142,9 @@ export default function Toolbar() {
             </button>
           </div>
           <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
-          {showLogButton()}
+          <button className="hover:underline" onClick={() => logout()}>
+            Logout
+          </button>
         </div>
         <div className=" bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200">
           <div className="flex justify-between items-center">

@@ -21,12 +21,14 @@ namespace backend.Controllers
         private readonly IAccountRepository accountRepository;
         private readonly INoteBookRepository noteBookRepository;
         private readonly IPageRepository pageRepository;
+        private readonly IPasswordHasher passwordHasher;
 
-        public AccountsController(IAccountRepository accountRepository, INoteBookRepository noteBookRepository, IPageRepository pageRepository)
+        public AccountsController(IAccountRepository accountRepository, INoteBookRepository noteBookRepository, IPageRepository pageRepository, IPasswordHasher passwordHasher)
         {
             this.accountRepository = accountRepository;
             this.noteBookRepository = noteBookRepository;
             this.pageRepository = pageRepository;
+            this.passwordHasher = passwordHasher;
         }
 
         [HttpGet]
@@ -86,9 +88,10 @@ namespace backend.Controllers
         {
             var exist = await accountRepository.GetAccountByUsernameAsync(acc.Username);
             if (exist != null) {
-                return BadRequest();
+                return BadRequest("Username already exists");
             }
-            var account = await accountRepository.AddAccountAsync(acc.Username, acc.Email, acc.Password);
+            var passwordHash = passwordHasher.Hash(acc.Password);
+            var account = await accountRepository.AddAccountAsync(acc.Username, acc.Email, passwordHash);
             if (account != null)
             {
                 var noteBook = await noteBookRepository.AddNoteBookAsync(account.Id, "Quick Notes");
@@ -100,7 +103,7 @@ namespace backend.Controllers
                             Id = account.Id,
                             Username = acc.Username,
                             Email = acc.Email,
-                            Password = acc.Password,
+                            Password = passwordHash,
                             DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                             LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                         };

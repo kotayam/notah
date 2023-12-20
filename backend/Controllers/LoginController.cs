@@ -29,31 +29,36 @@ namespace backend.Controllers
     public class LoginController : Controller
     {
         private readonly NotahAPIDbContext dbContext;
+        private readonly IPasswordHasher passwordHasher;
         private IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 
-        public LoginController(NotahAPIDbContext dbContext)
+        public LoginController(NotahAPIDbContext dbContext, IPasswordHasher passwordHasher)
         {
             this.dbContext = dbContext;
+            this.passwordHasher = passwordHasher;
         }
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginReqDto log)
         {
-            var account = await dbContext.Accounts.Where(a => a.Email == log.Email && a.Password == log.Password).FirstOrDefaultAsync();
-            if (account != null)
-            {
-                GenerateToken(account);
-                var accountDto = new AccountDto()
-                {
-                    Id = account.Id,
-                    Username = account.Username,
-                    Email = account.Email,
-                    Password = account.Password
-                };
-                return Ok(accountDto);
+            var account = await dbContext.Accounts.Where(a => a.Email == log.Email).FirstOrDefaultAsync();
+            if (account == null) {
+                return NotFound();
             }
-            return NotFound("Account not found");
+            var result = passwordHasher.Verify(account.Password, log.Password);
+            if (!result) {
+                return BadRequest();
+            }
+            GenerateToken(account);
+            var accountDto = new AccountDto()
+            {
+                Id = account.Id,
+                Username = account.Username,
+                Email = account.Email,
+                Password = account.Password
+            };
+            return Ok(accountDto);
         }
 
         private void GenerateToken(Account account) {

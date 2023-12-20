@@ -23,6 +23,9 @@ export default function Pages() {
   const [fetchSwitch, setFetchSwitch] = useState(false);
 
   useEffect(() => {
+    if (noteBook.id === "-1") {
+      return;
+    }
     fetch(notahApi + "byNoteBookId/" + noteBook.id, {
       credentials: 'include'
     })
@@ -40,6 +43,7 @@ export default function Pages() {
       .catch((e) => {
         setPage({id: "-1", title: "Error", dateCreated: "", lastEdited: "Error"});
         console.error(e);
+        
       });
   }, [fetchSwitch, noteBook, page]);
 
@@ -72,6 +76,7 @@ export default function Pages() {
       })
       .catch((_) => {
         console.log("Failed to add page");
+        
       });
   };
 
@@ -84,6 +89,7 @@ export default function Pages() {
       .then((data) => {
         console.log(data);
         setFetchSwitch((prevState) => !prevState);
+        setPage({id: pages[0].id, title: pages[0].title, dateCreated: pages[0].dateCreated, lastEdited: pages[0].lastEdited});
       })
       .catch((e) => {
         console.error(e);

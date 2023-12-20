@@ -1,7 +1,7 @@
 import { SaveAction } from "../actions";
 import { ActionType } from "../action-types";
 
-const initialState = false;
+const initialState = true;
 
 const saveReducer = (state = initialState , action: SaveAction) => {
     switch(action.type) {
