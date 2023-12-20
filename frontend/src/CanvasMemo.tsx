@@ -145,29 +145,36 @@ export default function CanvasMemo() {
 
   return (
     <>
-      <div id="canvas-container" className="h-screen w-full overflow-scroll">
-        <div
-          id="canvas"
-          className="h-full relative"
-          onMouseDown={(e) => {
-            handleMouseDown(e, e.currentTarget);
-          }}
-          onMouseMove={(e) => {
-            handleMouseMove(e, e.currentTarget);
-          }}
-          onMouseUp={(_) => {
-            handleMouseUp();
-          }}
-        >
-          <h3
-            className="pl-3 pt-2 text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
+      <div id="canvas-container" className="h-screen w-full overflow-x-scroll overflow-y-hidden">
+        <div className="grid grid-cols-1">
+          <div className="bg-amber-500 bg-opacity-40 w-full py-1">
+            <p className="text-black text-lg animate-horizontalroll">
+              Currently in <span className="font-semibold">Memo Mode</span>. Sign Up and/or Login to save notes and unlock more features!
+            </p>
+          </div>
+          <div
+            id="canvas"
+            className="h-screen relative"
             onMouseDown={(e) => {
-              e.stopPropagation();
+              handleMouseDown(e, e.currentTarget);
+            }}
+            onMouseMove={(e) => {
+              handleMouseMove(e, e.currentTarget);
+            }}
+            onMouseUp={(_) => {
+              handleMouseUp();
             }}
           >
-            Memo
-          </h3>
-          {returnCanvasElement()}
+            <h3
+              className="pl-3 pt-2 text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Memo
+            </h3>
+            {returnCanvasElement()}
+          </div>
         </div>
       </div>
     </>

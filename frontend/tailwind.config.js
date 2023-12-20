@@ -41,13 +41,18 @@ export default {
         slideup: {
           '0%': {transform: 'translateY(100px)', opacity: '0'},
           '100%': {transform: '0%', opacity: '1'}
+        },
+        horizontalroll: {
+          '0%': {transform: 'translateX(-50%)'},
+          '100%': {transform: 'translateX(125%)'}
         }
       },
       animation: {
         blinker: 'blinker 1s infinite step-end',
         gradient: 'gradient 10s ease infinite',
         slidein: 'slidein 3s',
-        slideup: 'slideup 2s 2s backwards'
+        slideup: 'slideup 2s 2s backwards',
+        horizontalroll: 'horizontalroll 25s linear infinite'
       },
     },
   },
