@@ -1,5 +1,6 @@
 import { CanvasElement } from "src/Classes";
 import { ActionType } from "../action-types";
+import { Action } from "redux";
 
 interface AddCanvasElementAction {
   type: ActionType.ADD;
@@ -92,4 +93,9 @@ export type AccountAction = {
 export type SaveAction = {
   type: ActionType.SAVE;
   payload: boolean;
+}
+
+export type ResetStateAction = {
+  type: ActionType.RESET;
+  payload: undefined;
 }

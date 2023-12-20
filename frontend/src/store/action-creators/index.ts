@@ -7,3 +7,4 @@ export * from "./noteBookActionCreator";
 export * from "./pageActionCreator";
 export * from "./accountActionCreator";
 export * from "./saveActionCreator";
+export * from "./resetStateActionCreator";

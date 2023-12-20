@@ -19,7 +19,6 @@ export type TextBoxProps = {
     elt: TextBoxElement;
     selectTextBox: (elt: TextBoxElement) => void;
     selectedElt: {id: string, r: number, c: number};
-    updateText: (newText: string) => void;
 }
 
 export type ShapeProps = {
@@ -33,14 +32,12 @@ export type TableProps = {
     elt: TableElement;
     selectTableText: (elt: TableElement, row: number, col: number) => void;
     selectedElt: {id: string, r: number, c: number};
-    updateText: (newText: string) => void;
 }
 
 export type TableRowProps = {
     rowId: number;
     elt: TableElement;
     selectTableText: (elt: TableElement, row: number, col: number) => void;
-    updateText: (newText: string) => void;
 }
 
 export type ModeSelectorProps = {

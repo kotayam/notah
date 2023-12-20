@@ -32,15 +32,12 @@ type CanvasElementDTO = {
   column: number;
 };
 
-export default function Canvas() {
+export default function CanvasMemo() {
   const dispatch = useDispatch();
-  const {
-    addCanvasElement,
-    updateCanvasElement,
-    clearCanvasElements,
-    setPage,
-    setSaved,
-  } = bindActionCreators(actionCreators, dispatch);
+  const { addCanvasElement, updateCanvasElement } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
 
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
@@ -52,60 +49,6 @@ export default function Canvas() {
 
   const [drawing, setDrawing] = useState(false);
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
-  useEffect(() => {
-    if (page.id === "-1") return;
-    fetch(notahApi + "byPageId/" + page.id, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => data as CanvasElementDTO[])
-      .then((data) => {
-        console.log(data);
-        clearCanvasElements(page.id);
-        data.forEach((elt) => {
-          let newElt: CanvasElement;
-          if (elt.type === "text") {
-            newElt = new TextBoxElement(
-              elt.id,
-              elt.x,
-              elt.y,
-              elt.innerHTML,
-              elt.font,
-              elt.fontSize,
-              elt.fontColor,
-              textStyle.fontWeight,
-              textStyle.fontStyle
-            );
-          } else if (elt.type === "shape") {
-            newElt = new ShapeElement(
-              elt.id,
-              elt.x,
-              elt.y,
-              elt.innerHTML,
-              elt.shape,
-              elt.width,
-              elt.height
-            );
-          } else if (elt.type === "table") {
-            newElt = new TableElement(
-              elt.id,
-              elt.x,
-              elt.y,
-              elt.innerHTML,
-              elt.row,
-              elt.column
-            );
-          } else {
-            return;
-          }
-          addCanvasElement(page.id, newElt);
-        });
-      })
-      .catch((e) => {
-        clearCanvasElements(page.id);
-        console.error(e);
-      });
-  }, [page]);
 
   const handleMouseDown = (e: MouseEvent, parent: HTMLDivElement) => {
     let newElt: CanvasElement;
@@ -113,7 +56,6 @@ export default function Canvas() {
     const x = e.pageX - parent.offsetLeft;
     const y = e.pageY - parent.offsetTop;
     if (mode === "text") {
-      // setText("");
       newElt = new TextBoxElement(
         id,
         x,
@@ -133,16 +75,12 @@ export default function Canvas() {
     } else {
       return;
     }
-    setSaved(false);
     addCanvasElement(page.id, newElt);
     setSelectedElt((prevState) => {
       const newState = prevState;
       newState.id = id;
       return newState;
     });
-    // setCanvasElts(canvasElts => {
-    //     return [...canvasElts, newElt];
-    // });
   };
 
   const handleMouseMove = (e: MouseEvent, parent: HTMLDivElement) => {
@@ -150,7 +88,6 @@ export default function Canvas() {
     e.preventDefault();
     const x = e.pageX - parent.offsetLeft;
     const y = e.pageY - parent.offsetTop;
-    // console.log(`x: ${x}, y: ${y}`);
     const ce = canvasElements.get(page.id);
     if (!ce) return;
     const tgt = ce.filter((elt) => elt.id === selectedElt.id)[0];
@@ -184,36 +121,6 @@ export default function Canvas() {
   const selectTableText = (elt: TableElement, row: number, col: number) => {
     console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
     setSelectedElt({ id: elt.id, r: row, c: col });
-  };
-
-  const saveTitle = (e: React.KeyboardEvent) => {
-    const div = document.getElementById("page-title");
-    if (div === null) return;
-    if (e.key === "Enter") {
-      e.preventDefault();
-      fetch("http://localhost:5245/api/v1/Pages/" + page.id, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: div.innerText }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setPage({
-            id: data.id,
-            title: data.title,
-            dateCreated: data.dateCreated,
-            lastEdited: data.lastEdited,
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-        });
-    }
   };
 
   const returnCanvasElement = () => {
@@ -256,10 +163,10 @@ export default function Canvas() {
 
   return (
     <>
-      <div id="canvas-container" className="w-full h-screen overflow-scroll">
+      <div id="canvas-container" className="h-screen w-full overflow-scroll">
         <div
           id="canvas"
-          className="w-full h-full relative"
+          className="h-full relative"
           onMouseDown={(e) => {
             handleMouseDown(e, e.currentTarget);
           }}
@@ -270,27 +177,14 @@ export default function Canvas() {
             handleMouseUp();
           }}
         >
-          <div className="pl-3 pt-2">
-            <h3
-              id="page-title"
-              suppressContentEditableWarning
-              contentEditable="true"
-              className="text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-              }}
-              onKeyDown={(e) => saveTitle(e)}
-            >
-              {page.title}
-            </h3>
-            <p
-              id="page-lastedited"
-              className="pt-2 text-gray-500"
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              Last Edited: {page.lastEdited}
-            </p>
-          </div>
+          <h3
+            className="pl-3 pt-2 text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            Memo
+          </h3>
           {returnCanvasElement()}
         </div>
       </div>

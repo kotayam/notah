@@ -1,4 +1,16 @@
+import { useDispatch } from "react-redux";
+import { actionCreators } from "./store";
+import { bindActionCreators } from "@reduxjs/toolkit";
+import { useEffect } from "react";
+
 export default function Landing() {
+  const dispatch = useDispatch();
+  const { resetState } = bindActionCreators(actionCreators, dispatch);
+  
+  useEffect(() => {
+    resetState();
+  }, [])
+
   return (
     <div className="bg-gradient-to-br from-yellow-300 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] animate-gradient flex justify-center items-center p-2">
       <div className="grid grid-cols-1 gap-8 place-content-center">

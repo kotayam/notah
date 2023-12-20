@@ -80,8 +80,8 @@ export function TextFunctionBar() {
             name="font"
             id="font"
           >
-            {fonts.map((font) => (
-              <option value={font.toLowerCase()}>{font}</option>
+            {fonts.map((font, idx) => (
+              <option key={idx} value={font.toLowerCase()}>{font}</option>
             ))}
           </select>
           <select
@@ -93,8 +93,8 @@ export function TextFunctionBar() {
             name="font-size"
             id="font-size"
           >
-            {fontSizes.map((size) => (
-              <option value={size}>{size}</option>
+            {fontSizes.map((size, idx) => (
+              <option key={idx} value={size}>{size}</option>
             ))}
           </select>
         </div>

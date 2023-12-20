@@ -8,8 +8,9 @@ import noteBookReducer from "./noteBookReducer";
 import pageReducer from "./pageReducer";
 import accountReducer from "./accountReducer";
 import saveReducer from "./saveReducer";
+import { ActionType } from "../action-types";
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
     canvasElements: canvasElementReducer,
     textStyle: textStyleReducer,
     shape: shapeReducer,
@@ -20,6 +21,16 @@ const rootReducer = combineReducers({
     account: accountReducer,
     isSaved: saveReducer
 });
+
+const rootReducer = (state: any, action: any) => {
+    switch (action.type) {
+        case ActionType.RESET:
+            localStorage.removeItem("persist:root");
+            return appReducer(undefined, action);
+        default:
+            return appReducer(state, action);
+    }
+}
 
 export default rootReducer;
 

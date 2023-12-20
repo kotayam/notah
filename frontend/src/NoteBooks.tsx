@@ -23,9 +23,6 @@ export default function NoteBooks() {
   const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
-    // if (!itemAdded && noteBooks.length) {
-    //     return;
-    // }
     fetch(notahApi + "byOwnerId/" + account.id, {
       credentials: 'include'
     })

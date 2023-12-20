@@ -14,5 +14,6 @@ export enum ActionType {
     NOTEBOOK = 'notebook',
     PAGE = 'page',
     ACOUNT = 'account',
-    SAVE = "save"
+    SAVE = "save",
+    RESET = "reset"
 }

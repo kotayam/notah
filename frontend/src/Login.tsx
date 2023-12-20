@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
@@ -16,10 +16,14 @@ type Account = {
 
 export default function Login() {
   const dispatch = useDispatch();
-  const { setAccount } = bindActionCreators(actionCreators, dispatch);
+  const { setAccount, resetState } = bindActionCreators(actionCreators, dispatch);
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    resetState();
+  }, []);
 
   const displayErrorMessage = (msg: string) => {
     setErrMsg(msg);
@@ -161,6 +165,15 @@ export default function Login() {
                 href="/signup"
               >
                 Sign Up
+              </a>
+            </div>
+            <div className="text-center flex justify-center">
+              <p>Jot down a quick note?&nbsp;</p>
+              <a
+                className="text-center text-blue-600 font-semibold hover:underline"
+                href="/note"
+              >
+                Memo
               </a>
             </div>
             <hr />
