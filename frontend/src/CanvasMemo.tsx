@@ -145,11 +145,15 @@ export default function CanvasMemo() {
 
   return (
     <>
-      <div id="canvas-container" className="h-screen w-full overflow-x-scroll overflow-y-hidden">
+      <div
+        id="canvas-container"
+        className="h-screen w-full overflow-x-scroll overflow-y-hidden"
+      >
         <div className="grid grid-cols-1">
-          <div className="bg-amber-500 bg-opacity-40 w-full py-1">
-            <p className="text-black text-lg animate-horizontalroll">
-              Currently in <span className="font-semibold">Memo Mode</span>. Sign Up and/or Login to save notes and unlock more features!
+          <div className="bg-amber-500 bg-opacity-40 w-full py-1 pointer-events-none">
+            <p className="text-black text-lg mobile:text-sm animate-horizontalroll1 mobile:animate-horizontalroll2 whitespace-nowrap text-right">
+              Currently in <span className="font-semibold">Memo Mode</span>.
+              Sign Up and/or Login to save notes and unlock more features!
             </p>
           </div>
           <div
@@ -165,14 +169,16 @@ export default function CanvasMemo() {
               handleMouseUp();
             }}
           >
-            <h3
-              className="pl-3 pt-2 text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              Memo
-            </h3>
+            <div className="pl-3 pt-2">
+              <h3
+                className="text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-fit outline-none"
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                Memo
+              </h3>
+            </div>
             {returnCanvasElement()}
           </div>
         </div>

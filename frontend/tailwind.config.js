@@ -42,9 +42,13 @@ export default {
           '0%': {transform: 'translateY(100px)', opacity: '0'},
           '100%': {transform: '0%', opacity: '1'}
         },
-        horizontalroll: {
-          '0%': {transform: 'translateX(-50%)'},
-          '100%': {transform: 'translateX(125%)'}
+        horizontalroll1: {
+          '0%': {transform: 'translateX(50%)'},
+          '100%': {transform: 'translateX(-100%)'}
+        },
+        horizontalroll2: {
+          '0%': {transform: 'translateX(125%)'},
+          '100%': {transform: 'translateX(-225%)'}
         }
       },
       animation: {
@@ -52,7 +56,8 @@ export default {
         gradient: 'gradient 10s ease infinite',
         slidein: 'slidein 3s',
         slideup: 'slideup 2s 2s backwards',
-        horizontalroll: 'horizontalroll 25s linear infinite'
+        horizontalroll1: 'horizontalroll1 25s linear infinite',
+        horizontalroll2: 'horizontalroll2 20s linear infinite'
       },
     },
   },
