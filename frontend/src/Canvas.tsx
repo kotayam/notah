@@ -292,7 +292,7 @@ export default function Canvas() {
               id="page-title"
               suppressContentEditableWarning
               contentEditable="true"
-              className="text-3xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
+              className="text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
               onMouseDown={(e) => {
                 e.stopPropagation();
               }}

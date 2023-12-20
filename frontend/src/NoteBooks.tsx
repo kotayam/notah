@@ -100,7 +100,7 @@ export default function NoteBooks() {
     <>
       <div className="h-full flex-1 border-r-2">
         <button
-          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap overflow-auto p-1 border-b-2 w-full font-bold text-amber-500"
+          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal overflow-hidden p-1 border-b-2 font-bold text-amber-500 text-center"
           onClick={() => addNoteBook()}
         >
           + Add Notebook
