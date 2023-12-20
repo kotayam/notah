@@ -5,7 +5,7 @@ const notahApi = "http://localhost:5245/api/v1/Accounts";
 export default function CreateAccount() {
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [signupStatus, setSignupStatus] = useState("Sign Up");
+  const [loading, setLoading] = useState(false);
 
   const displayErrorMessage = (msg: string) => {
     setErrMsg(msg);
@@ -36,11 +36,21 @@ export default function CreateAccount() {
       displayErrorMessage("*Please fill out all fields");
       return;
     }
+    let usernameChecker = new RegExp(/^[a-zA-Z0-9]+$/i);
+    if (!usernameChecker.test(username.value)) {
+      displayErrorMessage("*Username can only contain alphanumeric characters");
+      return;
+    }
+    let emailChecker = new RegExp(/^.+\@.+\..+$/i);
+    if (!emailChecker.test(email.value)) {
+      displayErrorMessage("*Invalid email format");
+      return;
+    }
     if (password.value !== confirmPass.value) {
       displayErrorMessage("*Password does not match");
       return;
     }
-    setSignupStatus("Signing up...");
+    setLoading(true);
     fetch(notahApi, {
       method: "POST",
       headers: {
@@ -55,7 +65,7 @@ export default function CreateAccount() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setSignupStatus("Sign Up");
+        setLoading(false);
         console.log(data);
         if (data.status === 400) {
           displayErrorMessage("*Username already exists");
@@ -64,16 +74,16 @@ export default function CreateAccount() {
         window.location.href = "/login";
       })
       .catch((e) => {
-        setSignupStatus("Sign Up");
+        setLoading(false);
         console.error(e);
         displayErrorMessage("*Failed to create account");
       });
   };
   return (
     <>
-      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center items-center animate-gradient">
+      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center items-center animate-gradient mobile:text-sm">
         <div className="bg-white p-2 rounded-xl h-fit min-w-[400px]">
-          <h1 className="mt-5 mb-5 text-center font-semibold text-2xl">
+          <h1 className="mt-5 mb-5 text-center font-semibold text-2xl mobile:text-xl">
             Sign Up
           </h1>
           <p
@@ -104,6 +114,7 @@ export default function CreateAccount() {
                 <input
                   id="username"
                   type="text"
+                  maxLength={20}
                   placeholder="Type your username"
                 />
               </div>
@@ -184,10 +195,19 @@ export default function CreateAccount() {
               <hr />
             </div>
             <button
-              className="mt-3 rounded-lg p-2 font-medium hover:bg-amber-300 active:bg-amber-400 bg-amber-200 "
+              className={`mt-3 rounded-lg p-2 hover:bg-amber-300 active:bg-amber-400 bg-amber-200 flex justify-center`}
               onClick={() => createAccount()}
             >
-              {signupStatus}
+              <p
+                className="font-medium"
+                style={{ display: loading ? "none" : "flex" }}
+              >
+                Sign Up
+              </p>
+              <div
+                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                style={{ display: loading ? "flex" : "none" }}
+              ></div>
             </button>
             <div className="mt-5 text-center flex justify-center">
               <p>Already Have an Account?&nbsp;</p>

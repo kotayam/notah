@@ -1,7 +1,7 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Landing from "./Landing"
-import Home from "./Home.tsx";
+import Home from "./Notah.tsx";
 import Login from "./Login.tsx";
 import CreateAccount from "./CreateAccount.tsx";
 import NotFound from "./NotFound.tsx";
@@ -11,8 +11,8 @@ function App() {
     <>
     <Routes>
       <Route path="/" element={<Landing/>}/>
-      <Route path="/note/" element={<Home access={"guest"}/>}/>
-      <Route path="/note/:username" element={<Home access={"user"}/>}/>
+      <Route path="/note/" element={<Home/>}/>
+      <Route path="/note/:username" element={<Home/>}/>
       <Route path="/login" element={<Login/>}/>
       <Route path="/signup" element={<CreateAccount/>}/>
       <Route path="*" element={<NotFound/>}/>

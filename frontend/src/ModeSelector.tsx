@@ -23,7 +23,7 @@ export default function ModeSelector({ thisMode }: ModeSelectorProps) {
     return (
         <>
         <button 
-        className="hover:bg-white py-2 px-6 decoration-amber-400 decoration-4 underline-offset-4" 
+        className="hover:bg-white py-2 mobile:py-1 px-6 mobile:px-4 decoration-amber-400 decoration-4 underline-offset-4" 
         style={{fontWeight: boldSelected(), textDecoration: underlineSelected() }}
         onClick={_ => {changeMode(thisMode.toLowerCase())}}
         >

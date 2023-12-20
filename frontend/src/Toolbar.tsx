@@ -167,7 +167,7 @@ export default function Toolbar() {
   return (
     <>
       <div className="w-full border-b-2">
-        <div className="flex justify-between items-enter bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400">
+        <div className="flex justify-between items-center bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400">
           <div>
             <button
               className="p-2 bg-amber-300 hover:bg-amber-400 active:bg-amber-500"
@@ -176,12 +176,12 @@ export default function Toolbar() {
               Save
             </button>
           </div>
-          <h1 className=" font-semibold text-2xl">Notah</h1>
+          <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
           {showLogButton()}
         </div>
         <div className=" bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200">
-          <div className="flex justify-between items-enter">
-            <div className="">
+          <div className="flex justify-between items-center">
+            <div>
               <ModeSelector thisMode={"Text"} />
               <ModeSelector thisMode={"Shape"} />
               <ModeSelector thisMode={"Table"} />
@@ -194,7 +194,7 @@ export default function Toolbar() {
               Save as PDF
             </button>
           </div>
-          <div className=" h-10 px-4">{returnFunctionBar()}</div>
+          <div className="h-10 px-4">{returnFunctionBar()}</div>
         </div>
       </div>
     </>

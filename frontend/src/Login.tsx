@@ -19,7 +19,7 @@ export default function Login() {
   const { setAccount } = bindActionCreators(actionCreators, dispatch);
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const [loginStatus, setLoginStatus] = useState("Login");
+  const [loading, setLoading] = useState(false);
 
   const displayErrorMessage = (msg: string) => {
     setErrMsg(msg);
@@ -42,7 +42,7 @@ export default function Login() {
       displayErrorMessage("*Please fill out all fields");
       return;
     }
-    setLoginStatus("Logging in...");
+    setLoading(true);
     fetch(notahApi, {
       method: "POST",
       credentials: "include",
@@ -54,7 +54,7 @@ export default function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setLoginStatus("Login");
+        setLoading(false);
         if (data.status === 404) {
           displayErrorMessage("*Email or password is incorrect");
           return;
@@ -72,16 +72,16 @@ export default function Login() {
         window.location.href = `/${data.username}`;
       })
       .catch((e) => {
-        setLoginStatus("Login");
+        setLoading(false);
         console.error(e);
         displayErrorMessage("*Failed to login");
       });
   };
   return (
     <>
-      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center items-center animate-gradient">
+      <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center items-center animate-gradient mobile:text-sm">
         <div className="bg-white p-2 rounded-xl h-fit min-w-[400px]">
-          <h1 className="mt-5 mb-5 text-center font-semibold text-2xl">
+          <h1 className="mt-5 mb-5 text-center font-semibold text-2xl mobile:text-xl">
             Login
           </h1>
           <p
@@ -132,18 +132,27 @@ export default function Login() {
                   />
                 </svg>
                 <input
-                id="password"
-                type="password"
-                placeholder="Type your password"
-              />
+                  id="password"
+                  type="password"
+                  placeholder="Type your password"
+                />
               </div>
               <hr />
             </div>
             <button
-              className="mt-3 rounded-lg p-2 font-medium hover:bg-amber-300 active:bg-amber-400 bg-amber-200"
+              className="mt-3 rounded-lg p-2 hover:bg-amber-300 active:bg-amber-400 bg-amber-200 flex justify-center"
               onClick={() => login()}
             >
-              {loginStatus}
+              <p
+                className="font-medium"
+                style={{ display: loading ? "none" : "flex" }}
+              >
+                Sign Up
+              </p>
+              <div
+                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                style={{ display: loading ? "flex" : "none" }}
+              ></div>
             </button>
             <div className="mt-5 text-center flex justify-center">
               <p>New to Notah?&nbsp;</p>

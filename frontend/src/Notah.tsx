@@ -1,15 +1,14 @@
-import { HomeProps } from "./Props";
 import Canvas from "./Canvas";
 import Notes from "./Notes";
 import Toolbar from "./Toolbar";
 
-export default function Home({access} : HomeProps) {
+export default function Notah() {
   return (
-    <div className="bg-amber-50">
+    <div className="bg-amber-50 mobile:text-sm">
       <Toolbar/>
       <div className="flex h-full">
         <Notes/>
-        <Canvas access={access} />
+        <Canvas />
       </div>
     </div>
   );

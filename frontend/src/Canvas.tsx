@@ -1,5 +1,4 @@
 import "./App.css";
-import { CanvasProps } from "./Props.ts";
 import { useEffect, useState } from "react";
 import { MouseEvent } from "react";
 import {
@@ -33,10 +32,15 @@ type CanvasElementDTO = {
   column: number;
 };
 
-export default function Canvas({ access }: CanvasProps) {
+export default function Canvas() {
   const dispatch = useDispatch();
-  const { addCanvasElement, updateCanvasElement, clearCanvasElements, setPage, setSaved } =
-    bindActionCreators(actionCreators, dispatch);
+  const {
+    addCanvasElement,
+    updateCanvasElement,
+    clearCanvasElements,
+    setPage,
+    setSaved,
+  } = bindActionCreators(actionCreators, dispatch);
 
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
@@ -48,62 +52,60 @@ export default function Canvas({ access }: CanvasProps) {
 
   const [drawing, setDrawing] = useState(false);
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
-  if (access === "user") {
-    useEffect(() => {
-      if (page.id === "-1") return;
-      fetch(notahApi + "byPageId/" + page.id, {
-        credentials: "include",
-      })
-        .then((res) => res.json())
-        .then((data) => data as CanvasElementDTO[])
-        .then((data) => {
-          console.log(data);
-          clearCanvasElements(page.id);
-          data.forEach((elt) => {
-            let newElt: CanvasElement;
-            if (elt.type === "text") {
-              newElt = new TextBoxElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML,
-                elt.font,
-                elt.fontSize,
-                elt.fontColor,
-                textStyle.fontWeight,
-                textStyle.fontStyle
-              );
-            } else if (elt.type === "shape") {
-              newElt = new ShapeElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML,
-                elt.shape,
-                elt.width,
-                elt.height
-              );
-            } else if (elt.type === "table") {
-              newElt = new TableElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML,
-                elt.row,
-                elt.column
-              );
-            } else {
-              return;
-            }
-            addCanvasElement(page.id, newElt);
-          });
-        })
-        .catch((e) => {
-          clearCanvasElements(page.id);
-          console.error(e);
+  useEffect(() => {
+    if (page.id === "-1") return;
+    fetch(notahApi + "byPageId/" + page.id, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => data as CanvasElementDTO[])
+      .then((data) => {
+        console.log(data);
+        clearCanvasElements(page.id);
+        data.forEach((elt) => {
+          let newElt: CanvasElement;
+          if (elt.type === "text") {
+            newElt = new TextBoxElement(
+              elt.id,
+              elt.x,
+              elt.y,
+              elt.innerHTML,
+              elt.font,
+              elt.fontSize,
+              elt.fontColor,
+              textStyle.fontWeight,
+              textStyle.fontStyle
+            );
+          } else if (elt.type === "shape") {
+            newElt = new ShapeElement(
+              elt.id,
+              elt.x,
+              elt.y,
+              elt.innerHTML,
+              elt.shape,
+              elt.width,
+              elt.height
+            );
+          } else if (elt.type === "table") {
+            newElt = new TableElement(
+              elt.id,
+              elt.x,
+              elt.y,
+              elt.innerHTML,
+              elt.row,
+              elt.column
+            );
+          } else {
+            return;
+          }
+          addCanvasElement(page.id, newElt);
         });
-    }, [page]);
-  }
+      })
+      .catch((e) => {
+        clearCanvasElements(page.id);
+        console.error(e);
+      });
+  }, [page]);
 
   const handleMouseDown = (e: MouseEvent, parent: HTMLDivElement) => {
     let newElt: CanvasElement;
@@ -202,7 +204,7 @@ export default function Canvas({ access }: CanvasProps) {
   const saveTitle = (e: React.KeyboardEvent) => {
     const div = document.getElementById("page-title");
     if (div === null) return;
-    if ((e.key === "Enter")) {
+    if (e.key === "Enter") {
       e.preventDefault();
       fetch("http://localhost:5245/api/v1/Pages/" + page.id, {
         method: "PUT",
@@ -224,7 +226,6 @@ export default function Canvas({ access }: CanvasProps) {
           });
         })
         .catch((e) => {
-
           console.error(e);
         });
     }

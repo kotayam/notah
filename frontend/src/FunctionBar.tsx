@@ -18,6 +18,14 @@ export function TextFunctionBar() {
     changeFontSize,
   } = bindActionCreators(actionCreators, dispatch);
 
+  const fonts = [
+    "Sans-Serif",
+    "Calibri",
+    "Arial",
+    "Times New Roman",
+    "Georgia",
+  ];
+  const fontSizes = [11, 12, 16, 20, 24, 36, 48, 72];
   const textColors = ["black", "white", "red", "yellow", "green", "blue"];
 
   let boldStyle;
@@ -37,18 +45,12 @@ export function TextFunctionBar() {
             style={{ top: colorRect.bottom, left: colorRect.left }}
           >
             <p>Font Color</p>
-            <div
-              className={`grid gap-1`}
-              style={{
-                gridTemplateRows: `repeat(${1}, minmax(0, 1fr))`,
-                gridTemplateColumns: `repeat(${textColors.length}, minmax(0, 1fr))`,
-              }}
-            >
+            <div className={`grid grid-cols-6 mobile:grid-cols-1 gap-1`}>
               {textColors.map((color, idx) => {
                 return (
                   <div
                     key={`${idx}`}
-                    className="border-[1px] h-8 w-8 hover:border-black z-[999]"
+                    className="border-[1px] h-8 mobile:h-6 w-8 mobile:w-6 hover:border-black z-[999]"
                     style={{ backgroundColor: color }}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -67,78 +69,80 @@ export function TextFunctionBar() {
 
   return (
     <>
-      <select
-        className="hover:bg-gray-300 border-2 border-r-0 border-gray-300 text-[18px]"
-        value={textStyle.font}
-        onChange={(e) => {
-          changeFont(e.target.value);
-        }}
-        name="font"
-        id="font"
-      >
-        <option value="sans-serif">Sans-Serif</option>
-        <option value="calibri">Calibri</option>
-        <option value="arial">Arial</option>
-        <option value="times-new-roman">Times New Roman</option>
-        <option value="georgia">Georgia</option>
-      </select>
-      <select
-        className="hover:bg-gray-300 border-2 border-gray-300 text-[18px]"
-        value={textStyle.fontSize}
-        onChange={(e) => {
-          changeFontSize(parseInt(e.target.value));
-        }}
-        name="font-size"
-        id="font-size"
-      >
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="16">16</option>
-        <option value="20">20</option>
-        <option value="24">24</option>
-        <option value="36">36</option>
-        <option value="48">48</option>
-        <option value="72">72</option>
-      </select>
-      <button
-        className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${boldStyle}`}
-        onClick={(_) => {
-          if (textStyle.fontWeight === "bold") changeFontWeight("normal");
-          else changeFontWeight("bold");
-        }}
-      >
-        <strong>B</strong>
-      </button>
-      <button
-        className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none ${italicStyle}`}
-        onClick={(_) => {
-          if (textStyle.fontStyle === "italic") changeFontStyle("normal");
-          else changeFontStyle("italic");
-        }}
-      >
-        <em style={{ fontFamily: "georgia" }}>I</em>
-      </button>
-      <button
-        className={`hover:bg-gray-300 active:bg-gray-400 text-[25px] w-[30px] rounded-none`}
-      >
-        <span className="underline">U</span>
-      </button>
-      <button
-        className={`hover:bg-gray-300 active:bg-gray-400 text-[21px] w-[30px] rounded-none`}
-        onClick={(e) => {
-          setColorClicked((prev) => !prev);
-          setColorRect(e.currentTarget.getBoundingClientRect());
-        }}
-      >
-        <div className="w-full h-full">
-          <p className="h-7">A</p>
-          <div
-            className="h-1 w-5 m-auto"
-            style={{ backgroundColor: textStyle.fontColor }}
-          ></div>
+      <div className="flex justify-start items-center">
+        <div className="grid grid-cols-2 place-content-center gap-1">
+          <div className="flex items-center">
+            <select
+              className="hover:bg-gray-300 border-2 border-r-0 border-gray-300"
+              value={textStyle.font}
+              onChange={(e) => {
+                changeFont(e.target.value);
+              }}
+              name="font"
+              id="font"
+            >
+              {fonts.map((font) => (
+                <option value={font.toLowerCase()}>{font}</option>
+              ))}
+            </select>
+            <select
+              className="hover:bg-gray-300 border-2 border-gray-300"
+              value={textStyle.fontSize}
+              onChange={(e) => {
+                changeFontSize(parseInt(e.target.value));
+              }}
+              name="font-size"
+              id="font-size"
+            >
+              {fontSizes.map((size) => (
+                <option value={size}>{size}</option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-4 gap-0 place-content-center">
+            <button
+              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl ${boldStyle}`}
+              onClick={(_) => {
+                if (textStyle.fontWeight === "bold") changeFontWeight("normal");
+                else changeFontWeight("bold");
+              }}
+            >
+              <strong>B</strong>
+            </button>
+            <button
+              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl ${italicStyle}`}
+              onClick={(_) => {
+                if (textStyle.fontStyle === "italic") changeFontStyle("normal");
+                else changeFontStyle("italic");
+              }}
+            >
+              <em style={{ fontFamily: "georgia" }}>I</em>
+            </button>
+            <button
+              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl`}
+            >
+              <span className="underline">U</span>
+            </button>
+            <button
+              className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl`}
+              onClick={(e) => {
+                setColorClicked((prev) => !prev);
+                setColorRect(e.currentTarget.getBoundingClientRect());
+              }}
+            >
+              <div className="w-full h-full">
+                <span
+                  className="h-7 underline decoration-4"
+                  style={{ textDecorationColor: textStyle.fontColor }}
+                >
+                  A
+                </span>
+              </div>
+            </button>
+          </div>
+          {showColorOption()}
         </div>
-      </button>
-      {showColorOption()}
+      </div>
     </>
   );
 }
@@ -160,43 +164,48 @@ export function ShapeFunctionBar() {
 
   return (
     <>
-      <button
-        className="hover:bg-gray-300 active:bg-gray-400 border-1 py-1 px-6 h-10"
-        style={{
-          fontWeight: boldSelected("rect"),
-          backgroundColor: bgSelected("rect"),
-        }}
-        onClick={(_) => changeShape("rect")}
-      >
-        <div className="border-[1px] border-black bg-gray-100 w-8 h-5"></div>
-      </button>
-      <button
-        className="hover:bg-gray-300 active:bg-gray-400 border-1 py-2 px-6 h-10"
-        style={{
-          fontWeight: boldSelected("circle"),
-          backgroundColor: bgSelected("circle"),
-        }}
-        onClick={(_) => changeShape("circle")}
-      >
-        <div className="border-[1px] border-black bg-gray-100 w-5 h-5 rounded-full"></div>
-      </button>
-      <button
-        className="hover:bg-gray-300 active:bg-gray-400 border-1 py-2 px-6 h-10"
-        style={{
-          fontWeight: boldSelected("line"),
-          backgroundColor: bgSelected("line"),
-        }}
-        onClick={(_) => changeShape("line")}
-      >
-        <svg width={20} height={20} stroke="black">
-          <line x1={0} y1={0} x2={"100%"} y2={"100%"}></line>
-        </svg>
-      </button>
+      <div className="flex justify-start items-center">
+        <div className="grid grid-cols-3 gap-2 place-content-center">
+          <button
+            className="hover:bg-gray-300 active:bg-gray-400 border-1 flex justify-center items-center h-8 w-16"
+            style={{
+              fontWeight: boldSelected("rect"),
+              backgroundColor: bgSelected("rect"),
+            }}
+            onClick={(_) => changeShape("rect")}
+          >
+            <div className="border-[1px] border-black bg-gray-100 w-8 h-5"></div>
+          </button>
+          <button
+            className="hover:bg-gray-300 active:bg-gray-400 border-1 flex justify-center items-center"
+            style={{
+              fontWeight: boldSelected("circle"),
+              backgroundColor: bgSelected("circle"),
+            }}
+            onClick={(_) => changeShape("circle")}
+          >
+            <div className="border-[1px] border-black bg-gray-100 w-5 h-5 rounded-full"></div>
+          </button>
+          <button
+            className="hover:bg-gray-300 active:bg-gray-400 border-1 flex justify-center items-center"
+            style={{
+              fontWeight: boldSelected("line"),
+              backgroundColor: bgSelected("line"),
+            }}
+            onClick={(_) => changeShape("line")}
+          >
+            <svg width={20} height={20} stroke="black">
+              <line x1={0} y1={0} x2={"100%"} y2={"100%"}></line>
+            </svg>
+          </button>
+        </div>
+      </div>
     </>
   );
 }
 
 export function TableFunctionBar() {
+  const table = useSelector((root: rootState) => root.table);
   const dispatch = useDispatch();
   const { createTable } = bindActionCreators(actionCreators, dispatch);
 
@@ -227,7 +236,7 @@ export function TableFunctionBar() {
       return (
         <>
           <div
-            className="absolute border-[1px] bg-white p-2"
+            className="absolute border-[1px] bg-white p-2 z-[999]"
             style={{ top: rect.bottom, left: rect.left }}
           >
             <p>{`${gridCoord.r + 1}*${gridCoord.c + 1} table`}</p>
@@ -270,16 +279,21 @@ export function TableFunctionBar() {
 
   return (
     <>
-      <button
-        className="hover:bg-gray-300 active:bg-gray-400 border-[1px] border-gray-500 py-1 px-2"
-        style={{ fontWeight: boldClicked(), backgroundColor: bgClicked() }}
-        onClick={(e) => {
-          setClicked((prev) => !prev);
-          setRect(e.currentTarget.getBoundingClientRect());
-        }}
-      >
-        New
-      </button>
+      <div className="flex justify-start items-center">
+        <button
+          className="hover:bg-gray-300 active:bg-gray-400 border-[1px] rounded-md border-gray-500 py-1 px-2"
+          style={{ fontWeight: boldClicked(), backgroundColor: bgClicked() }}
+          onClick={(e) => {
+            setClicked((prev) => !prev);
+            setRect(e.currentTarget.getBoundingClientRect());
+          }}
+        >
+          New
+        </button>
+        <div>
+          <p className=" bg-gray-300 rounded-md p-1 ml-2 text-center">{`Creating ${table.row} * ${table.col} table`}</p>
+        </div>
+      </div>
       {showTableOption()}
     </>
   );
