@@ -5,6 +5,7 @@ import { useState, useEffect, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
+import API from "./API.json";
 
 export default function Table({
   elt,
@@ -55,6 +56,22 @@ export default function Table({
   const handleMouseUp = () => {
     setSaved(false);
     setDrag(false);
+  };
+
+  const deleteTable = () => {
+    fetch(API["API"]["dev"] + `CanvasElements/${elt.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        deleteCanvasElement(page.id, elt.id, elt);
+        setSaved(false);
+      })
+      .catch(e => {
+        console.error(e);
+      })
   };
 
   const returnTableRow = () => {
@@ -109,7 +126,7 @@ export default function Table({
         </button>
         <button
           name="delete-elt"
-          onClick={(_) => {deleteCanvasElement(page.id, elt.id, elt); setSaved(false);}}
+          onClick={() => deleteTable()}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

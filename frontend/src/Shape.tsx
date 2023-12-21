@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import DOMPurify from "isomorphic-dompurify";
+import API from "./API.json";
 
 type Line = {
   x1: string | number;
@@ -160,6 +161,22 @@ export default function Shape({
     setDrag(false);
   };
 
+  const deleteShape = () => {
+    fetch(API["API"]["dev"] + `CanvasElements/${elt.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        deleteCanvasElement(page.id, elt.id, elt);
+        setSaved(false);
+      })
+      .catch(e => {
+        console.error(e);
+      })
+  };
+
   return (
     <div
       className={`absolute border-dotted ${border}`}
@@ -206,7 +223,7 @@ export default function Shape({
         </button>
         <button
           name="delete-elt"
-          onClick={(_) => {deleteCanvasElement(page.id, elt.id, elt); setSaved(false);}}
+          onClick={() => deleteShape()}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

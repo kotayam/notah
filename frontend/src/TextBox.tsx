@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import DOMPurify from "isomorphic-dompurify";
+import API from "./API.json";
 
 export default function TextBox({
   elt,
@@ -12,16 +13,14 @@ export default function TextBox({
   selectedElt,
 }: TextBoxProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement, setSaved } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
-  let canvasElements = useSelector(
-    (state: rootState) => state.canvasElements
-  );
+  const { deleteCanvasElement, updateCanvasElement, setSaved } =
+    bindActionCreators(actionCreators, dispatch);
+  let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
-  const page = useSelector((state: rootState) => state.page)
-  const [canvasElts, _] = useState(canvasElements.get(page.id) || new Array<CanvasElement>())
+  const page = useSelector((state: rootState) => state.page);
+  const [canvasElts, _] = useState(
+    canvasElements.get(page.id) || new Array<CanvasElement>()
+  );
   const [border, setBorder] = useState("border-0");
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
@@ -60,11 +59,27 @@ export default function TextBox({
     setSaved(false);
   };
 
+  const deleteTextBox = () => {
+    fetch(API["API"]["dev"] + `CanvasElements/${elt.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        deleteCanvasElement(page.id, elt.id, elt);
+        setSaved(false);
+      })
+      .catch(e => {
+        console.error(e);
+      })
+  };
+
   return (
     <>
       <div
         className={`absolute ${border}`}
-        style={{ top: elt.y -26, left: elt.x }}
+        style={{ top: elt.y - 26, left: elt.x }}
         onClick={(_) => {
           selectTextBox(elt);
         }}
@@ -101,7 +116,7 @@ export default function TextBox({
               <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
             </svg>
           </button>
-          <button name="delete-elt" onClick={(_) => {deleteCanvasElement(page.id, elt.id, elt); setSaved(false);}}>
+          <button name="delete-elt" onClick={() => deleteTextBox()}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -129,7 +144,9 @@ export default function TextBox({
             fontSize: elt.fontSize,
             color: elt.fontColor,
           }}
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(elt.innerHtml)}}
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(elt.innerHtml),
+          }}
         ></div>
       </div>
     </>

@@ -40,8 +40,11 @@ export default function Toolbar() {
   const save = () => {
     if (isSaved) return;
     const canvasElts = canvasElements.get(page.id);
-    if (!canvasElts) return;
     console.log(canvasElts);
+    if (!canvasElts || canvasElts.length <= 0) {
+      setSaved(true); 
+      return;
+    }
     canvasElts.forEach((elt) => {
       const body = {
         id: elt.id,
