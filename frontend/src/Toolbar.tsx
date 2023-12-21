@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
+import { useEffect, useState } from "react";
 
 const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
 
@@ -21,10 +22,14 @@ export default function Toolbar() {
   canvasElements = new Map(canvasElements);
 
   const dispatch = useDispatch();
-  const { setSaved } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { setSaved } = bindActionCreators(actionCreators, dispatch);
+
+  const [saveStatus, setSaveStatus] = useState("");
+
+  useEffect(() => {
+    if (isSaved) setSaveStatus("Work saved");
+    else setSaveStatus("Not saved");
+  }, [isSaved]);
 
   const returnFunctionBar = () => {
     switch (mode) {
@@ -42,7 +47,7 @@ export default function Toolbar() {
     const canvasElts = canvasElements.get(page.id);
     console.log(canvasElts);
     if (!canvasElts || canvasElts.length <= 0) {
-      setSaved(true); 
+      setSaved(true);
       return;
     }
     canvasElts.forEach((elt) => {
@@ -81,6 +86,7 @@ export default function Toolbar() {
         body.row = elt.row;
         body.column = elt.col;
       }
+      setSaveStatus("Saving...");
       fetch(notahApi + page.id, {
         method: "POST",
         credentials: "include",
@@ -97,6 +103,10 @@ export default function Toolbar() {
         })
         .catch((e) => {
           console.error(e);
+          setSaveStatus("Failed to save");
+          setTimeout(() => {
+            setSaveStatus("Not saved");
+          }, 3000);
         });
     });
   };
@@ -104,8 +114,7 @@ export default function Toolbar() {
   const logout = () => {
     if (isSaved) {
       window.location.href = "/login";
-    }
-    else {
+    } else {
       alert("Save before you logout");
     }
   };
@@ -136,18 +145,33 @@ export default function Toolbar() {
     <>
       <div className="w-full border-b-2">
         <div className="flex justify-between items-center bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400 px-2">
-          <div>
+          <div className="flex justify-center items-center gap-1">
             <button
-              className="p-2 bg-amber-300 hover:bg-amber-400 active:bg-amber-500"
+              className="p-2 mobile:p-1 hover:bg-amber-200 active:bg-amber-100"
               onClick={() => save()}
             >
-              Save
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"
+                className="w-6 h-6 mobile:w-4"
+              >
+                <path d="M433.9 129.9l-83.9-83.9A48 48 0 0 0 316.1 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V163.9a48 48 0 0 0 -14.1-33.9zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1 -6-6V86a6 6 0 0 1 6-6h42v104c0 13.3 10.7 24 24 24h176c13.3 0 24-10.7 24-24V83.9l78.2 78.2a6 6 0 0 1 1.8 4.2V426a6 6 0 0 1 -6 6zM224 232c-48.5 0-88 39.5-88 88s39.5 88 88 88 88-39.5 88-88-39.5-88-88-88zm0 128c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z" />
+              </svg>
             </button>
+            <p className=" text-gray-800">{saveStatus}</p>
           </div>
           <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
-          <button className="hover:underline" onClick={() => logout()}>
-            Logout
-          </button>
+          <div className="flex justify-center items-center">
+            <button className="hover:underline hover:bg-amber-200 p-2 mobile:p-1">
+              Account
+            </button>
+            <button
+              className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
+              onClick={() => logout()}
+            >
+              Logout
+            </button>
+          </div>
         </div>
         <div className=" bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200">
           <div className="flex justify-between items-center">

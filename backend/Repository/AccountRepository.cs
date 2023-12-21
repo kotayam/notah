@@ -41,6 +41,7 @@ namespace backend.Repository
                 Username = username,
                 Email = email,
                 Password = password,
+                Role = "user",
                 DateCreated = DateTime.Now,
                 LastEdited = DateTime.Now,
                 NoteBooks = new List<NoteBook>()

@@ -16,7 +16,10 @@ type Account = {
 
 export default function Login() {
   const dispatch = useDispatch();
-  const { setAccount, resetState } = bindActionCreators(actionCreators, dispatch);
+  const { setAccount, resetState } = bindActionCreators(
+    actionCreators,
+    dispatch
+  );
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,15 +37,15 @@ export default function Login() {
   };
 
   const login = () => {
-    const email = document.getElementById("email") as HTMLInputElement | null;
+    const username = document.getElementById("username") as HTMLInputElement | null;
     const password = document.getElementById(
       "password"
     ) as HTMLInputElement | null;
-    if (!(email && password)) {
-      displayErrorMessage("*Failed to login");
+    if (!(username && password)) {
+      displayErrorMessage("*Something went wrong, please try again later");
       return;
     }
-    if (!(email.value && password.value)) {
+    if (!(username.value && password.value)) {
       displayErrorMessage("*Please fill out all fields");
       return;
     }
@@ -54,7 +57,7 @@ export default function Login() {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: email.value, password: password.value }),
+      body: JSON.stringify({ username: username.value, password: password.value }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -62,12 +65,10 @@ export default function Login() {
         if (data.status === 404) {
           displayErrorMessage("*Account does not exist");
           return;
-        }
-        else if (data.status === 400) {
-          displayErrorMessage("*Email or password is incorrect");
+        } else if (data.status === 400) {
+          displayErrorMessage("*Username or password is incorrect");
           return;
-        }
-        else {
+        } else {
           data = data as Account;
         }
         console.log(data);
@@ -78,12 +79,12 @@ export default function Login() {
           dateCreated: data.dateCreated,
           lastEdited: data.lastEdited,
         });
-        window.location.href = `/note/${data.username}`;
+        window.location.href = `/notah`;
       })
       .catch((e: Error) => {
         setLoading(false);
         console.error(e);
-        displayErrorMessage("Something went wrong on the server");
+        displayErrorMessage("*Something went wrong, please try again later");
       });
   };
   return (
@@ -101,24 +102,29 @@ export default function Login() {
           </p>
           <div className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5">
             <div className="grid grid-cols-1 content-start gap-1">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">Username</label>
               <div className="flex justify-content">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  strokeWidth="1.5"
+                  stroke-width="1.5"
                   stroke="currentColor"
                   data-slot="icon"
                   className="w-5 mr-2"
                 >
                   <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>
-                <input id="email" type="email" placeholder="Type your email" />
+                <input
+                  id="username"
+                  type="text"
+                  maxLength={20}
+                  placeholder="Type your username"
+                />
               </div>
               <hr />
             </div>
@@ -176,7 +182,7 @@ export default function Login() {
               <p>Jot down a quick note?&nbsp;</p>
               <a
                 className="text-center text-blue-600 font-semibold hover:underline"
-                href="/note"
+                href="/memo"
               >
                 Memo
               </a>

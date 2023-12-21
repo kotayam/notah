@@ -37,7 +37,7 @@ export default function Signup() {
       "confirm-password"
     ) as HTMLInputElement | null;
     if (!(username && email && password && confirmPass)) {
-      displayErrorMessage("*Failed to create account");
+      displayErrorMessage("*Something went wrong, please try again later");
       return;
     }
     if (

@@ -42,6 +42,7 @@ namespace backend.Controllers
                                   Username = a.Username,
                                   Email = a.Email,
                                   Password = a.Password,
+                                  Role = a.Role,
                                   DateCreated = a.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                                   LastEdited = a.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                   NoteBooks = (from nb in a.NoteBooks
@@ -68,6 +69,7 @@ namespace backend.Controllers
                     Username = account.Username,
                     Email = account.Email,
                     Password = account.Password,
+                    Role = account.Role,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                     LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     NoteBooks = (from nb in account.NoteBooks
@@ -88,27 +90,28 @@ namespace backend.Controllers
         {
             var exist = await accountRepository.GetAccountByUsernameAsync(acc.Username);
             if (exist != null) {
-                return BadRequest("Username already exists");
+                return BadRequest();
             }
             var passwordHash = passwordHasher.Hash(acc.Password);
             var account = await accountRepository.AddAccountAsync(acc.Username, acc.Email, passwordHash);
-            if (account != null)
-            {
-                var noteBook = await noteBookRepository.AddNoteBookAsync(account.Id, "Quick Notes");
-                if (noteBook != null) {
-                    var page = await pageRepository.AddPageAsync(noteBook.Id, "Unititled Page");
-                    if (page != null) {
-                        var accountDto = new AccountDto()
-                        {
-                            Id = account.Id,
-                            Username = acc.Username,
-                            Email = acc.Email,
-                            Password = passwordHash,
-                            DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                            LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
-                        };
-                        return Ok(accountDto);
-                    }
+            if (account == null) {
+                return NotFound();
+            }
+            var noteBook = await noteBookRepository.AddNoteBookAsync(account.Id, "Quick Notes");
+            if (noteBook != null) {
+                var page = await pageRepository.AddPageAsync(noteBook.Id, "Unititled");
+                if (page != null) {
+                    var accountDto = new AccountDto()
+                    {
+                        Id = account.Id,
+                        Username = acc.Username,
+                        Email = acc.Email,
+                        Password = passwordHash,
+                        Role = account.Role,
+                        DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                        LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    };
+                    return Ok(accountDto);
                 }
             }
             return NotFound();
@@ -129,6 +132,7 @@ namespace backend.Controllers
                     Username = acc.Username,
                     Email = acc.Email,
                     Password = acc.Password,
+                    Role = account.Role,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                     LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
@@ -152,6 +156,7 @@ namespace backend.Controllers
                     Username = account.Username,
                     Email = account.Email,
                     Password = account.Password,
+                    Role = account.Role,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                     LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };

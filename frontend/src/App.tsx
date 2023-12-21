@@ -12,8 +12,8 @@ function App() {
     <>
     <Routes>
       <Route path="/" element={<Landing/>}/>
-      <Route path="/note" element={<NotahMemo/>}/>
-      <Route path="/note/:username" element={<Notah/>}/>
+      <Route path="/memo" element={<NotahMemo/>}/>
+      <Route path="/notah" element={<Notah/>}/>
       <Route path="/login" element={<Login/>}/>
       <Route path="/signup" element={<Signup/>}/>
       <Route path="*" element={<NotFound/>}/>

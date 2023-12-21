@@ -42,7 +42,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginReqDto log)
         {
-            var account = await dbContext.Accounts.Where(a => a.Email == log.Email).FirstOrDefaultAsync();
+            var account = await dbContext.Accounts.Where(a => a.Username == log.Username).FirstOrDefaultAsync();
             if (account == null) {
                 return NotFound();
             }
@@ -56,7 +56,8 @@ namespace backend.Controllers
                 Id = account.Id,
                 Username = account.Username,
                 Email = account.Email,
-                Password = account.Password
+                Password = account.Password,
+                Role = account.Role
             };
             return Ok(accountDto);
         }

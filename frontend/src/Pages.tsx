@@ -100,7 +100,7 @@ export default function Pages() {
     <>
       <div className="h-full flex-1 overflow-auto">
         <button
-          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal overflow-hidden border-b-2 p-1 font-bold text-amber-500"
+          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal w-full overflow-hidden border-b-2 p-1 font-bold text-amber-500"
           onClick={() => addPage()}
         >
           + Add Page
