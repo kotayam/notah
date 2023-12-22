@@ -46,7 +46,7 @@ export default function Pages() {
         console.error(e);
         
       });
-  }, [fetchSwitch, noteBook]);
+  }, [fetchSwitch, noteBook, page.title]);
 
   const addPage = () => {
     if (!isSaved) {

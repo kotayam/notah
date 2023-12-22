@@ -15,7 +15,7 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 type CanvasElementDTO = {
   id: string;
@@ -57,12 +57,12 @@ export default function Canvas() {
   const [lastSaved, setLastSaved] = useState(page.lastSaved);
 
   useEffect(() => {
-    page.id === "-1"? setClickable("pointer-events-none") : setClickable("");
-  }, [page.id])
+    page.id === "-1" ? setClickable("pointer-events-none") : setClickable("");
+  }, [page.id]);
 
   useEffect(() => {
     setLastSaved(page.lastSaved);
-  }, [page.lastSaved])
+  }, [page.lastSaved]);
 
   useEffect(() => {
     if (page.id === "-1") return;
@@ -116,7 +116,6 @@ export default function Canvas() {
       .catch((e) => {
         clearCanvasElements(page.id);
         console.error(e);
-        
       });
   }, [page]);
 
@@ -194,35 +193,39 @@ export default function Canvas() {
     setSelectedElt({ id: elt.id, r: row, c: col });
   };
 
-  const saveTitle = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     const div = document.getElementById("page-title");
     if (div === null) return;
     if (e.key === "Enter") {
       e.preventDefault();
-      fetch(apiLink + `Pages/${page.id}`, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: div.innerText }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setPage({
-            id: data.id,
-            title: data.title,
-            dateCreated: data.dateCreated,
-            lastSaved: data.lastSaved,
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-          
-        });
+      saveTitle(div);
     }
+  };
+
+  const saveTitle = (div: HTMLElement) => {
+    if (div.innerText === page.title) return;
+    fetch(apiLink + `Pages/${page.id}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title: div.innerText }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setPage({
+          id: data.id,
+          title: data.title,
+          dateCreated: data.dateCreated,
+          lastSaved: data.lastSaved,
+        });
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 
   const returnCanvasElement = () => {
@@ -265,7 +268,10 @@ export default function Canvas() {
 
   return (
     <>
-      <div id="canvas-container" className={`w-full h-screen overflow-scroll ${clickable}`}>
+      <div
+        id="canvas-container"
+        className={`w-full h-screen overflow-scroll ${clickable}`}
+      >
         <div
           id="canvas"
           className="w-full h-full relative"
@@ -288,16 +294,17 @@ export default function Canvas() {
               onMouseDown={(e) => {
                 e.stopPropagation();
               }}
-              onKeyDown={(e) => saveTitle(e)}
+              onKeyDown={(e) => handleKeyDown(e)}
+              onMouseLeave={(_) => {const div = document.getElementById("page-title"); if (div) saveTitle(div);}}
             >
-              {page.id === "-1"? "" : page.title}
+              {page.id === "-1" ? "" : page.title}
             </h3>
             <p
               id="page-lastSaved"
               className="pt-2 text-gray-500"
               onMouseDown={(e) => e.stopPropagation()}
             >
-              {page.id === "-1"? "" : `Last Saved: ${lastSaved}`}
+              {page.id === "-1" ? "" : `Last Saved: ${lastSaved}`}
             </p>
           </div>
           {returnCanvasElement()}
