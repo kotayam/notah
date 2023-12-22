@@ -10,7 +10,7 @@ namespace backend.Models
         public Guid Id { get; set; }
         public string Title { get; set; } = "";
         public DateTime DateCreated {get; set;}
-        public DateTime LastEdited {get; set;}
+        public DateTime LastSaved {get; set;}
         public ICollection<CanvasElement> CanvasElements { get; set; } = new List<CanvasElement>();
         public Guid NoteBookId { get; set; }
         public NoteBook NoteBook { get; set; } = null!;

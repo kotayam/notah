@@ -1,7 +1,7 @@
 import { PageAction } from "../actions";
 import { ActionType } from "../action-types";
 
-const initialState = {id: "-1", title: "Page 1", dateCreated: "default", lastEdited: "default"}
+const initialState = {id: "-1", title: "Page 1", dateCreated: "default", lastSaved: "default"}
 
 const pageReducer = (state = initialState , action: PageAction) => {
     switch(action.type) {

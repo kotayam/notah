@@ -23,7 +23,7 @@ export default function Toolbar() {
   canvasElements = new Map(canvasElements);
 
   const dispatch = useDispatch();
-  const { setSaved } = bindActionCreators(actionCreators, dispatch);
+  const { setSaved, setPage } = bindActionCreators(actionCreators, dispatch);
 
   const [saveStatus, setSaveStatus] = useState("");
 
@@ -100,6 +100,7 @@ export default function Toolbar() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          setPage({id: data.pageId, title: data.title, dateCreated: data.dateCreated, lastSaved: data.lastSaved});
           setSaved(true);
         })
         .catch((e) => {

@@ -27,7 +27,7 @@ export default function NoteBooks() {
     if (account.id === "-1") {
       window.location.href = "/login";
     }
-    fetch(apiLink + "byOwnerId/" + account.id, {
+    fetch(apiLink + `NoteBooks/byOwnerId/${account.id}`, {
       credentials: 'include'
     })
       .then((res) => res.json())
@@ -52,7 +52,7 @@ export default function NoteBooks() {
       alert("save before adding a new notebook!");
       return;
     }
-    fetch(apiLink + account.id, {
+    fetch(apiLink + `NoteBooks/${account.id}`, {
       method: "POST",
       credentials: 'include',
       headers: {
@@ -74,7 +74,7 @@ export default function NoteBooks() {
       .then((data) => {
         console.log(data);
         if (data) setNoteBook({id: data.id, title: data.title, dateCreated: data.dateCreated, lastEdited: data.lastEdited});
-        setPage({id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
+        setPage({id: "-1", title: "default", dateCreated: "default", lastSaved: "default"});
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((_) => {
@@ -83,7 +83,7 @@ export default function NoteBooks() {
   };
 
   const deleteNotebook = (id: string) => {
-    fetch(apiLink + id, {
+    fetch(apiLink + `NoteBooks/${id}`, {
       method: "DELETE",
       credentials: 'include',
     })

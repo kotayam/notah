@@ -10,6 +10,6 @@ namespace backend.DTO
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
         public string DateCreated {get; set;} = null!;
-        public string LastEdited {get; set;} = null!;
+        public string LastSaved {get; set;} = null!;
     }
 }

@@ -81,7 +81,7 @@ export type NoteBookAction = {
 
 export type PageAction = {
   type: ActionType.PAGE;
-  payload: { id: string; title: string; dateCreated: string; lastEdited: string };
+  payload: { id: string; title: string; dateCreated: string; lastSaved: string };
 };
 
 export type AccountAction = {

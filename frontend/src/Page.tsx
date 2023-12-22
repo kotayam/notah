@@ -11,7 +11,7 @@ export default function Page({
   id,
   title,
   dateCreated,
-  lastEdited,
+  lastSaved,
   deletePage,
 }: PageProps) {
   const page = useSelector((state: rootState) => state.page);
@@ -36,7 +36,7 @@ export default function Page({
       id: id,
       title: title,
       dateCreated: dateCreated,
-      lastEdited: lastEdited,
+      lastSaved: lastSaved,
     });
     switch (e.button) {
       case 0:
@@ -54,7 +54,7 @@ export default function Page({
     if (e.key === "Enter") {
       const input = document.getElementById(id) as HTMLInputElement;
       if (!input) return;
-      fetch(apiLink + id, {
+      fetch(apiLink + `Pages/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -71,7 +71,7 @@ export default function Page({
             id: data.id,
             title: data.title,
             dateCreated: data.dateCreated,
-            lastEdited: data.lastEdited,
+            lastSaved: data.lastSaved,
           });
         })
         .catch((e) => {

@@ -11,7 +11,7 @@ type Page = {
   id: string;
   title: string;
   dateCreated: string;
-  lastEdited: string;
+  lastSaved: string;
 };
 
 export default function Pages() {
@@ -27,7 +27,7 @@ export default function Pages() {
     if (noteBook.id === "-1") {
       return;
     }
-    fetch(apiLink + "byNoteBookId/" + noteBook.id, {
+    fetch(apiLink + `Pages/byNoteBookId/${noteBook.id}`, {
       credentials: 'include'
     })
       .then((res) => res.json())
@@ -35,25 +35,25 @@ export default function Pages() {
       .then((data) => {
         console.log(data);
         const pgs = new Array<Page>();
-        data.forEach((p) => pgs.push({ id: p.id, title: p.title, dateCreated: p.dateCreated, lastEdited: p.lastEdited }));
+        data.forEach((p) => pgs.push({ id: p.id, title: p.title, dateCreated: p.dateCreated, lastSaved: p.lastSaved }));
         setPages(pgs);
         if (pgs.length > 0 && page.id === "-1") {
-          setPage({id: pgs[0].id, title: pgs[0].title, dateCreated: pgs[0].dateCreated, lastEdited: pgs[0].lastEdited});
+          setPage({id: pgs[0].id, title: pgs[0].title, dateCreated: pgs[0].dateCreated, lastSaved: pgs[0].lastSaved});
         }
       })
       .catch((e) => {
-        setPage({id: "-1", title: "Error", dateCreated: "", lastEdited: "Error"});
+        setPage({id: "-1", title: "Error", dateCreated: "", lastSaved: "Error"});
         console.error(e);
         
       });
-  }, [fetchSwitch, noteBook, page]);
+  }, [fetchSwitch, noteBook]);
 
   const addPage = () => {
     if (!isSaved) {
       alert("save before adding a new page!");
       return;
     }
-    fetch(apiLink + noteBook.id, {
+    fetch(apiLink + `Pages/${noteBook.id}`, {
       method: "POST",
       credentials: 'include',
       headers: {
@@ -72,7 +72,7 @@ export default function Pages() {
       })
       .then((data) => {
         console.log(data);
-        if (data) setPage({id: data.id, title: data.title, dateCreated: data.dateCreated, lastEdited: data.lastEdited});
+        if (data) setPage({id: data.id, title: data.title, dateCreated: data.dateCreated, lastSaved: data.lastSaved});
         setFetchSwitch((prevState) => !prevState);
       })
       .catch((_) => {
@@ -82,7 +82,7 @@ export default function Pages() {
   };
 
   const deletePage = (id: string) => {
-    fetch(apiLink + id, {
+    fetch(apiLink + `Pages/${id}`, {
       method: "DELETE",
       credentials: 'include',
     })
@@ -90,7 +90,7 @@ export default function Pages() {
       .then((data) => {
         console.log(data);
         setFetchSwitch((prevState) => !prevState);
-        setPage({id: pages[0].id, title: pages[0].title, dateCreated: pages[0].dateCreated, lastEdited: pages[0].lastEdited});
+        setPage({id: pages[0].id, title: pages[0].title, dateCreated: pages[0].dateCreated, lastSaved: pages[0].lastSaved});
       })
       .catch((e) => {
         console.error(e);
@@ -114,7 +114,7 @@ export default function Pages() {
                 id={p.id}
                 title={p.title}
                 dateCreated={p.dateCreated}
-                lastEdited={p.lastEdited}
+                lastSaved={p.lastSaved}
                 deletePage={deletePage}
               />
             ))}

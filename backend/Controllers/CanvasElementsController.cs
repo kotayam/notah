@@ -14,10 +14,12 @@ namespace backend.Controllers
     public class CanvasElementsController : Controller
     {
         private readonly ICanvasElementRepository canvasElementRepository;
+        private readonly IPageRepository pageRepository;
 
-        public CanvasElementsController(ICanvasElementRepository canvasElementRepository)
+        public CanvasElementsController(ICanvasElementRepository canvasElementRepository, IPageRepository pageRepository)
         {
             this.canvasElementRepository = canvasElementRepository;
+            this.pageRepository = pageRepository;
         }
 
         [HttpGet]
@@ -108,31 +110,63 @@ namespace backend.Controllers
         [Route("{pageId:guid}")]
         public async Task<IActionResult> AddCanvasElement([FromRoute] Guid pageId, [FromBody] CanvasElementReqDto ce)
         {
+            var page = await pageRepository.UpdatePageAsync(pageId, "");
+            if (page == null) {
+                return BadRequest();
+            }
             var exist = await canvasElementRepository.GetCanvasElementByIdAsync(ce.Id);
             if (exist != null) {
-                return await UpdateCanvasElement(ce.Id, ce);
+                var updatedElt = await canvasElementRepository.UpdateCanvasElementAsync(ce.Id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height);
+                if (updatedElt != null) {
+                    var updatedEltAndPageDto = new CanvasElementAndPageDto()
+                    {
+                        Id = updatedElt.Id,
+                        Type = updatedElt.Type,
+                        X = updatedElt.X,
+                        Y = updatedElt.Y,
+                        InnerHTML = updatedElt.InnerHTML,
+                        Font = updatedElt.Font,
+                        FontSize = updatedElt.FontSize,
+                        FontColor = updatedElt.FontColor,
+                        Shape = updatedElt.Shape,
+                        Width = updatedElt.Width,
+                        Height = updatedElt.Height,
+                        Row = updatedElt.Row,
+                        Column = updatedElt.Column,
+                        PageId = updatedElt.PageId,
+                        Title = page.Title,
+                        DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                        LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt")
+                    };
+                    return Ok(updatedEltAndPageDto);
+                }
             }
-            var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.Type, ce.X, ce.Y, ce.InnerHTML, ce.Font, ce.FontSize, ce.FontColor, ce.Shape, ce.Width, ce.Height, ce.Row, ce.Column);
-            if (canvasElt != null)
-            {
-                var canvasEltDto = new CanvasElementDto()
+            else {
+                var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.Type, ce.X, ce.Y, ce.InnerHTML, ce.Font, ce.FontSize, ce.FontColor, ce.Shape, ce.Width, ce.Height, ce.Row, ce.Column);
+                if (canvasElt != null)
                 {
-                    Id = canvasElt.Id,
-                    Type = canvasElt.Type,
-                    X = canvasElt.X,
-                    Y = canvasElt.Y,
-                    InnerHTML = canvasElt.InnerHTML,
-                    Font = canvasElt.Font,
-                    FontSize = canvasElt.FontSize,
-                    FontColor = canvasElt.FontColor,
-                    Shape = canvasElt.Shape,
-                    Width = canvasElt.Width,
-                    Height = canvasElt.Height,
-                    Row = canvasElt.Row,
-                    Column = canvasElt.Column,
-                    PageId = canvasElt.PageId
-                };
-                return Ok(canvasEltDto);
+                    var canvasEltAndPageDto = new CanvasElementAndPageDto()
+                    {
+                        Id = canvasElt.Id,
+                        Type = canvasElt.Type,
+                        X = canvasElt.X,
+                        Y = canvasElt.Y,
+                        InnerHTML = canvasElt.InnerHTML,
+                        Font = canvasElt.Font,
+                        FontSize = canvasElt.FontSize,
+                        FontColor = canvasElt.FontColor,
+                        Shape = canvasElt.Shape,
+                        Width = canvasElt.Width,
+                        Height = canvasElt.Height,
+                        Row = canvasElt.Row,
+                        Column = canvasElt.Column,
+                        PageId = canvasElt.PageId,
+                        Title = page.Title,
+                        DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                        LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt")
+                    };
+                    return Ok(canvasEltAndPageDto);
+                }
             }
             return NotFound();
         }

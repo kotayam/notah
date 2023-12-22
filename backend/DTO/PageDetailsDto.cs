@@ -10,7 +10,7 @@ namespace backend.DTO
         public Guid Id { get; set; }
         public string Title { get; set; } = "";
         public string DateCreated {get; set;} = null!;
-        public string LastEdited {get; set;} = null!;
+        public string LastSaved {get; set;} = null!;
         public ICollection<CanvasElementDto> CanvasElements { get; set; } = new List<CanvasElementDto>();
         public Guid NoteBookId { get; set; }
     }

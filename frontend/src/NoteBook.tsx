@@ -28,7 +28,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
       return;
     }
     setNoteBook({ id: id, title: title, dateCreated: noteBook.dateCreated, lastEdited: noteBook.lastEdited });
-    setPage({id: "-1", title: "default", dateCreated: "default", lastEdited: "default"});
+    setPage({id: "-1", title: "default", dateCreated: "default", lastSaved: "default"});
     switch (e.button) {
       case 0:
         setRename(false);
@@ -45,7 +45,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
     if (e.key === "Enter") {
       const input = document.getElementById(id) as HTMLInputElement;
       if (!input) return;
-      fetch(apiLink + id, {
+      fetch(apiLink + `NoteBooks/${id}`, {
         method: "PUT",
         credentials: 'include',
         headers: {

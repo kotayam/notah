@@ -53,9 +53,20 @@ export default function Canvas() {
 
   const [drawing, setDrawing] = useState(false);
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
+  const [clickable, setClickable] = useState("");
+  const [lastSaved, setLastSaved] = useState(page.lastSaved);
+
+  useEffect(() => {
+    page.id === "-1"? setClickable("pointer-events-none") : setClickable("");
+  }, [page.id])
+
+  useEffect(() => {
+    setLastSaved(page.lastSaved);
+  }, [page.lastSaved])
+
   useEffect(() => {
     if (page.id === "-1") return;
-    fetch(apiLink + "byPageId/" + page.id, {
+    fetch(apiLink + `CanvasElements/byPageId/${page.id}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -115,7 +126,6 @@ export default function Canvas() {
     const x = e.pageX - parent.offsetLeft;
     const y = e.pageY - parent.offsetTop;
     if (mode === "text") {
-      // setText("");
       newElt = new TextBoxElement(
         id,
         x,
@@ -142,9 +152,6 @@ export default function Canvas() {
       newState.id = id;
       return newState;
     });
-    // setCanvasElts(canvasElts => {
-    //     return [...canvasElts, newElt];
-    // });
   };
 
   const handleMouseMove = (e: MouseEvent, parent: HTMLDivElement) => {
@@ -152,7 +159,6 @@ export default function Canvas() {
     e.preventDefault();
     const x = e.pageX - parent.offsetLeft;
     const y = e.pageY - parent.offsetTop;
-    // console.log(`x: ${x}, y: ${y}`);
     const ce = canvasElements.get(page.id);
     if (!ce) return;
     const tgt = ce.filter((elt) => elt.id === selectedElt.id)[0];
@@ -193,7 +199,7 @@ export default function Canvas() {
     if (div === null) return;
     if (e.key === "Enter") {
       e.preventDefault();
-      fetch("http://localhost:5245/api/v1/Pages/" + page.id, {
+      fetch(apiLink + `Pages/${page.id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -209,7 +215,7 @@ export default function Canvas() {
             id: data.id,
             title: data.title,
             dateCreated: data.dateCreated,
-            lastEdited: data.lastEdited,
+            lastSaved: data.lastSaved,
           });
         })
         .catch((e) => {
@@ -259,7 +265,7 @@ export default function Canvas() {
 
   return (
     <>
-      <div id="canvas-container" className="w-full h-screen overflow-scroll">
+      <div id="canvas-container" className={`w-full h-screen overflow-scroll ${clickable}`}>
         <div
           id="canvas"
           className="w-full h-full relative"
@@ -284,14 +290,14 @@ export default function Canvas() {
               }}
               onKeyDown={(e) => saveTitle(e)}
             >
-              {page.title}
+              {page.id === "-1"? "" : page.title}
             </h3>
             <p
-              id="page-lastedited"
+              id="page-lastSaved"
               className="pt-2 text-gray-500"
               onMouseDown={(e) => e.stopPropagation()}
             >
-              Last Edited: {page.lastEdited}
+              {page.id === "-1"? "" : `Last Saved: ${lastSaved}`}
             </p>
           </div>
           {returnCanvasElement()}

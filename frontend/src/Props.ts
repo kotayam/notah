@@ -65,6 +65,6 @@ export type PageProps = {
     id: string;
     title: string;
     dateCreated: string;
-    lastEdited: string;
+    lastSaved: string;
     deletePage: (id: string) => void;
 }
