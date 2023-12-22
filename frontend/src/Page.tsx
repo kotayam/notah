@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { PageProps } from "./Props";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import API from "./API.json";
 
-const notahApi = "http://localhost:5245/api/v1/Pages/";
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
 
 export default function Page({
   id,
@@ -53,7 +54,7 @@ export default function Page({
     if (e.key === "Enter") {
       const input = document.getElementById(id) as HTMLInputElement;
       if (!input) return;
-      fetch(notahApi + id, {
+      fetch(apiLink + id, {
         method: "PUT",
         credentials: "include",
         headers: {

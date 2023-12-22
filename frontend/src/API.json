@@ -1,4 +1,5 @@
 {
+    "isDev": true,
     "API": {
         "dev": "http://localhost:5245/api/v1/",
         "production": ""

@@ -7,6 +7,8 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import API from "./API.json";
 
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+
 export default function Table({
   elt,
   selectTableText,
@@ -59,7 +61,7 @@ export default function Table({
   };
 
   const deleteTable = () => {
-    fetch(API["API"]["dev"] + `CanvasElements/${elt.id}`, {
+    fetch(apiLink + `CanvasElements/${elt.id}`, {
       method: "DELETE",
       credentials: "include",
     })

@@ -3,8 +3,9 @@ import Page from "./Page";
 import { useSelector, useDispatch } from "react-redux";
 import { rootState, actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import API from "./API.json";
 
-const notahApi = "http://localhost:5245/api/v1/Pages/";
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
 
 type Page = {
   id: string;
@@ -26,7 +27,7 @@ export default function Pages() {
     if (noteBook.id === "-1") {
       return;
     }
-    fetch(notahApi + "byNoteBookId/" + noteBook.id, {
+    fetch(apiLink + "byNoteBookId/" + noteBook.id, {
       credentials: 'include'
     })
       .then((res) => res.json())
@@ -52,7 +53,7 @@ export default function Pages() {
       alert("save before adding a new page!");
       return;
     }
-    fetch(notahApi + noteBook.id, {
+    fetch(apiLink + noteBook.id, {
       method: "POST",
       credentials: 'include',
       headers: {
@@ -81,7 +82,7 @@ export default function Pages() {
   };
 
   const deletePage = (id: string) => {
-    fetch(notahApi + id, {
+    fetch(apiLink + id, {
       method: "DELETE",
       credentials: 'include',
     })

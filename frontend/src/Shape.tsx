@@ -7,6 +7,8 @@ import { actionCreators, rootState } from "./store/index.ts";
 import DOMPurify from "isomorphic-dompurify";
 import API from "./API.json";
 
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+
 type Line = {
   x1: string | number;
   y1: string | number;
@@ -162,7 +164,7 @@ export default function Shape({
   };
 
   const deleteShape = () => {
-    fetch(API["API"]["dev"] + `CanvasElements/${elt.id}`, {
+    fetch(apiLink + `CanvasElements/${elt.id}`, {
       method: "DELETE",
       credentials: "include",
     })

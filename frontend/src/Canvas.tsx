@@ -13,8 +13,9 @@ import Shape from "./Shape.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
+import API from "./API.json";
 
-const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
 
 type CanvasElementDTO = {
   id: string;
@@ -54,7 +55,7 @@ export default function Canvas() {
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
   useEffect(() => {
     if (page.id === "-1") return;
-    fetch(notahApi + "byPageId/" + page.id, {
+    fetch(apiLink + "byPageId/" + page.id, {
       credentials: "include",
     })
       .then((res) => res.json())

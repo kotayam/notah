@@ -3,8 +3,9 @@ import NoteBook from "./NoteBook";
 import { useSelector, useDispatch } from "react-redux";
 import { rootState, actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import API from "./API.json";
 
-const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
 
 type NoteBook = {
   id: string;
@@ -26,7 +27,7 @@ export default function NoteBooks() {
     if (account.id === "-1") {
       window.location.href = "/login";
     }
-    fetch(notahApi + "byOwnerId/" + account.id, {
+    fetch(apiLink + "byOwnerId/" + account.id, {
       credentials: 'include'
     })
       .then((res) => res.json())
@@ -51,7 +52,7 @@ export default function NoteBooks() {
       alert("save before adding a new notebook!");
       return;
     }
-    fetch(notahApi + account.id, {
+    fetch(apiLink + account.id, {
       method: "POST",
       credentials: 'include',
       headers: {
@@ -82,7 +83,7 @@ export default function NoteBooks() {
   };
 
   const deleteNotebook = (id: string) => {
-    fetch(notahApi + id, {
+    fetch(apiLink + id, {
       method: "DELETE",
       credentials: 'include',
     })

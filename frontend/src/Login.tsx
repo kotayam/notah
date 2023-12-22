@@ -4,6 +4,8 @@ import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import API from "./API.json";
 
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+
 type Account = {
   id: string;
   username: string;
@@ -51,7 +53,7 @@ export default function Login() {
       return;
     }
     setLoading(true);
-    fetch(API["API"]["dev"] + "Authentication/login", {
+    fetch(apiLink + "Authentication/login", {
       method: "POST",
       credentials: "include",
       headers: {

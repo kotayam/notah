@@ -13,6 +13,8 @@ import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
 import { useEffect, useState } from "react";
 import API from "./API.json";
 
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
   const page = useSelector((state: rootState) => state.page);
@@ -86,7 +88,7 @@ export default function Toolbar() {
         body.column = elt.col;
       }
       setSaveStatus("Saving...");
-      fetch(API["API"]["dev"] + `CanvasElements/${page.id}`, {
+      fetch(apiLink + `CanvasElements/${page.id}`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -115,7 +117,7 @@ export default function Toolbar() {
       alert("Save before you logout");
       return;
     }
-    fetch(API["API"]["dev"] + "Authentication/logout", {
+    fetch(apiLink + "Authentication/logout", {
       method: "POST",
       credentials: "include",
       headers: {

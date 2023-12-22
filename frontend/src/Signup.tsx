@@ -4,6 +4,8 @@ import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import API from "./API.json";
 
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+
 export default function Signup() {
   const dispatch = useDispatch();
   const { resetState } = bindActionCreators(actionCreators, dispatch);
@@ -60,7 +62,7 @@ export default function Signup() {
       return;
     }
     setLoading(true);
-    fetch(API["API"]["dev"] + "Accounts", {
+    fetch(apiLink + "Accounts", {
       method: "POST",
       headers: {
         Accept: "application/json",

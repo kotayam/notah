@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { MouseEvent, KeyboardEvent, useState } from "react";
+import API from "./API.json";
 
-const notahApi = "http://localhost:5245/api/v1/NoteBooks/";
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
 
 export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
   const noteBook = useSelector((state: rootState) => state.noteBook);
@@ -44,7 +45,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
     if (e.key === "Enter") {
       const input = document.getElementById(id) as HTMLInputElement;
       if (!input) return;
-      fetch(notahApi + id, {
+      fetch(apiLink + id, {
         method: "PUT",
         credentials: 'include',
         headers: {

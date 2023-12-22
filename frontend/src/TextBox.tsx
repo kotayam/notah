@@ -7,6 +7,8 @@ import { actionCreators, rootState } from "./store/index.ts";
 import DOMPurify from "isomorphic-dompurify";
 import API from "./API.json";
 
+const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+
 export default function TextBox({
   elt,
   selectTextBox,
@@ -60,7 +62,7 @@ export default function TextBox({
   };
 
   const deleteTextBox = () => {
-    fetch(API["API"]["dev"] + `CanvasElements/${elt.id}`, {
+    fetch(apiLink + `CanvasElements/${elt.id}`, {
       method: "DELETE",
       credentials: "include",
     })
