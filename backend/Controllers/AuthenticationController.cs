@@ -21,18 +21,19 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.OpenApi.Any;
 using Microsoft.Extensions.Options;
+using System.Net;
 
 namespace backend.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class LoginController : Controller
+    public class AuthenticationController : Controller
     {
         private readonly NotahAPIDbContext dbContext;
         private readonly IPasswordHasher passwordHasher;
         private IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
 
-        public LoginController(NotahAPIDbContext dbContext, IPasswordHasher passwordHasher)
+        public AuthenticationController(NotahAPIDbContext dbContext, IPasswordHasher passwordHasher)
         {
             this.dbContext = dbContext;
             this.passwordHasher = passwordHasher;
@@ -40,6 +41,7 @@ namespace backend.Controllers
 
         [AllowAnonymous]
         [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginReqDto log)
         {
             var account = await dbContext.Accounts.Where(a => a.Username == log.Username).FirstOrDefaultAsync();
@@ -60,6 +62,26 @@ namespace backend.Controllers
                 Role = account.Role
             };
             return Ok(accountDto);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout() {
+            if (HttpContext.Request.Cookies["accessToken"] != null) {
+                HttpContext.Response.Cookies.Append("accessToken", "", 
+                    new CookieOptions {
+                        Expires = DateTime.Now.AddDays(-1)
+                    }
+                );
+            }
+            if (HttpContext.Request.Cookies["refreshToken"] != null) {
+                HttpContext.Response.Cookies.Append("refreshToken", "", 
+                    new CookieOptions {
+                        Expires = DateTime.Now.AddDays(-1)
+                    }
+                );
+            }
+            return Ok();
         }
 
         private void GenerateToken(Account account) {

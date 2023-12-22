@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
-
-const notahApi = "http://localhost:5245/api/v1/Login";
+import API from "./API.json";
 
 type Account = {
   id: string;
@@ -37,7 +36,9 @@ export default function Login() {
   };
 
   const login = () => {
-    const username = document.getElementById("username") as HTMLInputElement | null;
+    const username = document.getElementById(
+      "username"
+    ) as HTMLInputElement | null;
     const password = document.getElementById(
       "password"
     ) as HTMLInputElement | null;
@@ -50,14 +51,17 @@ export default function Login() {
       return;
     }
     setLoading(true);
-    fetch(notahApi, {
+    fetch(API["API"]["dev"] + "Authentication/login", {
       method: "POST",
       credentials: "include",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username: username.value, password: password.value }),
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {

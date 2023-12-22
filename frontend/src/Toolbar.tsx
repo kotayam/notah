@@ -11,8 +11,7 @@ import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
 import { useEffect, useState } from "react";
-
-const notahApi = "http://localhost:5245/api/v1/CanvasElements/";
+import API from "./API.json";
 
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
@@ -87,7 +86,7 @@ export default function Toolbar() {
         body.column = elt.col;
       }
       setSaveStatus("Saving...");
-      fetch(notahApi + page.id, {
+      fetch(API["API"]["dev"] + `CanvasElements/${page.id}`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -112,11 +111,24 @@ export default function Toolbar() {
   };
 
   const logout = () => {
-    if (isSaved) {
-      window.location.href = "/login";
-    } else {
+    if (!isSaved) {
       alert("Save before you logout");
+      return;
     }
+    fetch(API["API"]["dev"] + "Authentication/logout", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then(_ => {
+      window.location.href = "/";
+    })
+    .catch(_ => {
+      console.error("failed to logout")
+    })
   };
 
   const saveAsPdf = async () => {

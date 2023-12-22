@@ -2,21 +2,20 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
-
-const notahApi = "http://localhost:5245/api/v1/Accounts";
+import API from "./API.json";
 
 export default function Signup() {
   const dispatch = useDispatch();
   const { resetState } = bindActionCreators(actionCreators, dispatch);
-  
+
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     resetState();
-  }, [])
-  
+  }, []);
+
   const displayErrorMessage = (msg: string) => {
     setErrMsg(msg);
     setDisplay(true);
@@ -61,7 +60,7 @@ export default function Signup() {
       return;
     }
     setLoading(true);
-    fetch(notahApi, {
+    fetch(API["API"]["dev"] + "Accounts", {
       method: "POST",
       headers: {
         Accept: "application/json",

@@ -23,6 +23,9 @@ export default function NoteBooks() {
   const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
 
   useEffect(() => {
+    if (account.id === "-1") {
+      window.location.href = "/login";
+    }
     fetch(notahApi + "byOwnerId/" + account.id, {
       credentials: 'include'
     })
