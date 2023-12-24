@@ -6,6 +6,7 @@ import {
   TableFunctionBar,
 } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import { useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 
@@ -24,20 +25,16 @@ export default function ToolbarMemo() {
   };
 
   const saveAsPdf = async () => {
-    const note = document.getElementById("canvas-container");
-    if (note) {
-      const rect = note.getBoundingClientRect();
+    const container = document.getElementById("canvas");
+    if (container) {
+      const canvas = await html2canvas(container);
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const width = pdf.internal.pageSize.getWidth();
-      pdf.html(note, {
-        callback: function (doc) {
-          doc.save("Memo");
-        },
-        x: 15,
-        y: 15,
-        width: width,
-        windowWidth: rect.width,
-      });
+      const height = pdf.internal.pageSize.getHeight();
+      const scale = Math.min(width / canvas.width, height / canvas.height)
+      pdf.addImage(imgData, 'PNG', 15, 15, canvas.width * scale, canvas.height * scale);
+      pdf.save("Memo");
     }
   };
 
@@ -62,10 +59,16 @@ export default function ToolbarMemo() {
               />
             </svg>
           </a>
-          <a href="/"><h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1></a>
+          <a href="/">
+            <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
+          </a>
           <div className="grid grid-cols-2 gap-3">
-            <a href="/signup" className="hover:underline">Sign Up</a>
-            <a href="/login" className="hover:underline">Login</a>
+            <a href="/signup" className="hover:underline">
+              Sign Up
+            </a>
+            <a href="/login" className="hover:underline">
+              Login
+            </a>
           </div>
         </div>
         <div className=" bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200">

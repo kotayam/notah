@@ -6,6 +6,7 @@ import {
   TableFunctionBar,
 } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
@@ -135,24 +136,16 @@ export default function Toolbar() {
   };
 
   const saveAsPdf = async () => {
-    const note = document.getElementById("canvas-container");
-    if (note) {
-      const rect = note.getBoundingClientRect();
-      // const canvas = await html2canvas(note, {scale: 2, width: rect.width, height: rect.height});
+    const container = document.getElementById("canvas");
+    if (container) {
+      const canvas = await html2canvas(container);
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
       const width = pdf.internal.pageSize.getWidth();
-      pdf.html(note, {
-        callback: function (doc) {
-          // Save the PDF
-          doc.save(page.title);
-        },
-        x: 15,
-        y: 15,
-        width: width,
-        windowWidth: rect.width,
-      });
-      // pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, width, height);
-      // pdf.save('note');
+      const height = pdf.internal.pageSize.getHeight();
+      const scale = Math.min(width / canvas.width, height / canvas.height)
+      pdf.addImage(imgData, 'PNG', 15, 15, canvas.width * scale, canvas.height * scale);
+      pdf.save("Memo");
     }
   };
 
