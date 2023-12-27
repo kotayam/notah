@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators } from "./store/index.ts";
+import { useSearchParams } from "react-router-dom";
 
 export function TextFunctionBar() {
   const [colorClicked, setColorClicked] = useState(false);
@@ -81,7 +82,9 @@ export function TextFunctionBar() {
             id="font"
           >
             {fonts.map((font, idx) => (
-              <option key={idx} value={font.toLowerCase()}>{font}</option>
+              <option key={idx} value={font.toLowerCase()}>
+                {font}
+              </option>
             ))}
           </select>
           <select
@@ -94,7 +97,9 @@ export function TextFunctionBar() {
             id="font-size"
           >
             {fontSizes.map((size, idx) => (
-              <option key={idx} value={size}>{size}</option>
+              <option key={idx} value={size}>
+                {size}
+              </option>
             ))}
           </select>
         </div>
@@ -115,7 +120,9 @@ export function TextFunctionBar() {
               else changeFontStyle("italic");
             }}
           >
-            <em className="" style={{ fontFamily: "georgia" }}>I</em>
+            <em className="" style={{ fontFamily: "georgia" }}>
+              I
+            </em>
           </button>
           <button
             className={`hover:bg-gray-300 active:bg-gray-400 rounded-none text-2xl mobile:text-xl pointer-events-none`}
@@ -295,4 +302,34 @@ export function TableFunctionBar() {
       {showTableOption()}
     </>
   );
+}
+
+export function AIFunctionBar() {
+  if (window.location.pathname === "/memo") {
+    return (
+      <div className="flex justify-start items-center">
+        <a
+          href="/signup"
+          className="font-semibold text-blue-500 hover:underline"
+        >
+          Signup
+        </a>
+        &nbsp;or&nbsp;
+        <a
+          href="/login"
+          className="font-semibold text-blue-500 hover:underline"
+        >
+          Login
+        </a>
+        &nbsp;to unlock AI feature!
+      </div>
+    );
+  } else if (window.location.pathname === "/notah") {
+    return (
+      <div className="flex justify-start items-center gap-2">
+        <p className="p-1">Click on your note to get started</p>
+        <p className=" bg-gray-300 rounded-md p-1">{`Remaining Usage: ${10}`}</p>
+      </div>
+    );
+  }
 }

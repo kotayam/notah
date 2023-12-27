@@ -52,3 +52,12 @@ export class TableElement extends CanvasElement {
         this.col = col;
     }
 }
+
+export class AIElement extends CanvasElement {
+    generated: boolean;
+
+    constructor(id: string, x: number, y:number, innerHtml: string, generated: boolean) {
+        super(id, x, y, innerHtml);
+        this.generated = generated;
+    }
+}

@@ -6,6 +6,7 @@ import {
   TextBoxElement,
   ShapeElement,
   TableElement,
+  AIElement,
 } from "./Classes.ts";
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
@@ -14,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import API from "./API.json";
+import AITextBox from "./AITextBox.tsx";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -124,25 +126,32 @@ export default function Canvas() {
     const id = crypto.randomUUID();
     const x = e.pageX - parent.offsetLeft;
     const y = e.pageY - parent.offsetTop;
-    if (mode === "text") {
-      newElt = new TextBoxElement(
-        id,
-        x,
-        y,
-        "",
-        textStyle.font,
-        textStyle.fontSize,
-        textStyle.fontColor,
-        textStyle.fontWeight,
-        textStyle.fontStyle
-      );
-    } else if (mode === "shape") {
-      setDrawing(true);
-      newElt = new ShapeElement(id, x, y, "", shape, 0, 0);
-    } else if (mode === "table") {
-      newElt = new TableElement(id, x, y, "", table.row, table.col);
-    } else {
-      return;
+    switch (mode) {
+      case "text":
+        newElt = new TextBoxElement(
+          id,
+          x,
+          y,
+          "",
+          textStyle.font,
+          textStyle.fontSize,
+          textStyle.fontColor,
+          textStyle.fontWeight,
+          textStyle.fontStyle
+        );
+        break;
+      case "shape":
+        setDrawing(true);
+        newElt = new ShapeElement(id, x, y, "", shape, 0, 0);
+        break;
+      case "table":
+        newElt = new TableElement(id, x, y, "", table.row, table.col);
+        break;
+      case "ai":
+        newElt = new AIElement(id, x, y, "", false);
+        break;
+      default:
+        return;
     }
     setSaved(false);
     addCanvasElement(page.id, newElt);
@@ -191,6 +200,15 @@ export default function Canvas() {
   const selectTableText = (elt: TableElement, row: number, col: number) => {
     console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
     setSelectedElt({ id: elt.id, r: row, c: col });
+  };
+
+  const selectAITextBox = (elt: AIElement) => {
+    console.log(`text box: ${elt.id} selected.`);
+    setSelectedElt((prevState) => {
+      const newState = prevState;
+      newState.id = elt.id;
+      return newState;
+    });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -261,6 +279,15 @@ export default function Canvas() {
             selectedElt={selectedElt}
           />
         );
+      } else if (elt instanceof AIElement) {
+        elts.push(
+          <AITextBox
+            key={elt.id}
+            elt={elt}
+            selectTextBox={selectAITextBox}
+            selectedElt={selectedElt}
+          />
+        );
       }
     });
     return elts;
@@ -295,7 +322,10 @@ export default function Canvas() {
                 e.stopPropagation();
               }}
               onKeyDown={(e) => handleKeyDown(e)}
-              onMouseLeave={(_) => {const div = document.getElementById("page-title"); if (div) saveTitle(div);}}
+              onMouseLeave={(_) => {
+                const div = document.getElementById("page-title");
+                if (div) saveTitle(div);
+              }}
             >
               {page.id === "-1" ? "" : page.title}
             </h3>

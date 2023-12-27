@@ -4,6 +4,7 @@ import {
   TextFunctionBar,
   ShapeFunctionBar,
   TableFunctionBar,
+  AIFunctionBar
 } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -21,6 +22,8 @@ export default function ToolbarMemo() {
         return <ShapeFunctionBar />;
       case "table":
         return <TableFunctionBar />;
+      case "ai":
+        return <AIFunctionBar />
     }
   };
 

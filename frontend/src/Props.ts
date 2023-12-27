@@ -1,4 +1,4 @@
-import { TextBoxElement, TableElement, ShapeElement } from "./Classes";
+import { TextBoxElement, TableElement, ShapeElement, AIElement } from "./Classes";
 
 export type HomeProps = {
     access: string;
@@ -38,6 +38,12 @@ export type TableRowProps = {
     rowId: number;
     elt: TableElement;
     selectTableText: (elt: TableElement, row: number, col: number) => void;
+}
+
+export type AITextBoxProps = {
+    elt: AIElement;
+    selectTextBox: (elt: AIElement) => void;
+    selectedElt: {id: string, r: number, c: number};
 }
 
 export type ModeSelectorProps = {
