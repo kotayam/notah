@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
@@ -304,6 +304,12 @@ export function TableFunctionBar() {
 }
 
 export function AIFunctionBar() {
+  const account = useSelector((root: rootState) => root.account);
+  const [usageLimit, setUsageLimit] = useState(account.aiUsageLimit);
+
+  useEffect(() => {
+    setUsageLimit(account.aiUsageLimit);
+  }, [account.aiUsageLimit])
   if (window.location.pathname === "/memo") {
     return (
       <div className="flex justify-start items-center">
@@ -327,7 +333,7 @@ export function AIFunctionBar() {
     return (
       <div className="flex justify-start items-center gap-2">
         <p className="p-1">Click on your note to get started</p>
-        <p className=" bg-gray-300 rounded-md p-1">{`Remaining Usage: ${10}`}</p>
+        <p className=" bg-gray-300 rounded-md p-1">{`Remaining Usage: ${usageLimit}`}</p>
       </div>
     );
   }

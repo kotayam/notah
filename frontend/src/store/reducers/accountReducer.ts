@@ -1,7 +1,7 @@
 import { AccountAction } from "../actions";
 import { ActionType } from "../action-types";
 
-const initialState = {id: "-1", username: "default", access: "guest", dateCreated: "default", lastEdited: "default"};
+const initialState = {id: "-1", username: "default", dateCreated: "default", lastEdited: "default", role: "user", aiUsageLimit: 0};
 
 const accountReducer = (state = initialState , action: AccountAction) => {
     switch(action.type) {

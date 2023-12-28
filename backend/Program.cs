@@ -13,6 +13,9 @@ var AllowedOrigins = "allowedOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 var JWTConfig = builder.Configuration.GetSection("Jwt");
+var issuer = JWTConfig.GetValue<string>("Issuer") ?? "";
+var audience = JWTConfig.GetValue<string>("Audience") ?? "";
+var key = JWTConfig.GetValue<string>("Key") ?? "";
 
 // Add services to the container.
 builder.Services.Configure<OpenAIConfig>(builder.Configuration.GetSection("OpenAI"));
@@ -41,17 +44,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Cookie.Name = "accessToken";
     })
     .AddJwtBearer(options => {
-#pragma warning disable CS8604 // Possible null reference argument.
         options.TokenValidationParameters = new TokenValidationParameters {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = JWTConfig.GetValue<string>("Issuer"),
-            ValidAudience = JWTConfig.GetValue<string>("Audience"),
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig.GetValue<string>("Key")))
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
         };
-#pragma warning restore CS8604 // Possible null reference argument.
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>

@@ -262,7 +262,11 @@ namespace backend.Controllers
             }
             var api = new OpenAI_API.OpenAIAPI(openAIConfig.Key);
             var result = await api.Chat.CreateChatCompletionAsync(req.Prompt);
-            return Ok(result.Choices[0].Message.TextContent);
+            var resDto = new AIPromptResDto() {
+                Answer = result.Choices[0].Message.TextContent,
+                AIUsageLimit = acc.AIUsageLimit,
+            };
+            return Ok(resDto);
         }
     }
 }

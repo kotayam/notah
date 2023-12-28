@@ -61,7 +61,10 @@ namespace backend.Controllers
                 Username = account.Username,
                 Email = account.Email,
                 Password = account.Password,
-                Role = account.Role
+                Role = account.Role,
+                DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                AIUsageLimit = account.AIUsageLimit
             };
             return Ok(accountDto);
         }
@@ -92,7 +95,9 @@ namespace backend.Controllers
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, account.Username),
-                new Claim(ClaimTypes.Email, account.Email)
+                new Claim(ClaimTypes.Email, account.Email),
+                new Claim(ClaimTypes.Role, account.Role),
+                new Claim("AIUsageLimit", account.AIUsageLimit.ToString())
             };
 
             var token = new JwtSecurityToken(

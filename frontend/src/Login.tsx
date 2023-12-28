@@ -13,6 +13,8 @@ type Account = {
   password: string;
   dateCreated: string;
   lastEdited: string;
+  role: string;
+  aiUsageLimit: number;
 };
 
 export default function Login() {
@@ -40,9 +42,9 @@ export default function Login() {
   const login = (e: FormEvent) => {
     e.preventDefault();
     const target = e.target as typeof e.target & {
-      username: { value: string },
-      password: {value: string}
-    }
+      username: { value: string };
+      password: { value: string };
+    };
     const username = target.username.value;
     const password = target.password.value;
     if (!(username && password)) {
@@ -71,16 +73,19 @@ export default function Login() {
         } else if (data.status === 400) {
           displayErrorMessage("*Username or password is incorrect");
           return;
-        } else {
-          data = data as Account;
         }
+        return data as Account;
+      })
+      .then((data) => {
+        if (!data) return;
         console.log(data);
         setAccount({
           id: data.id,
           username: data.username,
-          access: "user",
           dateCreated: data.dateCreated,
           lastEdited: data.lastEdited,
+          role: data.role,
+          aiUsageLimit: data.aiUsageLimit,
         });
         window.location.href = `/notah`;
       })
@@ -105,7 +110,7 @@ export default function Login() {
           </p>
           <form
             className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5"
-            onSubmit={e => login(e)}
+            onSubmit={(e) => login(e)}
           >
             <div className="grid grid-cols-1 content-start gap-1">
               <label htmlFor="email">Username</label>
@@ -114,14 +119,14 @@ export default function Login() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   data-slot="icon"
                   className="w-5 mr-2"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>

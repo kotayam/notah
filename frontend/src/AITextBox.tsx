@@ -16,7 +16,7 @@ export default function AITextBox({
 }: AITextBoxProps) {
   const account = useSelector((state: rootState) => state.account);
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement, setSaved } =
+  const { deleteCanvasElement, updateCanvasElement, setSaved, setAccount } =
     bindActionCreators(actionCreators, dispatch);
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
@@ -103,7 +103,9 @@ export default function AITextBox({
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setAnswer(data);
+        setAnswer(data.answer);
+        account.aiUsageLimit = data.aiUsageLimit;
+        setAccount(account);
       })
       .catch((e) => {
         console.error(e);
