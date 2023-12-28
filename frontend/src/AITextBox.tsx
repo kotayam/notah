@@ -29,6 +29,7 @@ export default function AITextBox({
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
   const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (selectedElt.id === elt.id) {
@@ -90,7 +91,8 @@ export default function AITextBox({
       prompt: { value: string };
     };
     const prompt = target.prompt.value;
-    console.log(prompt);
+    if (!prompt) return;
+    setLoading(true);
     fetch(apiLink + `CanvasElements/generateAnswer/${account.id}`, {
       method: "POST",
       credentials: "include",
@@ -98,16 +100,18 @@ export default function AITextBox({
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({prompt: prompt}),
+      body: JSON.stringify({ prompt: prompt }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        setLoading(false);
         setAnswer(data.answer);
         account.aiUsageLimit = data.aiUsageLimit;
         setAccount(account);
       })
       .catch((e) => {
+        setLoading(false);
         console.error(e);
       });
   };
@@ -174,7 +178,13 @@ export default function AITextBox({
         key={elt.id}
         className="grid-cols-1 place-content-center"
       >
-        <div className="mb-2 p-1 max-w-[150px]">{answer}</div>
+        <div className="mb-2 p-1 min-w-[150px] max-w-[500px] flex justify-center items-center">
+          <div
+            className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+            style={{ display: loading ? "" : "none" }}
+          ></div>
+          <p>{answer}</p>
+        </div>
         <form
           className="grid-cols-1 place-content-center p-1"
           onSubmit={(e) => generateAnswer(e)}
@@ -182,15 +192,24 @@ export default function AITextBox({
           <textarea
             name="prompt"
             placeholder="Enter prompt..."
-            className="max-w-[150px] bg-gray-100 outline-none"
+            className="w-full bg-gray-100 outline-none"
             onMouseDown={(_) => focus()}
           />
           <div className="grid grid-cols-2 gap-2 place-content-center">
             <button
               type="submit"
-              className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 active:bg-gray-400 font-semibold"
+              className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 active:bg-gray-400 font-semibold flex justify-center items-center"
             >
-              Generate
+              <p
+                className="font-semibold"
+                style={{ display: loading ? "none" : "" }}
+              >
+                Generate
+              </p>
+              <div
+                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                style={{ display: loading ? "" : "none" }}
+              ></div>
             </button>
             <button
               type="button"

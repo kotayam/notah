@@ -7,8 +7,10 @@ using backend.DTO;
 using backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.Options;
+using OpenAI_API.Chat;
 
 namespace backend.Controllers
 {
@@ -246,7 +248,6 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         [Route("generateAnswer/{userId:guid}")]
         public async Task<IActionResult> GenerateAnswer([FromRoute] Guid userId, [FromBody] AIPromptReqDTO req) {
             var account = await accountRepository.GetAccountByIdAsync(userId);
@@ -261,7 +262,15 @@ namespace backend.Controllers
                 return NotFound("failed to decrement");
             }
             var api = new OpenAI_API.OpenAIAPI(openAIConfig.Key);
-            var result = await api.Chat.CreateChatCompletionAsync(req.Prompt);
+            var result = await api.Chat.CreateChatCompletionAsync(new OpenAI_API.Chat.ChatRequest() 
+                {
+                    Model = OpenAI_API.Models.Model.ChatGPTTurbo, 
+                    Temperature = 0.1, 
+                    MaxTokens = 200,
+                    Messages = new ChatMessage[] {
+                        new(ChatMessageRole.User, req.Prompt)
+                    }
+                });
             var resDto = new AIPromptResDto() {
                 Answer = result.Choices[0].Message.TextContent,
                 AIUsageLimit = acc.AIUsageLimit,
