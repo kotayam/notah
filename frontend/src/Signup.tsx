@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 export default function Signup() {
   const dispatch = useDispatch();
@@ -26,38 +26,35 @@ export default function Signup() {
     }, 3000);
   };
 
-  const createAccount = () => {
-    const username = document.getElementById(
-      "username"
-    ) as HTMLInputElement | null;
-    const email = document.getElementById("email") as HTMLInputElement | null;
-    const password = document.getElementById(
-      "password"
-    ) as HTMLInputElement | null;
-    const confirmPass = document.getElementById(
-      "confirm-password"
-    ) as HTMLInputElement | null;
-    if (!(username && email && password && confirmPass)) {
-      displayErrorMessage("*Something went wrong, please try again later");
-      return;
+  const createAccount = (e: FormEvent) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      username: { value: string },
+      email: {value: string},
+      password: {value: string},
+      confirmPass: {value: string}
     }
+    const username = target.username.value;
+    const email = target.email.value;
+    const password = target.password.value;
+    const confirmPass = target.confirmPass.value;
     if (
-      !(username.value && email.value && password.value && confirmPass.value)
+      !(username && email && password && confirmPass)
     ) {
       displayErrorMessage("*Please fill out all fields");
       return;
     }
     let usernameChecker = new RegExp(/^[a-zA-Z0-9]+$/i);
-    if (!usernameChecker.test(username.value)) {
+    if (!usernameChecker.test(username)) {
       displayErrorMessage("*Username can only contain alphanumeric characters");
       return;
     }
     let emailChecker = new RegExp(/^.+\@.+\..+$/i);
-    if (!emailChecker.test(email.value)) {
+    if (!emailChecker.test(email)) {
       displayErrorMessage("*Invalid email format");
       return;
     }
-    if (password.value !== confirmPass.value) {
+    if (password !== confirmPass) {
       displayErrorMessage("*Password does not match");
       return;
     }
@@ -69,9 +66,9 @@ export default function Signup() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username.value,
-        email: email.value,
-        password: password.value,
+        username: username,
+        email: email,
+        password: password,
       }),
     })
       .then((res) => res.json())
@@ -103,7 +100,10 @@ export default function Signup() {
           >
             {errMsg}
           </p>
-          <div className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5">
+          <form
+            className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5"
+            onSubmit={e => createAccount(e)}
+          >
             <div className="grid grid-cols-1 content-start gap-1">
               <label htmlFor="username">Username</label>
               <div className="flex justify-content">
@@ -111,14 +111,14 @@ export default function Signup() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   data-slot="icon"
                   className="w-5 mr-2"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
                   />
                 </svg>
@@ -127,6 +127,7 @@ export default function Signup() {
                   type="text"
                   maxLength={20}
                   placeholder="Type your username"
+                  className="outline-none"
                 />
               </div>
               <hr />
@@ -138,18 +139,23 @@ export default function Signup() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   data-slot="icon"
                   className="w-5 mr-2"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
                   />
                 </svg>
-                <input id="email" type="email" placeholder="Type your email" />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Type your email"
+                  className="outline-none"
+                />
               </div>
               <hr />
             </div>
@@ -160,14 +166,14 @@ export default function Signup() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   data-slot="icon"
                   className="w-5 mr-2"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
                   />
                 </svg>
@@ -175,39 +181,41 @@ export default function Signup() {
                   id="password"
                   type="password"
                   placeholder="Type your password"
+                  className="outline-none"
                 />
               </div>
               <hr />
             </div>
             <div className="grid grid-cols-1 content-start gap-1">
-              <label htmlFor="confirm-password">Confirm Password</label>
+              <label htmlFor="confirmPass">Confirm Password</label>
               <div className="flex justify-content">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   data-slot="icon"
                   className="w-5 mr-2"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
                   />
                 </svg>
                 <input
-                  id="confirm-password"
+                  id="confirmPass"
                   type="password"
                   placeholder="Confirm your password"
+                  className="outline-none"
                 />
               </div>
               <hr />
             </div>
             <button
+              type="submit"
               className={`mt-3 rounded-lg p-2 hover:bg-amber-300 active:bg-amber-400 bg-amber-200 flex justify-center`}
-              onClick={() => createAccount()}
             >
               <p
                 className="font-medium"
@@ -233,7 +241,7 @@ export default function Signup() {
             <a className="text-center hover:underline mb-5" href="/">
               Return To Home
             </a>
-          </div>
+          </form>
         </div>
       </div>
     </>

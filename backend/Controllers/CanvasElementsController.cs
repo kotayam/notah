@@ -6,6 +6,7 @@ using backend.DTO;
 using backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace backend.Controllers
 {
@@ -42,6 +43,7 @@ namespace backend.Controllers
                                Height = ce.Height,
                                Row = ce.Row,
                                Column = ce.Column,
+                               Generated = ce.Generated,
                                PageId = ce.PageId
                            };
             return Ok(canvasEltsDto);
@@ -70,6 +72,7 @@ namespace backend.Controllers
                     Height = canvasElt.Height,
                     Row = canvasElt.Row,
                     Column = canvasElt.Column,
+                    Generated = canvasElt.Generated,
                     PageId = canvasElt.PageId
                 };
                 return Ok(canvasEltDto);
@@ -100,6 +103,7 @@ namespace backend.Controllers
                                Height = ce.Height,
                                Row = ce.Row,
                                Column = ce.Column,
+                               Generated = ce.Generated,
                                PageId = ce.PageId
                            };
             return Ok(canvasEltsDto);
@@ -116,7 +120,7 @@ namespace backend.Controllers
             }
             var exist = await canvasElementRepository.GetCanvasElementByIdAsync(ce.Id);
             if (exist != null) {
-                var updatedElt = await canvasElementRepository.UpdateCanvasElementAsync(ce.Id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height);
+                var updatedElt = await canvasElementRepository.UpdateCanvasElementAsync(ce.Id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height, ce.Generated);
                 if (updatedElt != null) {
                     var updatedEltAndPageDto = new CanvasElementAndPageDto()
                     {
@@ -133,6 +137,7 @@ namespace backend.Controllers
                         Height = updatedElt.Height,
                         Row = updatedElt.Row,
                         Column = updatedElt.Column,
+                        Generated = updatedElt.Generated,
                         PageId = updatedElt.PageId,
                         Title = page.Title,
                         DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
@@ -142,7 +147,7 @@ namespace backend.Controllers
                 }
             }
             else {
-                var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.Type, ce.X, ce.Y, ce.InnerHTML, ce.Font, ce.FontSize, ce.FontColor, ce.Shape, ce.Width, ce.Height, ce.Row, ce.Column);
+                var canvasElt = await canvasElementRepository.AddCanvasElementAsync(pageId, ce.Type, ce.X, ce.Y, ce.InnerHTML, ce.Font, ce.FontSize, ce.FontColor, ce.Shape, ce.Width, ce.Height, ce.Row, ce.Column, ce.Generated);
                 if (canvasElt != null)
                 {
                     var canvasEltAndPageDto = new CanvasElementAndPageDto()
@@ -160,6 +165,7 @@ namespace backend.Controllers
                         Height = canvasElt.Height,
                         Row = canvasElt.Row,
                         Column = canvasElt.Column,
+                        Generated = canvasElt.Generated,
                         PageId = canvasElt.PageId,
                         Title = page.Title,
                         DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
@@ -176,7 +182,7 @@ namespace backend.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateCanvasElement([FromRoute] Guid id, [FromBody] CanvasElementReqDto ce)
         {
-            var canvasElt = await canvasElementRepository.UpdateCanvasElementAsync(id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height);
+            var canvasElt = await canvasElementRepository.UpdateCanvasElementAsync(id, ce.X, ce.Y, ce.InnerHTML, ce.Width, ce.Height, ce.Generated);
             if (canvasElt != null)
             {
                 var cavnasEltDto = new CanvasElementDto()
@@ -194,6 +200,7 @@ namespace backend.Controllers
                     Height = canvasElt.Height,
                     Row = canvasElt.Row,
                     Column = canvasElt.Column,
+                    Generated = canvasElt.Generated,
                     PageId = canvasElt.PageId
                 };
                 return Ok(cavnasEltDto);
@@ -224,10 +231,18 @@ namespace backend.Controllers
                     Height = canvasElt.Height,
                     Row = canvasElt.Row,
                     Column = canvasElt.Column,
+                    Generated = canvasElt.Generated,
                     PageId = canvasElt.PageId
                 };
                 return Ok(canvasEltDto);
             }
+            return NotFound();
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("/generateAnswer/{userId:guid}")]
+        public async Task<IActionResult> generateAnswer([FromRoute] Guid userId, string prompt) {
             return NotFound();
         }
     }

@@ -83,7 +83,7 @@ export default function ToolbarMemo() {
               <ModeSelector thisMode={"AI"} />
             </div>
             <button
-              className=" h-full bg-gray-200 p-2"
+              className=" h-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2"
               onClick={(_) => saveAsPdf()}
             >
               Save as PDF

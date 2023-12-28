@@ -11,7 +11,7 @@ import html2canvas from "html2canvas";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
+import { AIElement, ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
 import { useEffect, useState } from "react";
 import API from "./API.json";
 
@@ -28,6 +28,7 @@ export default function Toolbar() {
   const { setSaved, setPage } = bindActionCreators(actionCreators, dispatch);
 
   const [saveStatus, setSaveStatus] = useState("");
+  const [clickable, setClickable] = useState("");
 
   useEffect(() => {
     if (isSaved) setSaveStatus("Work saved");
@@ -46,6 +47,11 @@ export default function Toolbar() {
         return <AIFunctionBar />;
     }
   };
+
+  useEffect(() => {
+    page.id === "-1" ? setClickable("pointer-events-none") : setClickable("");
+    setSaved(true);
+  }, [page.id]);
 
   const save = () => {
     if (isSaved) return;
@@ -70,6 +76,7 @@ export default function Toolbar() {
         height: 0,
         row: 0,
         column: 0,
+        generated: false
       };
       const div = document.getElementById(elt.id);
       const innerHtml = div?.innerHTML || "";
@@ -90,6 +97,10 @@ export default function Toolbar() {
         body.innerHTML = innerHtml;
         body.row = elt.row;
         body.column = elt.col;
+      } else if (elt instanceof AIElement) {
+        body.type = "ai";
+        body.innerHTML = innerHtml;
+        body.generated = elt.generated
       }
       setSaveStatus("Saving...");
       fetch(apiLink + `CanvasElements/${page.id}`, {
@@ -158,7 +169,7 @@ export default function Toolbar() {
         <div className="flex justify-between items-center bg-gradient-to-br from-amber-400 via-amber-300 to-amber-400 px-2">
           <div className="flex justify-center items-center gap-1">
             <button
-              className="p-2 mobile:p-1 hover:bg-amber-200 active:bg-amber-100"
+              className={`p-2 mobile:p-1 hover:bg-amber-200 active:bg-amber-100 ${clickable}`}
               onClick={() => save()}
             >
               <svg
@@ -193,7 +204,7 @@ export default function Toolbar() {
               <ModeSelector thisMode={"AI"} />
             </div>
             <button
-              className=" h-full bg-gray-200 p-2"
+              className={`h-full bg-gray-200 hover:bg-gray-300 active:bg-gray-400 p-2 ${clickable}`}
               onClick={(_) => saveAsPdf()}
             >
               Save as PDF

@@ -42,7 +42,7 @@ export type TableRowProps = {
 
 export type AITextBoxProps = {
     elt: AIElement;
-    selectTextBox: (elt: AIElement) => void;
+    selectAITextBox: (elt: AIElement) => void;
     selectedElt: {id: string, r: number, c: number};
 }
 

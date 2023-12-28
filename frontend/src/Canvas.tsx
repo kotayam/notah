@@ -203,7 +203,7 @@ export default function Canvas() {
   };
 
   const selectAITextBox = (elt: AIElement) => {
-    console.log(`text box: ${elt.id} selected.`);
+    console.log(`AT text box: ${elt.id} selected.`);
     setSelectedElt((prevState) => {
       const newState = prevState;
       newState.id = elt.id;
@@ -284,7 +284,7 @@ export default function Canvas() {
           <AITextBox
             key={elt.id}
             elt={elt}
-            selectTextBox={selectAITextBox}
+            selectAITextBox={selectAITextBox}
             selectedElt={selectedElt}
           />
         );

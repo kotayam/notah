@@ -12,6 +12,7 @@ namespace backend.Models
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string Role {get; set;} = null!;
+        public int AIUsageLimit {get; set;}
         public DateTime DateCreated {get; set;}
         public DateTime LastEdited {get; set;}
         public ICollection<NoteBook> NoteBooks { get; set; } = new List<NoteBook>();

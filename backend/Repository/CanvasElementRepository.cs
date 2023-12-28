@@ -32,7 +32,7 @@ namespace backend.Repository
             return await dbContext.CanvasElements.Where(ce => ce.PageId == pageId).ToListAsync();
         }
 
-        public async Task<CanvasElement?> AddCanvasElementAsync(Guid pageId, string type, double x, double y, string innerHtml, string font, int fontSize, string FontColor, string shape, double width, double height, int row, int col)
+        public async Task<CanvasElement?> AddCanvasElementAsync(Guid pageId, string type, double x, double y, string innerHtml, string font, int fontSize, string FontColor, string shape, double width, double height, int row, int col, bool generated)
         {
             var page = await dbContext.Pages.FindAsync(pageId);
             if (page != null) {
@@ -50,6 +50,7 @@ namespace backend.Repository
                     Height = height,
                     Row = row,
                     Column = col,
+                    Generated = generated,
                     PageId = page.Id,
                     Page = page
                 };
@@ -60,7 +61,7 @@ namespace backend.Repository
             return null;
         }
 
-        public async Task<CanvasElement?> UpdateCanvasElementAsync(Guid id, double x, double y, string innerHtml, double width, double height)
+        public async Task<CanvasElement?> UpdateCanvasElementAsync(Guid id, double x, double y, string innerHtml, double width, double height, bool generated)
         {
             var canvasElement = await dbContext.CanvasElements.FindAsync(id);
             if (canvasElement != null) {
@@ -69,6 +70,7 @@ namespace backend.Repository
                 canvasElement.InnerHTML = innerHtml;
                 canvasElement.Width = width;
                 canvasElement.Height = height;
+                canvasElement.Generated = generated;
                 await dbContext.SaveChangesAsync();
             }
             return canvasElement;

@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 type Account = {
   id: string;
@@ -37,18 +37,15 @@ export default function Login() {
     }, 3000);
   };
 
-  const login = () => {
-    const username = document.getElementById(
-      "username"
-    ) as HTMLInputElement | null;
-    const password = document.getElementById(
-      "password"
-    ) as HTMLInputElement | null;
-    if (!(username && password)) {
-      displayErrorMessage("*Something went wrong, please try again later");
-      return;
+  const login = (e: FormEvent) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      username: { value: string },
+      password: {value: string}
     }
-    if (!(username.value && password.value)) {
+    const username = target.username.value;
+    const password = target.password.value;
+    if (!(username && password)) {
       displayErrorMessage("*Please fill out all fields");
       return;
     }
@@ -61,8 +58,8 @@ export default function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username.value,
-        password: password.value,
+        username: username,
+        password: password,
       }),
     })
       .then((res) => res.json())
@@ -106,7 +103,10 @@ export default function Login() {
           >
             {errMsg}
           </p>
-          <div className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5">
+          <form
+            className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5"
+            onSubmit={e => login(e)}
+          >
             <div className="grid grid-cols-1 content-start gap-1">
               <label htmlFor="email">Username</label>
               <div className="flex justify-content">
@@ -130,6 +130,7 @@ export default function Login() {
                   type="text"
                   maxLength={20}
                   placeholder="Type your username"
+                  className="outline-none"
                 />
               </div>
               <hr />
@@ -156,13 +157,14 @@ export default function Login() {
                   id="password"
                   type="password"
                   placeholder="Type your password"
+                  className="outline-none"
                 />
               </div>
               <hr />
             </div>
             <button
+              type="submit"
               className="mt-3 rounded-lg p-2 hover:bg-amber-300 active:bg-amber-400 bg-amber-200 flex justify-center"
-              onClick={() => login()}
             >
               <p
                 className="font-medium"
@@ -197,7 +199,7 @@ export default function Login() {
             <a className="text-center hover:underline mb-5" href="/">
               Return To Home
             </a>
-          </div>
+          </form>
         </div>
       </div>
     </>
