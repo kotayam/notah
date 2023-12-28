@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using backend.Authentication;
+using backend.Configurations;
 using backend.Data;
 using backend.Interfaces;
 using backend.Repository;
@@ -11,11 +12,11 @@ using Microsoft.IdentityModel.Tokens;
 var AllowedOrigins = "allowedOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
-
-var config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
+var JWTConfig = builder.Configuration.GetSection("Jwt");
 
 // Add services to the container.
-
+builder.Services.Configure<OpenAIConfig>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
@@ -40,15 +41,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Cookie.Name = "accessToken";
     })
     .AddJwtBearer(options => {
+#pragma warning disable CS8604 // Possible null reference argument.
         options.TokenValidationParameters = new TokenValidationParameters {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = config["Jwt:Issuer"],
-            ValidAudience = config["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]))
+            ValidIssuer = JWTConfig.GetValue<string>("Issuer"),
+            ValidAudience = JWTConfig.GetValue<string>("Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig.GetValue<string>("Key")))
         };
+#pragma warning restore CS8604 // Possible null reference argument.
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>

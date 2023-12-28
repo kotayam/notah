@@ -14,6 +14,7 @@ export default function AITextBox({
   selectAITextBox,
   selectedElt,
 }: AITextBoxProps) {
+  const account = useSelector((state: rootState) => state.account);
   const dispatch = useDispatch();
   const { deleteCanvasElement, updateCanvasElement, setSaved } =
     bindActionCreators(actionCreators, dispatch);
@@ -27,6 +28,7 @@ export default function AITextBox({
   const [border, setBorder] = useState("border-0");
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
+  const [answer, setAnswer] = useState("");
 
   useEffect(() => {
     if (selectedElt.id === elt.id) {
@@ -89,18 +91,19 @@ export default function AITextBox({
     };
     const prompt = target.prompt.value;
     console.log(prompt);
-    fetch(apiLink, {
+    fetch(apiLink + `CanvasElements/generateAnswer/${account.id}`, {
       method: "POST",
       credentials: "include",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ prompt: prompt }),
+      body: JSON.stringify({prompt: prompt}),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        setAnswer(data);
       })
       .catch((e) => {
         console.error(e);
@@ -167,9 +170,9 @@ export default function AITextBox({
       <div
         id={elt.id}
         key={elt.id}
-        className="grid-cols-1 place-content-center "
+        className="grid-cols-1 place-content-center"
       >
-        <div className="mb-2 p-1"></div>
+        <div className="mb-2 p-1 max-w-[150px]">{answer}</div>
         <form
           className="grid-cols-1 place-content-center p-1"
           onSubmit={(e) => generateAnswer(e)}
@@ -177,7 +180,7 @@ export default function AITextBox({
           <textarea
             name="prompt"
             placeholder="Enter prompt..."
-            className="min-w-[150px] bg-gray-100 outline-none"
+            className="max-w-[150px] bg-gray-100 outline-none"
             onMouseDown={(_) => focus()}
           />
           <div className="grid grid-cols-2 gap-2 place-content-center">

@@ -42,6 +42,7 @@ namespace backend.Repository
                 Email = email,
                 Password = password,
                 Role = "user",
+                AIUsageLimit = 10,
                 DateCreated = DateTime.Now,
                 LastEdited = DateTime.Now,
                 NoteBooks = new List<NoteBook>()
@@ -53,13 +54,22 @@ namespace backend.Repository
 
         public async Task<Account?> UpdateAccountAsync(Guid id, String username, String email, String password)
         {
-            var account = await dbContext.Accounts.FindAsync(id);
+            var account = await dbContext.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
             if (account != null)
             {
                 account.Username = username;
                 account.Email = email;
                 account.Password = password;
                 account.LastEdited = DateTime.Now;
+                await dbContext.SaveChangesAsync();
+            }
+            return account;
+        }
+
+        public async Task<Account?> DecreaseAIUsageAsync(Guid id) {
+            var account = await dbContext.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            if (account != null) {
+                account.AIUsageLimit--;
                 await dbContext.SaveChangesAsync();
             }
             return account;

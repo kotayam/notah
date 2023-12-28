@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators } from "./store/index.ts";
-import { useSearchParams } from "react-router-dom";
 
 export function TextFunctionBar() {
   const [colorClicked, setColorClicked] = useState(false);

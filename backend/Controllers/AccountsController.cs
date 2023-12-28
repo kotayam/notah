@@ -43,6 +43,7 @@ namespace backend.Controllers
                                   Email = a.Email,
                                   Password = a.Password,
                                   Role = a.Role,
+                                  AIUsageLimit = a.AIUsageLimit,
                                   DateCreated = a.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                                   LastEdited = a.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                                   NoteBooks = (from nb in a.NoteBooks
@@ -70,6 +71,7 @@ namespace backend.Controllers
                     Email = account.Email,
                     Password = account.Password,
                     Role = account.Role,
+                    AIUsageLimit = account.AIUsageLimit,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                     LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     NoteBooks = (from nb in account.NoteBooks
@@ -108,6 +110,7 @@ namespace backend.Controllers
                         Email = acc.Email,
                         Password = passwordHash,
                         Role = account.Role,
+                        AIUsageLimit = account.AIUsageLimit,
                         DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                         LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                     };
@@ -133,6 +136,7 @@ namespace backend.Controllers
                     Email = acc.Email,
                     Password = acc.Password,
                     Role = account.Role,
+                    AIUsageLimit = account.AIUsageLimit,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                     LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };
@@ -157,6 +161,7 @@ namespace backend.Controllers
                     Email = account.Email,
                     Password = account.Password,
                     Role = account.Role,
+                    AIUsageLimit = account.AIUsageLimit,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                     LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
                 };

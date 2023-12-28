@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using backend.Configurations;
 using backend.DTO;
 using backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.Extensions.Options;
 
 namespace backend.Controllers
 {
@@ -16,11 +18,15 @@ namespace backend.Controllers
     {
         private readonly ICanvasElementRepository canvasElementRepository;
         private readonly IPageRepository pageRepository;
+        private readonly IAccountRepository accountRepository;
+        private readonly OpenAIConfig openAIConfig;
 
-        public CanvasElementsController(ICanvasElementRepository canvasElementRepository, IPageRepository pageRepository)
+        public CanvasElementsController(ICanvasElementRepository canvasElementRepository, IPageRepository pageRepository, IAccountRepository accountRepository, IOptionsMonitor<OpenAIConfig> optionsMonitor)
         {
             this.canvasElementRepository = canvasElementRepository;
             this.pageRepository = pageRepository;
+            this.accountRepository = accountRepository;
+            this.openAIConfig = optionsMonitor.CurrentValue;
         }
 
         [HttpGet]
@@ -241,9 +247,22 @@ namespace backend.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route("/generateAnswer/{userId:guid}")]
-        public async Task<IActionResult> generateAnswer([FromRoute] Guid userId, string prompt) {
-            return NotFound();
+        [Route("generateAnswer/{userId:guid}")]
+        public async Task<IActionResult> GenerateAnswer([FromRoute] Guid userId, [FromBody] AIPromptReqDTO req) {
+            var account = await accountRepository.GetAccountByIdAsync(userId);
+            if (account == null) {
+                return NotFound("account not found");
+            }
+            if (account.AIUsageLimit <= 0) {
+                return BadRequest("user limit reached");
+            }
+            var acc = await accountRepository.DecreaseAIUsageAsync(userId);
+            if (acc == null) {
+                return NotFound("failed to decrement");
+            }
+            var api = new OpenAI_API.OpenAIAPI(openAIConfig.Key);
+            var result = await api.Chat.CreateChatCompletionAsync(req.Prompt);
+            return Ok(result.Choices[0].Message.TextContent);
         }
     }
 }

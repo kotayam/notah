@@ -22,6 +22,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.OpenApi.Any;
 using Microsoft.Extensions.Options;
 using System.Net;
+using backend.Configurations;
 
 namespace backend.Controllers
 {
@@ -31,12 +32,13 @@ namespace backend.Controllers
     {
         private readonly NotahAPIDbContext dbContext;
         private readonly IPasswordHasher passwordHasher;
-        private IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false).Build();
+        private readonly JWTConfig JWTConfig;
 
-        public AuthenticationController(NotahAPIDbContext dbContext, IPasswordHasher passwordHasher)
+        public AuthenticationController(NotahAPIDbContext dbContext, IPasswordHasher passwordHasher, IOptionsMonitor<JWTConfig> optionsMonitor)
         {
             this.dbContext = dbContext;
             this.passwordHasher = passwordHasher;
+            this.JWTConfig = optionsMonitor.CurrentValue;
         }
 
         [AllowAnonymous]
@@ -85,7 +87,7 @@ namespace backend.Controllers
         }
 
         private void GenerateToken(Account account) {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
@@ -94,8 +96,8 @@ namespace backend.Controllers
             };
 
             var token = new JwtSecurityToken(
-                config["Jwt:Issuer"],
-                config["Jwt:Audience"], 
+                JWTConfig.Issuer,
+                JWTConfig.Audience, 
                 claims, 
                 expires: DateTime.Now.AddMinutes(15), 
                 signingCredentials: credentials);
