@@ -182,9 +182,9 @@ export default function Toolbar() {
           </div>
           <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
           <div className="flex justify-center items-center">
-            <button className="hover:underline hover:bg-amber-200 p-2 mobile:p-1">
+            <a href="/account" className="hover:underline hover:bg-amber-200 p-2 mobile:p-1">
               Account
-            </button>
+            </a>
             <button
               className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
               onClick={() => logout()}
