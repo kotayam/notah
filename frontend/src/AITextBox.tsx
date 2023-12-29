@@ -28,7 +28,7 @@ export default function AITextBox({
   const [border, setBorder] = useState("border-0");
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
-  const [answer, setAnswer] = useState("");
+  const [contents, setContents] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -93,6 +93,7 @@ export default function AITextBox({
     const prompt = target.prompt.value;
     if (!prompt) return;
     setLoading(true);
+    setContents((prev) => [...prev, `Q: ${prompt}`]);
     fetch(apiLink + `CanvasElements/generateAnswer/${account.id}`, {
       method: "POST",
       credentials: "include",
@@ -104,9 +105,27 @@ export default function AITextBox({
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setLoading(false);
-        setAnswer(data.answer);
+        target.prompt.value = "";
+        if (data.status === 404) {
+          setContents((prev) => {
+            const curr = [...prev];
+            curr.pop();
+            return curr;
+          });
+          alert("Failed to generate answer.");
+          return;
+        } else if (data.status === 400) {
+          setContents((prev) => {
+            const curr = [...prev];
+            curr.pop();
+            return curr;
+          });
+          alert("Usage limit reached.");
+          return;
+        }
+        console.log(data);
+        setContents((prev) => [...prev, `A: ${data.answer}`]);
         account.aiUsageLimit = data.aiUsageLimit;
         setAccount(account);
       })
@@ -118,7 +137,7 @@ export default function AITextBox({
 
   return (
     <div
-      className={`absolute ${border}`}
+      className={`absolute`}
       style={{ top: elt.y - 26, left: elt.x }}
       onClick={(_) => {
         selectAITextBox(elt);
@@ -138,7 +157,7 @@ export default function AITextBox({
       }}
     >
       <div
-        className="bg-gray-100 border-b-2 flex justify-between"
+        className={`bg-gray-100 flex justify-between ${border} border-b-0`}
         style={{ visibility: visibility }}
       >
         <button
@@ -176,14 +195,20 @@ export default function AITextBox({
       <div
         id={elt.id}
         key={elt.id}
-        className="grid-cols-1 place-content-center"
+        className="grid-cols-1 place-content-center border-2"
       >
-        <div className="mb-2 p-1 min-w-[150px] max-w-[500px] flex justify-center items-center">
-          <div
-            className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
-            style={{ display: loading ? "" : "none" }}
-          ></div>
-          <p>{answer}</p>
+        <div className="mb-2 py-1 px-2 min-w-[150px] max-w-[500px] grid grid-cols-1 place-content-center overflow-y-scroll">
+          {contents.map((c, idx) => (
+            <p key={idx} className="mb-1">
+              {c}
+            </p>
+          ))}
+          <div className="flex justify-center items-center">
+            <div
+              className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+              style={{ display: loading ? "" : "none" }}
+            ></div>
+          </div>
         </div>
         <form
           className="grid-cols-1 place-content-center p-1"
@@ -192,7 +217,7 @@ export default function AITextBox({
           <textarea
             name="prompt"
             placeholder="Enter prompt..."
-            className="w-full bg-gray-100 outline-none"
+            className="w-full bg-gray-100 outline-none resize-none"
             onMouseDown={(_) => focus()}
           />
           <div className="grid grid-cols-2 gap-2 place-content-center">

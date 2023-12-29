@@ -248,18 +248,19 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("generateAnswer/{userId:guid}")]
         public async Task<IActionResult> GenerateAnswer([FromRoute] Guid userId, [FromBody] AIPromptReqDTO req) {
             var account = await accountRepository.GetAccountByIdAsync(userId);
             if (account == null) {
-                return NotFound("account not found");
+                return NotFound();
             }
             if (account.AIUsageLimit <= 0) {
-                return BadRequest("user limit reached");
+                return BadRequest();
             }
             var acc = await accountRepository.DecreaseAIUsageAsync(userId);
             if (acc == null) {
-                return NotFound("failed to decrement");
+                return NotFound();
             }
             var api = new OpenAI_API.OpenAIAPI(openAIConfig.Key);
             var result = await api.Chat.CreateChatCompletionAsync(new OpenAI_API.Chat.ChatRequest() 

@@ -148,7 +148,7 @@ export default function Canvas() {
         newElt = new TableElement(id, x, y, "", table.row, table.col);
         break;
       case "ai":
-        newElt = new AIElement(id, x, y, "", false);
+        newElt = new AIElement(id, x, y, "");
         break;
       default:
         return;

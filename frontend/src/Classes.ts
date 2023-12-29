@@ -54,10 +54,8 @@ export class TableElement extends CanvasElement {
 }
 
 export class AIElement extends CanvasElement {
-    generated: boolean;
 
-    constructor(id: string, x: number, y:number, innerHtml: string, generated: boolean) {
+    constructor(id: string, x: number, y:number, innerHtml: string) {
         super(id, x, y, innerHtml);
-        this.generated = generated;
     }
 }
