@@ -78,39 +78,50 @@ export default function Canvas() {
         clearCanvasElements(page.id);
         data.forEach((elt) => {
           let newElt: CanvasElement;
-          if (elt.type === "text") {
-            newElt = new TextBoxElement(
-              elt.id,
-              elt.x,
-              elt.y,
-              elt.innerHTML,
-              elt.font,
-              elt.fontSize,
-              elt.fontColor,
-              textStyle.fontWeight,
-              textStyle.fontStyle
-            );
-          } else if (elt.type === "shape") {
-            newElt = new ShapeElement(
-              elt.id,
-              elt.x,
-              elt.y,
-              elt.innerHTML,
-              elt.shape,
-              elt.width,
-              elt.height
-            );
-          } else if (elt.type === "table") {
-            newElt = new TableElement(
-              elt.id,
-              elt.x,
-              elt.y,
-              elt.innerHTML,
-              elt.row,
-              elt.column
-            );
-          } else {
-            return;
+          switch(elt.type) {
+            case "text":
+              newElt = new TextBoxElement(
+                elt.id,
+                elt.x,
+                elt.y,
+                elt.innerHTML,
+                elt.font,
+                elt.fontSize,
+                elt.fontColor,
+                textStyle.fontWeight,
+                textStyle.fontStyle
+              );
+              break;
+            case "shape":
+              newElt = new ShapeElement(
+                elt.id,
+                elt.x,
+                elt.y,
+                elt.innerHTML,
+                elt.shape,
+                elt.width,
+                elt.height
+              );
+              break;
+            case "table":
+              newElt = new TableElement(
+                elt.id,
+                elt.x,
+                elt.y,
+                elt.innerHTML,
+                elt.row,
+                elt.column
+              );
+              break;
+            case "ai":
+              newElt = new AIElement(
+                elt.id,
+                elt.x,
+                elt.y,
+                elt.innerHTML
+              );
+              break;
+            default: return;
           }
           addCanvasElement(page.id, newElt);
         });

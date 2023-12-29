@@ -4,7 +4,6 @@ import { useEffect, useState, MouseEvent, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
-import DOMPurify from "isomorphic-dompurify";
 import API from "./API.json";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
@@ -40,6 +39,22 @@ export default function AITextBox({
       setVisibility("hidden");
     }
   }, [selectedElt.id]);
+
+  useEffect(() => {
+    const splitter = new RegExp('</p>');
+    const splitted = elt.innerHtml.split(splitter);
+    console.log(splitted);
+    const matcher = new RegExp('<p class=.*>([^]+)');
+    const res: string[] = [];
+    splitted.forEach((reg) => {
+      const content = reg.match(matcher);
+      if (content) {
+        res.push(content[1]);
+      }
+    })
+    console.log(res);
+    setContents(res);
+  }, [elt.innerHtml])
 
   const handleMouseDown = () => {
     setDrag(true);
@@ -124,6 +139,7 @@ export default function AITextBox({
           alert("Usage limit reached.");
           return;
         }
+        setSaved(false);
         console.log(data);
         setContents((prev) => [...prev, `A: ${data.answer}`]);
         account.aiUsageLimit = data.aiUsageLimit;
@@ -199,7 +215,7 @@ export default function AITextBox({
       >
         <div className="mb-2 py-1 px-2 min-w-[150px] max-w-[500px] grid grid-cols-1 place-content-center overflow-y-scroll">
           {contents.map((c, idx) => (
-            <p key={idx} className="mb-1">
+            <p key={idx} className="mb-1 whitespace-pre-wrap">
               {c}
             </p>
           ))}
@@ -225,12 +241,12 @@ export default function AITextBox({
               type="submit"
               className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 active:bg-gray-400 font-semibold flex justify-center items-center"
             >
-              <p
+              <div
                 className="font-semibold"
                 style={{ display: loading ? "none" : "" }}
               >
                 Generate
-              </p>
+              </div>
               <div
                 className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
                 style={{ display: loading ? "" : "none" }}

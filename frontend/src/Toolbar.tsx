@@ -76,7 +76,6 @@ export default function Toolbar() {
         height: 0,
         row: 0,
         column: 0,
-        generated: false
       };
       const div = document.getElementById(elt.id);
       const innerHtml = div?.innerHTML || "";
@@ -100,7 +99,6 @@ export default function Toolbar() {
       } else if (elt instanceof AIElement) {
         body.type = "ai";
         body.innerHTML = innerHtml;
-        body.generated = elt.generated
       }
       setSaveStatus("Saving...");
       fetch(apiLink + `CanvasElements/${page.id}`, {
