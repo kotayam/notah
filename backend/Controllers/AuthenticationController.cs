@@ -60,7 +60,6 @@ namespace backend.Controllers
                 Id = account.Id,
                 Username = account.Username,
                 Email = account.Email,
-                Password = account.Password,
                 Role = account.Role,
                 DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
                 LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),

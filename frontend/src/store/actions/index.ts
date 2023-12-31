@@ -86,7 +86,7 @@ export type PageAction = {
 
 export type AccountAction = {
   type: ActionType.ACOUNT;
-  payload: { id: string; username: string; dateCreated: string; lastEdited: string; role: string; aiUsageLimit: number};
+  payload: { id: string; username: string; email: string, dateCreated: string; lastEdited: string; role: string; aiUsageLimit: number};
 };
 
 export type SaveAction = {

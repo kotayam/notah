@@ -41,7 +41,6 @@ namespace backend.Controllers
                                   Id = a.Id,
                                   Username = a.Username,
                                   Email = a.Email,
-                                  Password = a.Password,
                                   Role = a.Role,
                                   AIUsageLimit = a.AIUsageLimit,
                                   DateCreated = a.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
@@ -69,7 +68,6 @@ namespace backend.Controllers
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
-                    Password = account.Password,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
@@ -88,7 +86,7 @@ namespace backend.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> AddAccount([FromBody] AccountReqDto acc)
+        public async Task<IActionResult> AddAccount([FromBody] AccountPostReqDto acc)
         {
             var exist = await accountRepository.GetAccountByUsernameAsync(acc.Username);
             if (exist != null) {
@@ -108,7 +106,6 @@ namespace backend.Controllers
                         Id = account.Id,
                         Username = acc.Username,
                         Email = acc.Email,
-                        Password = passwordHash,
                         Role = account.Role,
                         AIUsageLimit = account.AIUsageLimit,
                         DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
@@ -123,9 +120,9 @@ namespace backend.Controllers
         [HttpPut]
         [Authorize]
         [Route("{id:guid}")]
-        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, [FromBody] AccountReqDto acc)
+        public async Task<IActionResult> UpdateAccount([FromRoute] Guid id, [FromBody] AccountPutReqDto acc)
         {
-            var account = await accountRepository.UpdateAccountAsync(id, acc.Username, acc.Email, acc.Password);
+            var account = await accountRepository.UpdateAccountAsync(id, acc.Username, acc.Email);
 
             if (account != null)
             {
@@ -134,7 +131,6 @@ namespace backend.Controllers
                     Id = account.Id,
                     Username = acc.Username,
                     Email = acc.Email,
-                    Password = acc.Password,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
@@ -143,6 +139,31 @@ namespace backend.Controllers
                 return Ok(accountDto);
             }
             return NotFound();
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("changePassword/{id:guid}")]
+        public async Task<IActionResult> ChangePassword([FromRoute] Guid id, [FromBody] AccountPasswordReqDto req) {
+            try {
+                var account = await accountRepository.ChangePasswordAsync(id, req.currPassword, req.newPassword);
+                if (account == null) {
+                    return NotFound();
+                }
+                var accountDto = new AccountDto()
+                {
+                    Id = account.Id,
+                    Username = account.Username,
+                    Email = account.Email,
+                    Role = account.Role,
+                    AIUsageLimit = account.AIUsageLimit,
+                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                };
+                return Ok(accountDto);
+            } catch(Exception e) {
+                return BadRequest();
+            }
         }
 
         [HttpDelete]
@@ -159,7 +180,6 @@ namespace backend.Controllers
                     Id = account.Id,
                     Username = account.Username,
                     Email = account.Email,
-                    Password = account.Password,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
                     DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),

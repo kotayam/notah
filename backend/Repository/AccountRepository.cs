@@ -7,16 +7,19 @@ using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Repository
 {
     public class AccountRepository : IAccountRepository
     {
         private readonly NotahAPIDbContext dbContext;
+        private readonly IPasswordHasher passwordHasher;
 
-        public AccountRepository(NotahAPIDbContext dbContext)
+        public AccountRepository(NotahAPIDbContext dbContext, IPasswordHasher passwordHasher)
         {
             this.dbContext = dbContext;
+            this.passwordHasher = passwordHasher;
         }
 
         public async Task<ICollection<Account>> GetAllAccountsAsync()
@@ -52,14 +55,28 @@ namespace backend.Repository
             return account;
         }
 
-        public async Task<Account?> UpdateAccountAsync(Guid id, String username, String email, String password)
+        public async Task<Account?> UpdateAccountAsync(Guid id, String username, String email)
         {
             var account = await dbContext.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
             if (account != null)
             {
                 account.Username = username;
                 account.Email = email;
-                account.Password = password;
+                account.LastEdited = DateTime.Now;
+                await dbContext.SaveChangesAsync();
+            }
+            return account;
+        }
+
+        public async Task<Account?> ChangePasswordAsync(Guid id, string currPassword, string newPassword) {
+            var account = await dbContext.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            if (account != null)
+            {
+                var result = passwordHasher.Verify(account.Password, currPassword);
+                if (!result) {
+                    throw new Exception("Incorrect password");
+                }
+                account.Password = passwordHasher.Hash(newPassword);
                 account.LastEdited = DateTime.Now;
                 await dbContext.SaveChangesAsync();
             }

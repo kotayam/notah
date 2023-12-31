@@ -10,7 +10,6 @@ type Account = {
   id: string;
   username: string;
   email: string;
-  password: string;
   dateCreated: string;
   lastEdited: string;
   role: string;
@@ -82,6 +81,7 @@ export default function Login() {
         setAccount({
           id: data.id,
           username: data.username,
+          email: data.email,
           dateCreated: data.dateCreated,
           lastEdited: data.lastEdited,
           role: data.role,

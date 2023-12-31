@@ -13,7 +13,8 @@ namespace backend.Interfaces
         Task<Account?> GetAccountByIdAsync(Guid id);
         Task<Account?> GetAccountByUsernameAsync(String username);
         Task<Account?> AddAccountAsync(String username, String email, String password);
-        Task<Account?> UpdateAccountAsync(Guid id, String username, String email, String password);
+        Task<Account?> UpdateAccountAsync(Guid id, String username, String email);
+        Task<Account?> ChangePasswordAsync(Guid id, String currPassword, String newPassword);
         Task<Account?> DecreaseAIUsageAsync(Guid id);
         Task<Account?> DeleteAccountAsync(Guid id);
     }
