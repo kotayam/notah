@@ -100,9 +100,9 @@ export default function NoteBooks() {
 
   return (
     <>
-      <div className="h-full flex-1 border-r-2">
+      <div className="h-full flex-1 border-r-2 overflow-scroll">
         <button
-          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal overflow-hidden w-full p-1 border-b-2 font-bold text-amber-500 text-center"
+          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal w-full p-1 border-b-2 font-bold text-amber-500 text-center"
           onClick={() => addNoteBook()}
         >
           + Add Notebook

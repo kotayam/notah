@@ -11,11 +11,16 @@ import html2canvas from "html2canvas";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store/index.ts";
 import { bindActionCreators } from "@reduxjs/toolkit";
-import { AIElement, ShapeElement, TableElement, TextBoxElement } from "./Classes.ts";
+import {
+  AIElement,
+  ShapeElement,
+  TableElement,
+  TextBoxElement,
+} from "./Classes.ts";
 import { useEffect, useState } from "react";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
@@ -113,7 +118,12 @@ export default function Toolbar() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          setPage({id: data.pageId, title: data.title, dateCreated: data.dateCreated, lastSaved: data.lastSaved});
+          setPage({
+            id: data.pageId,
+            title: data.title,
+            dateCreated: data.dateCreated,
+            lastSaved: data.lastSaved,
+          });
           setSaved(true);
         })
         .catch((e) => {
@@ -139,12 +149,12 @@ export default function Toolbar() {
         "Content-Type": "application/json",
       },
     })
-    .then(_ => {
-      window.location.href = "/";
-    })
-    .catch(_ => {
-      console.error("failed to logout")
-    })
+      .then((_) => {
+        window.location.href = "/";
+      })
+      .catch((_) => {
+        console.error("failed to logout");
+      });
   };
 
   const saveAsPdf = async () => {
@@ -155,8 +165,15 @@ export default function Toolbar() {
       const pdf = new jsPDF("p", "mm", "a4");
       const width = pdf.internal.pageSize.getWidth();
       const height = pdf.internal.pageSize.getHeight();
-      const scale = Math.min(width / canvas.width, height / canvas.height)
-      pdf.addImage(imgData, 'PNG', 15, 15, canvas.width * scale, canvas.height * scale);
+      const scale = Math.min(width / canvas.width, height / canvas.height);
+      pdf.addImage(
+        imgData,
+        "PNG",
+        15,
+        15,
+        canvas.width * scale,
+        canvas.height * scale
+      );
       pdf.save("Memo");
     }
   };
@@ -182,14 +199,49 @@ export default function Toolbar() {
           </div>
           <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
           <div className="flex justify-center items-center">
-            <a href="/account?" className="hover:underline hover:bg-amber-200 p-2 mobile:p-1">
-              Account
+            <a
+              href="/account"
+              className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
+            >
+              <div className="flex justify-center items-center">
+                <h3>Account</h3>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1"
+                  stroke="currentColor"
+                  className="w-5 mobile:w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
+              </div>
             </a>
             <button
               className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
               onClick={() => logout()}
             >
-              Logout
+              <div className="flex justify-center items-center">
+                <h3>Logout</h3>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1"
+                  stroke="currentColor"
+                  className="w-5 mobile:w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
+              </div>
             </button>
           </div>
         </div>

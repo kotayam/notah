@@ -98,7 +98,7 @@ export default function Login() {
   return (
     <>
       <div className="bg-gradient-to-br from-yellow-200 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] flex justify-center items-center animate-gradient mobile:text-sm">
-        <div className="bg-white p-2 rounded-xl h-fit min-w-[400px]">
+        <div className="bg-white p-2 rounded-xl h-fit min-w-[400px] mobile:min-w-[300px]">
           <h1 className="mt-5 mb-5 text-center font-semibold text-2xl mobile:text-xl">
             Login
           </h1>

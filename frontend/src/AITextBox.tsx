@@ -213,7 +213,7 @@ export default function AITextBox({
         key={elt.id}
         className="grid-cols-1 place-content-center border-2"
       >
-        <div className="mb-2 py-1 px-2 min-w-[150px] max-w-[500px] grid grid-cols-1 place-content-center overflow-y-scroll">
+        <div className="mb-2 py-1 px-2 min-w-[150px] max-w-[500px] max-h-[250px] grid grid-cols-1 overflow-y-scroll">
           {contents.map((c, idx) => (
             <p key={idx} className="mb-1 whitespace-pre-wrap">
               {c}
@@ -236,10 +236,10 @@ export default function AITextBox({
             className="w-full bg-gray-100 outline-none resize-none"
             onMouseDown={(_) => focus()}
           />
-          <div className="grid grid-cols-2 gap-2 place-content-center">
+          <div className="flex justify-center items-center">
             <button
               type="submit"
-              className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 active:bg-gray-400 font-semibold flex justify-center items-center"
+              className="p-1 rounded-md bg-gray-200 hover:bg-gray-300 active:bg-gray-400 font-semibold flex justify-center items-center w-full"
             >
               <div
                 className="font-semibold"
@@ -251,12 +251,6 @@ export default function AITextBox({
                 className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
                 style={{ display: loading ? "" : "none" }}
               ></div>
-            </button>
-            <button
-              type="button"
-              className="p-1 rounded-md bg-red-400 hover:bg-red-500 active:bg-red-600 font-semibold"
-            >
-              Stop
             </button>
           </div>
         </form>

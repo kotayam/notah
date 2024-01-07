@@ -4,7 +4,7 @@ import {
   TextFunctionBar,
   ShapeFunctionBar,
   TableFunctionBar,
-  AIFunctionBar
+  AIFunctionBar,
 } from "./FunctionBar.tsx";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
@@ -23,7 +23,7 @@ export default function ToolbarMemo() {
       case "table":
         return <TableFunctionBar />;
       case "ai":
-        return <AIFunctionBar />
+        return <AIFunctionBar />;
     }
   };
 
@@ -35,8 +35,15 @@ export default function ToolbarMemo() {
       const pdf = new jsPDF("p", "mm", "a4");
       const width = pdf.internal.pageSize.getWidth();
       const height = pdf.internal.pageSize.getHeight();
-      const scale = Math.min(width / canvas.width, height / canvas.height)
-      pdf.addImage(imgData, 'PNG', 15, 15, canvas.width * scale, canvas.height * scale);
+      const scale = Math.min(width / canvas.width, height / canvas.height);
+      pdf.addImage(
+        imgData,
+        "PNG",
+        15,
+        15,
+        canvas.width * scale,
+        canvas.height * scale
+      );
       pdf.save("Memo");
     }
   };
@@ -65,12 +72,44 @@ export default function ToolbarMemo() {
           <a href="/">
             <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
           </a>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 mobile:gap-0">
             <a href="/signup" className="hover:underline">
-              Sign Up
+              <div className="flex justify-center items-center">
+                <h3>Sign Up</h3>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1"
+                  stroke="currentColor"
+                  className="w-5 mobile:w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
+              </div>
             </a>
             <a href="/login" className="hover:underline">
-              Login
+              <div className="flex justify-center items-center">
+                <h3>Login</h3>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1"
+                  stroke="currentColor"
+                  className="w-5 mobile:w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
+                  />
+                </svg>
+              </div>
             </a>
           </div>
         </div>
