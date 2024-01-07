@@ -110,7 +110,7 @@ export default function AccountEdit() {
   };
 
   return (
-    <div className="grid grid-cols-1 p-2 gap-2 ">
+    <div className="grid grid-cols-1 p-2 gap-2">
       <p
         className="text-red-600"
         style={{ display: display ? "block" : "none" }}
@@ -127,6 +127,7 @@ export default function AccountEdit() {
             <label htmlFor="username">New Username:</label>
             <input
               type="text"
+              id="username"
               name="username"
               placeholder="New Username"
               className="bg-gray-200"
@@ -140,6 +141,7 @@ export default function AccountEdit() {
             <label htmlFor="email">New Email:</label>
             <input
               type="email"
+              id="email"
               name="email"
               placeholder="New Email"
               className="bg-gray-200"
@@ -165,6 +167,7 @@ export default function AccountEdit() {
             <label htmlFor="currPass">Current Password:</label>
             <input
               type="password"
+              id="currPass"
               name="currPass"
               placeholder="Current Password"
               className="bg-gray-200"
@@ -174,6 +177,7 @@ export default function AccountEdit() {
             <label htmlFor="newPass">New Password:</label>
             <input
               type="password"
+              id="newPass"
               name="newPass"
               placeholder="New Password"
               className="bg-gray-200"

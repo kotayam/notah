@@ -38,6 +38,11 @@ export default {
           '40%': {opacity: '1'},
           '100%': {transform: 'translateX(0)'}
         },
+        notahlogo: {
+          '0%': {transform: 'translateX(-2000px)', opacity: '0'},
+          '50%': {transform: 'translateX(0)', opacity: '1'},
+          '100%': {transform: 'translateX(2000px)', opacity: '0', display: 'none'}
+        },
         slideup: {
           '0%': {transform: 'translateY(100px)', opacity: '0'},
           '100%': {transform: '0%', opacity: '1'}
@@ -57,7 +62,8 @@ export default {
         slidein: 'slidein 3s',
         slideup: 'slideup 2s 2s backwards',
         horizontalroll1: 'horizontalroll1 25s linear infinite',
-        horizontalroll2: 'horizontalroll2 20s linear infinite'
+        horizontalroll2: 'horizontalroll2 20s linear infinite',
+        notahlogo: 'notahlogo 6s forwards'
       },
     },
   },

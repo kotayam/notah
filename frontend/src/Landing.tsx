@@ -14,32 +14,35 @@ export default function Landing() {
   return (
     <div className="bg-gradient-to-br from-yellow-300 via-amber-600 to-red-600 bg-[length:400%_400%] min-h-[100vh] animate-gradient flex justify-center items-center p-2">
       <div className="grid grid-cols-1 gap-8 place-content-center">
-        <div className="animate-slidein">
-          <h1 className="text-5xl mobile:text-3xl font-bold text-white text-center">
-            Welcome to Notah
-          </h1>
-          <h2 className="text-2xl mobile:text-lg text-white text-center">
-            An AI-powered quick note-taking app
-          </h2>
+        <div>
+          <div className="absolute animate-notahlogo">
+            <img src="/img/notah-logo.gif" alt="Notah Logo" className=" relative w-80 mobile:w-44 z-0 top-[-75px] mobile:top-[-100px]"/>
+          </div>
+          <div className="animate-slidein">
+            <h1 className="text-5xl mobile:text-3xl font-bold text-white text-center z-10">
+              Welcome to Notah
+            </h1>
+            <h2 className="text-2xl mobile:text-lg text-white text-center">
+              An AI-powered quick note-taking app
+            </h2>
+          </div>
         </div>
         <div className="grid grid-cols-3 gap-4 place-content-center text-center text-white text-xl mobile:text-sm animate-slideup">
           <a href="/memo">
             <div className="hover:border-2 rounded-xl p-2">
               <div className="flex justify-center items-center gap-1 mb-2">
-                <h3 className="text-2xl mobile:text-lg font-semibold">
-                  Memo
-                </h3>
+                <h3 className="text-2xl mobile:text-lg font-semibold">Memo</h3>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 mobile:w-5"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
                   />
                 </svg>
@@ -54,20 +57,18 @@ export default function Landing() {
           <a href="/login">
             <div className="hover:border-2 rounded-xl p-2">
               <div className="flex justify-center items-center gap-1 mb-2">
-                <h3 className="text-2xl mobile:text-lg font-semibold">
-                  Login
-                </h3>
+                <h3 className="text-2xl mobile:text-lg font-semibold">Login</h3>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 mobile:w-5"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
                   />
                 </svg>
@@ -89,13 +90,13 @@ export default function Landing() {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 mobile:w-5"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25"
                   />
                 </svg>
