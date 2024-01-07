@@ -16,7 +16,7 @@ export default function Landing() {
       <div className="grid grid-cols-1 gap-8 place-content-center">
         <div>
           <div className="absolute animate-notahlogo">
-            <img src="/img/notah-logo.gif" alt="Notah Logo" className=" relative w-80 mobile:w-44 z-0 top-[-75px] mobile:top-[-100px]"/>
+            <img src="/notah-logo.gif" alt="Notah Logo" className=" relative w-80 mobile:w-44 z-0 top-[-75px] mobile:top-[-100px]"/>
           </div>
           <div className="animate-slidein">
             <h1 className="text-5xl mobile:text-3xl font-bold text-white text-center z-10">
