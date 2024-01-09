@@ -118,6 +118,13 @@ export default function Toolbar() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          if (data.status) {
+            setSaveStatus("Failed to save");
+            setTimeout(() => {
+              setSaveStatus("Not saved");
+            }, 3000);
+            return;
+          }
           setPage({
             id: data.pageId,
             title: data.title,
@@ -128,10 +135,7 @@ export default function Toolbar() {
         })
         .catch((e) => {
           console.error(e);
-          setSaveStatus("Failed to save");
-          setTimeout(() => {
-            setSaveStatus("Not saved");
-          }, 3000);
+          window.location.href = "/login?error=timeout";
         });
     });
   };
@@ -154,6 +158,7 @@ export default function Toolbar() {
       })
       .catch((_) => {
         console.error("failed to logout");
+        window.location.href = "/login?error=timeout";
       });
   };
 

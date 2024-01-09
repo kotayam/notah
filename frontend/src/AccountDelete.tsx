@@ -48,6 +48,7 @@ export default function AccountDelete() {
       })
       .catch((e) => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       });
   };
   return (

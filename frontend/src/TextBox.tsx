@@ -79,6 +79,7 @@ export default function TextBox({
       })
       .catch(e => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       })
   };
 

@@ -42,8 +42,8 @@ export default function NoteBooks() {
         }
       })
       .catch((e) => {
-        setNoteBook({id: "-1", title: "Error", dateCreated: "", lastEdited: ""})
         console.error(e);
+        window.location.href = "/login?error=timeout";
       });
   }, [fetchSwitch]);
 
@@ -79,6 +79,7 @@ export default function NoteBooks() {
       })
       .catch((_) => {
         console.log("Failed to add notebook");
+        window.location.href = "/login?error=timeout";
       });
   };
 
@@ -95,6 +96,7 @@ export default function NoteBooks() {
       })
       .catch((e) => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       });
   };
 

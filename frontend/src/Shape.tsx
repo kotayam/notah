@@ -176,6 +176,7 @@ export default function Shape({
       })
       .catch(e => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       })
   };
 

@@ -110,7 +110,8 @@ namespace backend.Controllers
 
             HttpContext.Response.Cookies.Append("accessToken", accessToken, 
                 new CookieOptions {
-                    Expires = DateTime.Now.AddMinutes(14),
+                    //Expires = DateTime.Now.AddMinutes(14),
+                    Expires = DateTime.Now.AddSeconds(20),
                     HttpOnly = true,
                     Secure = true,
                     IsEssential = true,

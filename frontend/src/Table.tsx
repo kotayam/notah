@@ -73,6 +73,7 @@ export default function Table({
       })
       .catch(e => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       })
   };
 

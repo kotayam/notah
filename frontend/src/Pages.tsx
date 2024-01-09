@@ -42,9 +42,8 @@ export default function Pages() {
         }
       })
       .catch((e) => {
-        setPage({id: "-1", title: "Error", dateCreated: "", lastSaved: "Error"});
         console.error(e);
-        
+        window.location.href = "/login?error=timeout";
       });
   }, [fetchSwitch, noteBook, page.title]);
 
@@ -77,7 +76,7 @@ export default function Pages() {
       })
       .catch((_) => {
         console.log("Failed to add page");
-        
+        window.location.href = "/login?error=timeout";
       });
   };
 
@@ -94,6 +93,7 @@ export default function Pages() {
       })
       .catch((e) => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       });
   };
 

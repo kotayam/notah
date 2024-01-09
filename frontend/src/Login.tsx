@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import API from "./API.json";
+import { useSearchParams } from "react-router-dom";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -25,9 +26,20 @@ export default function Login() {
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     resetState();
+  }, []);
+
+  useEffect(() => {
+    const err = searchParams.get("error");
+    switch(err) {
+      case 'timeout':
+        displayErrorMessage("*Your session expired, recent changes might not be saved");
+        setSearchParams("");
+        break
+    }
   }, []);
 
   const displayErrorMessage = (msg: string) => {
@@ -35,7 +47,7 @@ export default function Login() {
     setDisplay(true);
     setTimeout(() => {
       setDisplay(false);
-    }, 3000);
+    }, 4000);
   };
 
   const login = (e: FormEvent) => {

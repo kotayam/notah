@@ -76,7 +76,7 @@ export default function Page({
         })
         .catch((e) => {
           console.error(e);
-          
+          window.location.href = "/login?error=timeout";
         });
     }
   };

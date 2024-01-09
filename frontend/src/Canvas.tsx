@@ -127,8 +127,8 @@ export default function Canvas() {
         });
       })
       .catch((e) => {
-        clearCanvasElements(page.id);
         console.error(e);
+        window.location.href = "/login?error=timeout";
       });
   }, [page]);
 
@@ -254,6 +254,7 @@ export default function Canvas() {
       })
       .catch((e) => {
         console.error(e);
+        window.location.href = "/login?error=timeout";
       });
   };
 

@@ -61,7 +61,7 @@ export default function AccountEdit() {
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login";
+        window.location.href = "/login?error=timeout";
       });
   };
 

@@ -62,6 +62,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
         })
         .catch((e) => {
           console.error(e);
+          window.location.href = "/login?error=timeout";
         });
     }
   };

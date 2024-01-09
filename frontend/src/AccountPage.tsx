@@ -30,13 +30,14 @@ export default function AccountPage() {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        if (data.status === 404) throw new Error("404 page not found");
+        if (data.status) throw new Error("error occurred");
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login";
+        window.location.href = "/login?error=timeout";
       });
   }, [account]);
+
   const returnMenu = () => {
     switch (selectedMenu) {
       case "Account":
