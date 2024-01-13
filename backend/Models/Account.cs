@@ -15,6 +15,9 @@ namespace backend.Models
         public int AIUsageLimit {get; set;}
         public DateTime DateCreated {get; set;}
         public DateTime LastEdited {get; set;}
+        public string RefreshToken {get; set;} = "";
+        public DateTime TokenCreated {get; set;}
+        public DateTime TokenExpires {get; set;}
         public ICollection<NoteBook> NoteBooks { get; set; } = new List<NoteBook>();
     }
 }

@@ -23,6 +23,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.Extensions.Options;
 using System.Net;
 using backend.Configurations;
+using System.Security.Cryptography.X509Certificates;
 
 namespace backend.Controllers
 {
@@ -54,7 +55,7 @@ namespace backend.Controllers
             if (!result) {
                 return BadRequest();
             }
-            GenerateToken(account);
+            GenerateJWTAccessToken(account);
             var accountDto = new AccountDto()
             {
                 Id = account.Id,
@@ -69,8 +70,13 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPost("logout")]
-        public IActionResult Logout() {
+        [HttpPost]
+        [Route("logout/{id:guid}")]
+        public async Task<IActionResult> Logout([FromBody] Guid id) {
+            var account = await dbContext.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
+            if (account == null) {
+                return NotFound();
+            }
             if (HttpContext.Request.Cookies["accessToken"] != null) {
                 HttpContext.Response.Cookies.Append("accessToken", "", 
                     new CookieOptions {
@@ -85,10 +91,13 @@ namespace backend.Controllers
                     }
                 );
             }
+            account.RefreshToken = "";
+            await dbContext.SaveChangesAsync();
+
             return Ok();
         }
 
-        private void GenerateToken(Account account) {
+        private void GenerateJWTAccessToken(Account account) {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
@@ -107,11 +116,50 @@ namespace backend.Controllers
                 signingCredentials: credentials);
             
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+            SetJWTAccessToken(accessToken);
 
+            var refreshToken = GenerateRefreshToken();
+            SetRefreshToken(refreshToken, account);
+        }
+
+        private RefreshToken GenerateRefreshToken() {
+            var refreshToken = new RefreshToken() {
+                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Created = DateTime.Now,
+                Expires = DateTime.Now.AddDays(7)
+            };
+            return refreshToken;
+        }
+
+        [HttpGet("RefreshToken")]
+        public async Task<IActionResult> RefreshToken() {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var account = await dbContext.Accounts.Where(a => a.RefreshToken == refreshToken).FirstOrDefaultAsync();
+            if (account == null || account.TokenExpires < DateTime.Now) {
+                return Unauthorized();
+            }
+            GenerateJWTAccessToken(account);
+            return Ok();
+        }
+
+        public async void SetRefreshToken(RefreshToken refreshToken, Account account) {
+            HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions {
+                Expires = refreshToken.Expires.AddMinutes(-10),
+                HttpOnly = true,
+                Secure = true,
+                IsEssential = true,
+                SameSite = SameSiteMode.None
+            });
+            account.RefreshToken = refreshToken.Token;
+            account.DateCreated = refreshToken.Created;
+            account.TokenExpires = refreshToken.Expires;
+            await dbContext.SaveChangesAsync();
+        }
+
+        public void SetJWTAccessToken(string accessToken) {
             HttpContext.Response.Cookies.Append("accessToken", accessToken, 
                 new CookieOptions {
-                    //Expires = DateTime.Now.AddMinutes(14),
-                    Expires = DateTime.Now.AddSeconds(20),
+                    Expires = DateTime.Now.AddMinutes(14),
                     HttpOnly = true,
                     Secure = true,
                     IsEssential = true,
