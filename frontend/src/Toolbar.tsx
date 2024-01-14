@@ -26,6 +26,7 @@ export default function Toolbar() {
   const mode = useSelector((state: rootState) => state.mode);
   const page = useSelector((state: rootState) => state.page);
   const isSaved = useSelector((state: rootState) => state.isSaved);
+  const account = useSelector((state: rootState) => state.account);
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
 
@@ -135,7 +136,21 @@ export default function Toolbar() {
         })
         .catch((e) => {
           console.error(e);
-          window.location.href = "/login?error=timeout";
+          fetch(apiLink + `Authentication/refreshToken`, {
+            credentials: "include",
+          })
+            .then((data) => {
+              console.log(data);
+              if (!data.ok) {
+                window.location.href = "/login?status=timeout";
+              } else {
+                console.log("Session extended");
+              }
+            })
+            .catch((e) => {
+              console.error(e);
+              window.location.href = "/login?status=timeout";
+            });
         });
     });
   };
@@ -145,7 +160,7 @@ export default function Toolbar() {
       alert("Save before you logout");
       return;
     }
-    fetch(apiLink + "Authentication/logout", {
+    fetch(apiLink + `Authentication/logout/${account.id}`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -153,12 +168,30 @@ export default function Toolbar() {
         "Content-Type": "application/json",
       },
     })
-      .then((_) => {
+      .then((data) => {
+        console.log(data);
+        if (data.status !== 200) {
+          throw new Error();
+        }
         window.location.href = "/";
       })
       .catch((_) => {
         console.error("failed to logout");
-        window.location.href = "/login?error=timeout";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("Session extended");
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   };
 

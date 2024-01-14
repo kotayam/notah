@@ -34,7 +34,29 @@ export default function AccountPage() {
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login?error=timeout";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("Session extended");
+              fetch(apiLink + `Accounts/${account.id}`, {
+                credentials: "include",
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  console.log(data);
+                  if (data.status) throw new Error("error occurred");
+                });
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   }, [account]);
 

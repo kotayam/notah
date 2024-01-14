@@ -33,12 +33,20 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-    const err = searchParams.get("error");
-    switch(err) {
+    const status = searchParams.get("status");
+    switch(status) {
       case 'timeout':
         displayErrorMessage("*Your session expired, recent changes might not be saved");
         setSearchParams("");
-        break
+        break;
+      case 'signup-success':
+        displayErrorMessage("Signed up successfully!");
+        setSearchParams("");
+        break;
+      case 'deleted':
+        displayErrorMessage("Account deleted successfully");
+        setSearchParams("");
+        break;
     }
   }, []);
 

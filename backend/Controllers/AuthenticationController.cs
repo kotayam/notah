@@ -72,7 +72,7 @@ namespace backend.Controllers
         [Authorize]
         [HttpPost]
         [Route("logout/{id:guid}")]
-        public async Task<IActionResult> Logout([FromBody] Guid id) {
+        public async Task<IActionResult> Logout([FromRoute] Guid id) {
             var account = await dbContext.Accounts.Where(a => a.Id == id).FirstOrDefaultAsync();
             if (account == null) {
                 return NotFound();
@@ -112,7 +112,8 @@ namespace backend.Controllers
                 JWTConfig.Issuer,
                 JWTConfig.Audience, 
                 claims, 
-                expires: DateTime.Now.AddMinutes(15), 
+                // expires: DateTime.Now.AddMinutes(15), 
+                expires: DateTime.Now.AddSeconds(10),
                 signingCredentials: credentials);
             
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -131,7 +132,7 @@ namespace backend.Controllers
             return refreshToken;
         }
 
-        [HttpGet("RefreshToken")]
+        [HttpGet("refreshToken")]
         public async Task<IActionResult> RefreshToken() {
             var refreshToken = Request.Cookies["refreshToken"];
             var account = await dbContext.Accounts.Where(a => a.RefreshToken == refreshToken).FirstOrDefaultAsync();
@@ -142,7 +143,7 @@ namespace backend.Controllers
             return Ok();
         }
 
-        public async void SetRefreshToken(RefreshToken refreshToken, Account account) {
+        private async void SetRefreshToken(RefreshToken refreshToken, Account account) {
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions {
                 Expires = refreshToken.Expires.AddMinutes(-10),
                 HttpOnly = true,
@@ -156,10 +157,11 @@ namespace backend.Controllers
             await dbContext.SaveChangesAsync();
         }
 
-        public void SetJWTAccessToken(string accessToken) {
+        private void SetJWTAccessToken(string accessToken) {
             HttpContext.Response.Cookies.Append("accessToken", accessToken, 
                 new CookieOptions {
-                    Expires = DateTime.Now.AddMinutes(14),
+                    // Expires = DateTime.Now.AddMinutes(14),
+                    Expires = DateTime.Now.AddSeconds(10),
                     HttpOnly = true,
                     Secure = true,
                     IsEssential = true,

@@ -1,5 +1,6 @@
 import { CanvasElement } from "./Classes.ts";
 import { AITextBoxProps } from "./Props.ts";
+import refreshToken from "./Authentication.ts";
 import { useEffect, useState, MouseEvent, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
@@ -41,20 +42,20 @@ export default function AITextBox({
   }, [selectedElt.id]);
 
   useEffect(() => {
-    const splitter = new RegExp('</p>');
+    const splitter = new RegExp("</p>");
     const splitted = elt.innerHtml.split(splitter);
     console.log(splitted);
-    const matcher = new RegExp('<p class=.*>([^]+)');
+    const matcher = new RegExp("<p class=.*>([^]+)");
     const res: string[] = [];
     splitted.forEach((reg) => {
       const content = reg.match(matcher);
       if (content) {
         res.push(content[1]);
       }
-    })
+    });
     console.log(res);
     setContents(res);
-  }, [elt.innerHtml])
+  }, [elt.innerHtml]);
 
   const handleMouseDown = () => {
     setDrag(true);
@@ -93,10 +94,21 @@ export default function AITextBox({
       .then((data) => {
         console.log(data);
         deleteCanvasElement(page.id, elt.id, elt);
-        setSaved(false);
       })
-      .catch((e) => {
+      .catch(async(e) => {
         console.error(e);
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `CanvasElements/${elt.id}`, {
+            method: "DELETE",
+            credentials: "include",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              deleteCanvasElement(page.id, elt.id, elt);
+            })
+        }
       });
   };
 
@@ -148,6 +160,21 @@ export default function AITextBox({
       .catch((e) => {
         setLoading(false);
         console.error(e);
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("Session extended");
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   };
 

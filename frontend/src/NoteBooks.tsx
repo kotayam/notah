@@ -43,7 +43,21 @@ export default function NoteBooks() {
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login?error=timeout";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("Session extended");
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   }, [fetchSwitch]);
 
@@ -79,7 +93,21 @@ export default function NoteBooks() {
       })
       .catch((_) => {
         console.log("Failed to add notebook");
-        window.location.href = "/login?error=timeout";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("Session extended");
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   };
 
@@ -96,7 +124,21 @@ export default function NoteBooks() {
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login?error=timeout";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("Session extended");
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   };
 

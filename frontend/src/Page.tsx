@@ -76,7 +76,21 @@ export default function Page({
         })
         .catch((e) => {
           console.error(e);
-          window.location.href = "/login?error=timeout";
+          fetch(apiLink + `Authentication/refreshToken`, {
+            credentials: "include",
+          })
+            .then((data) => {
+              console.log(data);
+              if (!data.ok) {
+                window.location.href = "/login?status=timeout";
+              } else {
+                console.log("Session extended");
+              }
+            })
+            .catch((e) => {
+              console.error(e);
+              window.location.href = "/login?status=timeout";
+            });
         });
     }
   };

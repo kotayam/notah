@@ -61,7 +61,43 @@ export default function AccountEdit() {
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login?error=timeout";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            } else {
+              console.log("session extended");
+              fetch(apiLink + `Accounts/${account.id}`, {
+                method: "PUT",
+                credentials: "include",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username: username, email: email }),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  console.log(data);
+                  setAccount({
+                    id: data.id,
+                    username: data.username,
+                    email: data.email,
+                    dateCreated: data.dateCreated,
+                    lastEdited: data.lastEdited,
+                    role: data.role,
+                    aiUsageLimit: data.aiUsageLimit,
+                  });
+                });
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   };
 
@@ -105,7 +141,19 @@ export default function AccountEdit() {
       })
       .catch((e) => {
         console.error(e);
-        window.location.href = "/login";
+        fetch(apiLink + `Authentication/refreshToken`, {
+          credentials: "include",
+        })
+          .then((data) => {
+            console.log(data);
+            if (!data.ok) {
+              window.location.href = "/login?status=timeout";
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+            window.location.href = "/login?status=timeout";
+          });
       });
   };
 

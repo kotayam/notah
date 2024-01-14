@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { rootState } from "./store";
 import { FormEvent, useState } from "react";
+import refreshToken from "./Authentication";
 import API from "./API.json";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
@@ -46,9 +47,26 @@ export default function AccountDelete() {
           window.location.href = "/";
         }
       })
-      .catch((e) => {
-        console.error(e);
-        window.location.href = "/login?error=timeout";
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Accounts/${account.id}`, {
+            method: "DELETE",
+            credentials: "include",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              if (data.status) {
+                throw new Error();
+              } else {
+                window.location.href = "/login?status=deleted";
+              }
+            })
+            .catch((_) => {
+              displayErrorMessage("Something went wrong, try again later");
+            });
+        }
       });
   };
   return (

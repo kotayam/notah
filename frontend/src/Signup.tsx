@@ -79,7 +79,7 @@ export default function Signup() {
           displayErrorMessage("*Username already exists");
           return;
         }
-        window.location.href = "/login";
+        window.location.href = "/login?status=signup-success";
       })
       .catch((e) => {
         setLoading(false);
