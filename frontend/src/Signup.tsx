@@ -79,7 +79,20 @@ export default function Signup() {
           displayErrorMessage("*Username already exists");
           return;
         }
-        window.location.href = "/login?status=signup-success";
+        fetch(apiLink + `Mail/SendMail`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({emailToAddress: data.email, emailToName: data.username, emailSubject: "Welcome to Notah", emailBody: "Welcome to Notah!"})
+        })
+        .then(res => {
+          window.location.href = "/login?status=signup-success";
+        })
+        .catch(_ => {
+          console.log("send email failed");
+        })
       })
       .catch((e) => {
         setLoading(false);

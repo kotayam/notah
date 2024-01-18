@@ -44,7 +44,26 @@ export default function AccountDelete() {
           displayErrorMessage("Something went wrong, try again later");
           return;
         } else {
-          window.location.href = "/";
+          fetch(apiLink + `Mail/SendMail`, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              emailToAddress: data.email,
+              emailToName: data.username,
+              emailSubject: "Account Deleted",
+              emailBody:
+                "Your account was deleted successfully. Thank you for using Notah!",
+            }),
+          })
+            .then((res) => {
+              window.location.href = "/login?status=deleted";
+            })
+            .catch((_) => {
+              console.log("send email failed");
+            });
         }
       })
       .catch(async (_) => {
@@ -60,7 +79,26 @@ export default function AccountDelete() {
               if (data.status) {
                 throw new Error();
               } else {
-                window.location.href = "/login?status=deleted";
+                fetch(apiLink + `Mail/SendMail`, {
+                  method: "POST",
+                  headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    emailToAddress: data.email,
+                    emailToName: data.username,
+                    emailSubject: "Account Deleted",
+                    emailBody:
+                      "Your account was deleted successfully. Thank you for using Notah!",
+                  }),
+                })
+                  .then((res) => {
+                    window.location.href = "/login?status=deleted";
+                  })
+                  .catch((_) => {
+                    console.log("send email failed");
+                  });
               }
             })
             .catch((_) => {

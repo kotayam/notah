@@ -117,7 +117,20 @@ export default function Login() {
           role: data.role,
           aiUsageLimit: data.aiUsageLimit,
         });
-        window.location.href = `/notah`;
+        fetch(apiLink + `Mail/SendMail`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({emailToAddress: data.email, emailToName: data.username, emailSubject: "Login", emailBody: "Logged in Successfully!"})
+        })
+        .then(res => {
+          window.location.href = `/notah`;
+        })
+        .catch(_ => {
+          console.log("send email failed");
+        })
       })
       .catch((e: Error) => {
         setLoading(false);
