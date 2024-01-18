@@ -20,11 +20,13 @@ var key = JWTConfig.GetValue<string>("Key") ?? "";
 // Add services to the container.
 builder.Services.Configure<OpenAIConfig>(builder.Configuration.GetSection("OpenAI"));
 builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
 );
 builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseInMemoryDatabase("NotahDb"));
+builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INoteBookRepository, NoteBookRepository>();
 builder.Services.AddScoped<IPageRepository, PageRepository>();
