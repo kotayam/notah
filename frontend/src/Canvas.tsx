@@ -11,11 +11,12 @@ import {
 import TextBox from "./TextBox.tsx";
 import Table from "./Table.tsx";
 import Shape from "./Shape.tsx";
+import AITextBox from "./AITextBox.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import API from "./API.json";
-import AITextBox from "./AITextBox.tsx";
+import refreshToken from "./Authentication.ts";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -68,6 +69,54 @@ export default function Canvas() {
 
   useEffect(() => {
     if (page.id === "-1") return;
+    const addToList = (data: CanvasElementDTO[]) => {
+      data.forEach((elt) => {
+        let newElt: CanvasElement;
+        switch (elt.type) {
+          case "text":
+            newElt = new TextBoxElement(
+              elt.id,
+              elt.x,
+              elt.y,
+              elt.innerHTML,
+              elt.font,
+              elt.fontSize,
+              elt.fontColor,
+              textStyle.fontWeight,
+              textStyle.fontStyle
+            );
+            break;
+          case "shape":
+            newElt = new ShapeElement(
+              elt.id,
+              elt.x,
+              elt.y,
+              elt.innerHTML,
+              elt.shape,
+              elt.width,
+              elt.height
+            );
+            break;
+          case "table":
+            newElt = new TableElement(
+              elt.id,
+              elt.x,
+              elt.y,
+              elt.innerHTML,
+              elt.row,
+              elt.column
+            );
+            break;
+          case "ai":
+            newElt = new AIElement(elt.id, elt.x, elt.y, elt.innerHTML);
+            break;
+          default:
+            return;
+        }
+        addCanvasElement(page.id, newElt);
+      });
+    };
+
     fetch(apiLink + `CanvasElements/byPageId/${page.id}`, {
       credentials: "include",
     })
@@ -76,73 +125,25 @@ export default function Canvas() {
       .then((data) => {
         console.log(data);
         clearCanvasElements(page.id);
-        data.forEach((elt) => {
-          let newElt: CanvasElement;
-          switch(elt.type) {
-            case "text":
-              newElt = new TextBoxElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML,
-                elt.font,
-                elt.fontSize,
-                elt.fontColor,
-                textStyle.fontWeight,
-                textStyle.fontStyle
-              );
-              break;
-            case "shape":
-              newElt = new ShapeElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML,
-                elt.shape,
-                elt.width,
-                elt.height
-              );
-              break;
-            case "table":
-              newElt = new TableElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML,
-                elt.row,
-                elt.column
-              );
-              break;
-            case "ai":
-              newElt = new AIElement(
-                elt.id,
-                elt.x,
-                elt.y,
-                elt.innerHTML
-              );
-              break;
-            default: return;
-          }
-          addCanvasElement(page.id, newElt);
-        });
+        addToList(data);
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `CanvasElements/byPageId/${page.id}`, {
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => data as CanvasElementDTO[])
+            .then((data) => {
+              console.log(data);
+              clearCanvasElements(page.id);
+              addToList(data);
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   }, [page]);
 
@@ -266,23 +267,32 @@ export default function Canvas() {
           lastSaved: data.lastSaved,
         });
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Pages/${page.id}`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: div.innerText }),
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              setPage({
+                id: data.id,
+                title: data.title,
+                dateCreated: data.dateCreated,
+                lastSaved: data.lastSaved,
+              });
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 

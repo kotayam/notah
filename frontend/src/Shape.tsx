@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import DOMPurify from "isomorphic-dompurify";
+import refreshToken from "./Authentication.ts";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 type Line = {
   x1: string | number;
@@ -23,10 +24,8 @@ export default function Shape({
   drawing,
 }: ShapeProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement, setSaved } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { deleteCanvasElement, updateCanvasElement, setSaved } =
+    bindActionCreators(actionCreators, dispatch);
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page);
@@ -101,7 +100,9 @@ export default function Shape({
             onMouseLeave={(_) => {
               setIsEditable(false);
             }}
-            dangerouslySetInnerHTML={{ __html : DOMPurify.sanitize(elt.innerHtml)}}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(elt.innerHtml),
+            }}
           ></div>
         );
       case "circle":
@@ -122,7 +123,9 @@ export default function Shape({
             onMouseLeave={(_) => {
               setIsEditable(false);
             }}
-            dangerouslySetInnerHTML={{ __html : DOMPurify.sanitize(elt.innerHtml)}}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(elt.innerHtml),
+            }}
           ></div>
         );
       case "line":
@@ -174,24 +177,24 @@ export default function Shape({
         deleteCanvasElement(page.id, elt.id, elt);
         setSaved(false);
       })
-      .catch(e => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `CanvasElements/${elt.id}`, {
+            method: "DELETE",
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
-      })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              deleteCanvasElement(page.id, elt.id, elt);
+              setSaved(false);
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
+      });
   };
 
   return (
@@ -238,10 +241,7 @@ export default function Shape({
             <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
           </svg>
         </button>
-        <button
-          name="delete-elt"
-          onClick={() => deleteShape()}
-        >
+        <button name="delete-elt" onClick={() => deleteShape()}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

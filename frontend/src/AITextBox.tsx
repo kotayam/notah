@@ -95,7 +95,7 @@ export default function AITextBox({
         console.log(data);
         deleteCanvasElement(page.id, elt.id, elt);
       })
-      .catch(async(e) => {
+      .catch(async (e) => {
         console.error(e);
         const authorized = await refreshToken();
         if (authorized) {
@@ -108,6 +108,9 @@ export default function AITextBox({
               console.log(data);
               deleteCanvasElement(page.id, elt.id, elt);
             })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
         }
       });
   };
@@ -134,6 +137,7 @@ export default function AITextBox({
       .then((data) => {
         setLoading(false);
         target.prompt.value = "";
+        console.log(data);
         if (data.status === 404) {
           setContents((prev) => {
             const curr = [...prev];
@@ -157,24 +161,52 @@ export default function AITextBox({
         account.aiUsageLimit = data.aiUsageLimit;
         setAccount(account);
       })
-      .catch((e) => {
-        setLoading(false);
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `CanvasElements/generateAnswer/${account.id}`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: prompt }),
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              setLoading(false);
+              target.prompt.value = "";
+              if (data.status === 404) {
+                setContents((prev) => {
+                  const curr = [...prev];
+                  curr.pop();
+                  return curr;
+                });
+                alert("Failed to generate answer.");
+                return;
+              } else if (data.status === 400) {
+                setContents((prev) => {
+                  const curr = [...prev];
+                  curr.pop();
+                  return curr;
+                });
+                alert("Usage limit reached.");
+                return;
+              }
+              setSaved(false);
+              console.log(data);
+              setContents((prev) => [...prev, `A: ${data.answer}`]);
+              account.aiUsageLimit = data.aiUsageLimit;
+              setAccount(account);
+            })
+            .catch(_ => {
+              setLoading(false);
+              target.prompt.value = "";
+              setContents((prev) => prev.filter((_, idx) => idx !== prev.length - 1));
+              alert("Something went wrong. Please try again later.");
+            })
+        }
       });
   };
 

@@ -10,7 +10,7 @@ export default async function refreshToken() {
         if (!res.ok) {
             window.location.href = "/login?status=timeout";
         } else {
-            return true
+            return true;
         }
     } catch(e) {
         window.location.href = "/login?status=timeout";

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import DOMPurify from "isomorphic-dompurify";
+import refreshToken from "./Authentication.ts";
 import API from "./API.json";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
@@ -76,24 +77,22 @@ export default function TextBox({
         console.log(data);
         deleteCanvasElement(page.id, elt.id, elt);
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-              
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `CanvasElements/${elt.id}`, {
+            method: "DELETE",
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              deleteCanvasElement(page.id, elt.id, elt);
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 

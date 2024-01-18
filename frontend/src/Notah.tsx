@@ -5,6 +5,7 @@ import Toolbar from "./Toolbar";
 import API from "./API.json";
 import { useSelector } from "react-redux";
 import { rootState } from "./store";
+import refreshToken from "./Authentication";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -23,23 +24,23 @@ export default function Notah() {
           setChecking(false);
         }
       })
-      .catch((_) => {
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-              setChecking(false);
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Accounts/${account.id}`, {
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              if (!data.status) {
+                setChecking(false);
+              }
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   }, []);
 

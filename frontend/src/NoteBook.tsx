@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { MouseEvent, KeyboardEvent, useState } from "react";
+import refreshToken from "./Authentication";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
   const noteBook = useSelector((state: rootState) => state.noteBook);
@@ -27,8 +28,18 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
       alert("save before switching notebooks!");
       return;
     }
-    setNoteBook({ id: id, title: title, dateCreated: noteBook.dateCreated, lastEdited: noteBook.lastEdited });
-    setPage({id: "-1", title: "default", dateCreated: "default", lastSaved: "default"});
+    setNoteBook({
+      id: id,
+      title: title,
+      dateCreated: noteBook.dateCreated,
+      lastEdited: noteBook.lastEdited,
+    });
+    setPage({
+      id: "-1",
+      title: "default",
+      dateCreated: "default",
+      lastSaved: "default",
+    });
     switch (e.button) {
       case 0:
         setRename(false);
@@ -47,7 +58,7 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
       if (!input) return;
       fetch(apiLink + `NoteBooks/${id}`, {
         method: "PUT",
-        credentials: 'include',
+        credentials: "include",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -60,23 +71,28 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
           setRename(false);
           setTtl(input.value);
         })
-        .catch((e) => {
-          console.error(e);
-          fetch(apiLink + `Authentication/refreshToken`, {
-            credentials: "include",
-          })
-            .then((data) => {
-              console.log(data);
-              if (!data.ok) {
-                window.location.href = "/login?status=timeout";
-              } else {
-                console.log("Session extended");
-              }
+        .catch(async (_) => {
+          const authorized = await refreshToken();
+          if (authorized) {
+            fetch(apiLink + `NoteBooks/${id}`, {
+              method: "PUT",
+              credentials: "include",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ title: input.value }),
             })
-            .catch((e) => {
-              console.error(e);
-              window.location.href = "/login?status=timeout";
-            });
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                setRename(false);
+                setTtl(input.value);
+              })
+              .catch((_) => {
+                window.location.href = "/login?status=error";
+              });
+          }
         });
     }
   };

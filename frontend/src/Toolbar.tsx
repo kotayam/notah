@@ -18,6 +18,7 @@ import {
   TextBoxElement,
 } from "./Classes.ts";
 import { useEffect, useState } from "react";
+import refreshToken from "./Authentication.ts";
 import API from "./API.json";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
@@ -59,7 +60,7 @@ export default function Toolbar() {
     setSaved(true);
   }, [page.id]);
 
-  const save = () => {
+  const save = async () => {
     if (isSaved) return;
     const canvasElts = canvasElements.get(page.id);
     console.log(canvasElts);
@@ -67,92 +68,80 @@ export default function Toolbar() {
       setSaved(true);
       return;
     }
-    canvasElts.forEach((elt) => {
-      const body = {
-        id: elt.id,
-        type: "",
-        x: elt.x,
-        y: elt.y,
-        innerHTML: "",
-        font: "",
-        fontSize: 0,
-        fontColor: "",
-        shape: "",
-        width: 0,
-        height: 0,
-        row: 0,
-        column: 0,
-      };
-      const div = document.getElementById(elt.id);
-      const innerHtml = div?.innerHTML || "";
-      if (elt instanceof TextBoxElement) {
-        body.type = "text";
-        body.innerHTML = innerHtml;
-        body.font = elt.font;
-        body.fontSize = elt.fontSize;
-        body.fontColor = elt.fontColor;
-      } else if (elt instanceof ShapeElement) {
-        body.type = "shape";
-        body.innerHTML = innerHtml;
-        body.shape = elt.shape;
-        body.width = elt.width;
-        body.height = elt.height;
-      } else if (elt instanceof TableElement) {
-        body.type = "table";
-        body.innerHTML = innerHtml;
-        body.row = elt.row;
-        body.column = elt.col;
-      } else if (elt instanceof AIElement) {
-        body.type = "ai";
-        body.innerHTML = innerHtml;
-      }
-      setSaveStatus("Saving...");
-      fetch(apiLink + `CanvasElements/${page.id}`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          if (data.status) {
-            setSaveStatus("Failed to save");
-            setTimeout(() => {
-              setSaveStatus("Not saved");
-            }, 3000);
-            return;
-          }
-          setPage({
-            id: data.pageId,
-            title: data.title,
-            dateCreated: data.dateCreated,
-            lastSaved: data.lastSaved,
-          });
-          setSaved(true);
+    const authorized = await refreshToken();
+    if (authorized) {
+      canvasElts.forEach((elt) => {
+        const body = {
+          id: elt.id,
+          type: "",
+          x: elt.x,
+          y: elt.y,
+          innerHTML: "",
+          font: "",
+          fontSize: 0,
+          fontColor: "",
+          shape: "",
+          width: 0,
+          height: 0,
+          row: 0,
+          column: 0,
+        };
+        const div = document.getElementById(elt.id);
+        const innerHtml = div?.innerHTML || "";
+        if (elt instanceof TextBoxElement) {
+          body.type = "text";
+          body.innerHTML = innerHtml;
+          body.font = elt.font;
+          body.fontSize = elt.fontSize;
+          body.fontColor = elt.fontColor;
+        } else if (elt instanceof ShapeElement) {
+          body.type = "shape";
+          body.innerHTML = innerHtml;
+          body.shape = elt.shape;
+          body.width = elt.width;
+          body.height = elt.height;
+        } else if (elt instanceof TableElement) {
+          body.type = "table";
+          body.innerHTML = innerHtml;
+          body.row = elt.row;
+          body.column = elt.col;
+        } else if (elt instanceof AIElement) {
+          body.type = "ai";
+          body.innerHTML = innerHtml;
+        }
+        setSaveStatus("Saving...");
+        fetch(apiLink + `CanvasElements/${page.id}`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
         })
-        .catch((e) => {
-          console.error(e);
-          fetch(apiLink + `Authentication/refreshToken`, {
-            credentials: "include",
-          })
-            .then((data) => {
-              console.log(data);
-              if (!data.ok) {
-                window.location.href = "/login?status=timeout";
-              } else {
-                console.log("Session extended");
-              }
-            })
-            .catch((e) => {
-              console.error(e);
-              window.location.href = "/login?status=timeout";
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.status) {
+              setSaveStatus("Failed to save");
+              setTimeout(() => {
+                setSaveStatus("Not saved");
+              }, 3000);
+              return;
+            }
+            setPage({
+              id: data.pageId,
+              title: data.title,
+              dateCreated: data.dateCreated,
+              lastSaved: data.lastSaved,
             });
-        });
-    });
+            setSaved(true);
+          })
+          .catch((_) => {
+            window.location.href = "/login?status=error";
+          });
+      });
+    }
   };
 
   const logout = () => {
@@ -175,23 +164,28 @@ export default function Toolbar() {
         }
         window.location.href = "/";
       })
-      .catch((_) => {
-        console.error("failed to logout");
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Authentication/logout/${account.id}`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((data) => {
+              console.log(data);
+              if (data.status !== 200) {
+                throw new Error();
+              }
+              window.location.href = "/";
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 

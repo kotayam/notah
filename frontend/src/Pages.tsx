@@ -3,9 +3,10 @@ import Page from "./Page";
 import { useSelector, useDispatch } from "react-redux";
 import { rootState, actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import refreshToken from "./Authentication";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 type Page = {
   id: string;
@@ -28,36 +29,64 @@ export default function Pages() {
       return;
     }
     fetch(apiLink + `Pages/byNoteBookId/${noteBook.id}`, {
-      credentials: 'include'
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => data as Page[])
       .then((data) => {
         console.log(data);
         const pgs = new Array<Page>();
-        data.forEach((p) => pgs.push({ id: p.id, title: p.title, dateCreated: p.dateCreated, lastSaved: p.lastSaved }));
+        data.forEach((p) =>
+          pgs.push({
+            id: p.id,
+            title: p.title,
+            dateCreated: p.dateCreated,
+            lastSaved: p.lastSaved,
+          })
+        );
         setPages(pgs);
         if (pgs.length > 0 && page.id === "-1") {
-          setPage({id: pgs[0].id, title: pgs[0].title, dateCreated: pgs[0].dateCreated, lastSaved: pgs[0].lastSaved});
+          setPage({
+            id: pgs[0].id,
+            title: pgs[0].title,
+            dateCreated: pgs[0].dateCreated,
+            lastSaved: pgs[0].lastSaved,
+          });
         }
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Pages/byNoteBookId/${noteBook.id}`, {
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => data as Page[])
+            .then((data) => {
+              console.log(data);
+              const pgs = new Array<Page>();
+              data.forEach((p) =>
+                pgs.push({
+                  id: p.id,
+                  title: p.title,
+                  dateCreated: p.dateCreated,
+                  lastSaved: p.lastSaved,
+                })
+              );
+              setPages(pgs);
+              if (pgs.length > 0 && page.id === "-1") {
+                setPage({
+                  id: pgs[0].id,
+                  title: pgs[0].title,
+                  dateCreated: pgs[0].dateCreated,
+                  lastSaved: pgs[0].lastSaved,
+                });
+              }
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   }, [fetchSwitch, noteBook, page.title]);
 
@@ -68,7 +97,7 @@ export default function Pages() {
     }
     fetch(apiLink + `Pages/${noteBook.id}`, {
       method: "POST",
-      credentials: 'include',
+      credentials: "include",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -76,66 +105,98 @@ export default function Pages() {
       body: JSON.stringify({ title: `Page ${pages.length}` }),
     })
       .then((res) => res.json())
-      .then(data => {
+      .then((data) => {
         if (data.status === 404) {
           alert("Select a notebook to add a new page!");
           return;
-        }
-        else return data as Page;
+        } else return data as Page;
       })
       .then((data) => {
         console.log(data);
-        if (data) setPage({id: data.id, title: data.title, dateCreated: data.dateCreated, lastSaved: data.lastSaved});
+        if (data)
+          setPage({
+            id: data.id,
+            title: data.title,
+            dateCreated: data.dateCreated,
+            lastSaved: data.lastSaved,
+          });
         setFetchSwitch((prevState) => !prevState);
       })
-      .catch((_) => {
-        console.log("Failed to add page");
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Pages/${noteBook.id}`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: `Page ${pages.length}` }),
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status === 404) {
+                alert("Select a notebook to add a new page!");
+                return;
+              } else return data as Page;
+            })
+            .then((data) => {
+              console.log(data);
+              if (data)
+                setPage({
+                  id: data.id,
+                  title: data.title,
+                  dateCreated: data.dateCreated,
+                  lastSaved: data.lastSaved,
+                });
+              setFetchSwitch((prevState) => !prevState);
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 
   const deletePage = (id: string) => {
     fetch(apiLink + `Pages/${id}`, {
       method: "DELETE",
-      credentials: 'include',
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setFetchSwitch((prevState) => !prevState);
-        setPage({id: pages[0].id, title: pages[0].title, dateCreated: pages[0].dateCreated, lastSaved: pages[0].lastSaved});
+        setPage({
+          id: pages[0].id,
+          title: pages[0].title,
+          dateCreated: pages[0].dateCreated,
+          lastSaved: pages[0].lastSaved,
+        });
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Pages/${id}`, {
+            method: "DELETE",
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              setFetchSwitch((prevState) => !prevState);
+              setPage({
+                id: pages[0].id,
+                title: pages[0].title,
+                dateCreated: pages[0].dateCreated,
+                lastSaved: pages[0].lastSaved,
+              });
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 

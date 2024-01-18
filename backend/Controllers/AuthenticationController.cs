@@ -112,8 +112,7 @@ namespace backend.Controllers
                 JWTConfig.Issuer,
                 JWTConfig.Audience, 
                 claims, 
-                // expires: DateTime.Now.AddMinutes(15), 
-                expires: DateTime.Now.AddSeconds(10),
+                expires: DateTime.Now.AddMinutes(15), 
                 signingCredentials: credentials);
             
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -123,7 +122,7 @@ namespace backend.Controllers
             SetRefreshToken(refreshToken, account);
         }
 
-        private RefreshToken GenerateRefreshToken() {
+        private static RefreshToken GenerateRefreshToken() {
             var refreshToken = new RefreshToken() {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
                 Created = DateTime.Now,
@@ -136,8 +135,11 @@ namespace backend.Controllers
         public async Task<IActionResult> RefreshToken() {
             var refreshToken = Request.Cookies["refreshToken"];
             var account = await dbContext.Accounts.Where(a => a.RefreshToken == refreshToken).FirstOrDefaultAsync();
-            if (account == null || account.TokenExpires < DateTime.Now) {
-                return Unauthorized();
+            if (account == null) {
+                return Unauthorized("Cannot refresh token");
+            }
+            if (account.TokenExpires < DateTime.Now) {
+                return Unauthorized("Token expired");
             }
             GenerateJWTAccessToken(account);
             return Ok();
@@ -160,8 +162,7 @@ namespace backend.Controllers
         private void SetJWTAccessToken(string accessToken) {
             HttpContext.Response.Cookies.Append("accessToken", accessToken, 
                 new CookieOptions {
-                    // Expires = DateTime.Now.AddMinutes(14),
-                    Expires = DateTime.Now.AddSeconds(10),
+                    Expires = DateTime.Now.AddMinutes(14),
                     HttpOnly = true,
                     Secure = true,
                     IsEssential = true,

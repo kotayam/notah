@@ -5,9 +5,10 @@ import { useState, useEffect, MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
+import refreshToken from "./Authentication.ts";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 export default function Table({
   elt,
@@ -15,10 +16,8 @@ export default function Table({
   selectedElt,
 }: TableProps) {
   const dispatch = useDispatch();
-  const { deleteCanvasElement, updateCanvasElement, setSaved } = bindActionCreators(
-    actionCreators,
-    dispatch
-  );
+  const { deleteCanvasElement, updateCanvasElement, setSaved } =
+    bindActionCreators(actionCreators, dispatch);
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page);
@@ -70,24 +69,23 @@ export default function Table({
         console.log(data);
         deleteCanvasElement(page.id, elt.id, elt);
       })
-      .catch(e => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `CanvasElements/${elt.id}`, {
+            method: "DELETE",
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
-      })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              deleteCanvasElement(page.id, elt.id, elt);
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
+      });
   };
 
   const returnTableRow = () => {
@@ -140,10 +138,7 @@ export default function Table({
             <path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
           </svg>
         </button>
-        <button
-          name="delete-elt"
-          onClick={() => deleteTable()}
-        >
+        <button name="delete-elt" onClick={() => deleteTable()}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

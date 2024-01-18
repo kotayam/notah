@@ -3,6 +3,7 @@ import API from "./API.json";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import refreshToken from "./Authentication";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -59,45 +60,35 @@ export default function AccountEdit() {
           aiUsageLimit: data.aiUsageLimit,
         });
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("session extended");
-              fetch(apiLink + `Accounts/${account.id}`, {
-                method: "PUT",
-                credentials: "include",
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username: username, email: email }),
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                  console.log(data);
-                  setAccount({
-                    id: data.id,
-                    username: data.username,
-                    email: data.email,
-                    dateCreated: data.dateCreated,
-                    lastEdited: data.lastEdited,
-                    role: data.role,
-                    aiUsageLimit: data.aiUsageLimit,
-                  });
-                });
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Accounts/${account.id}`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username: username, email: email }),
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              setAccount({
+                id: data.id,
+                username: data.username,
+                email: data.email,
+                dateCreated: data.dateCreated,
+                lastEdited: data.lastEdited,
+                role: data.role,
+                aiUsageLimit: data.aiUsageLimit,
+              });
+            })
+            .catch((_) => {
+              displayErrorMessage("Something went wrong, try again later");
+            });
+        }
       });
   };
 
@@ -139,21 +130,42 @@ export default function AccountEdit() {
           aiUsageLimit: data.aiUsageLimit,
         });
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Accounts/changePassword/${account.id}`, {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              currPassword: currPass,
+              newPassword: newPass,
+            }),
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              if (data.status === 400) {
+                displayErrorMessage("*Incorrect password, try again");
+                return;
+              }
+              setAccount({
+                id: data.id,
+                username: data.username,
+                email: data.email,
+                dateCreated: data.dateCreated,
+                lastEdited: data.lastEdited,
+                role: data.role,
+                aiUsageLimit: data.aiUsageLimit,
+              });
+            })
+            .catch((_) => {
+              displayErrorMessage("Something went wrong, try again later");
+            });
+        }
       });
   };
 

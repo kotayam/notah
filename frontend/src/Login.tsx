@@ -26,6 +26,7 @@ export default function Login() {
   const [display, setDisplay] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [textColor, setTextColor] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -34,23 +35,32 @@ export default function Login() {
 
   useEffect(() => {
     const status = searchParams.get("status");
-    switch(status) {
-      case 'timeout':
-        displayErrorMessage("*Your session expired, recent changes might not be saved");
+    switch (status) {
+      case "timeout":
+        displayErrorMessage(
+          "*Your session expired, recent changes might not be saved",
+          true
+        );
         setSearchParams("");
         break;
-      case 'signup-success':
-        displayErrorMessage("Signed up successfully!");
+      case "signup-success":
+        displayErrorMessage("Signed up successfully!", false);
         setSearchParams("");
         break;
-      case 'deleted':
-        displayErrorMessage("Account deleted successfully");
+      case "deleted":
+        displayErrorMessage("Account deleted successfully", false);
+        setSearchParams("");
+        break;
+      case "error":
+        displayErrorMessage("*Something went wrong, try again later", true);
         setSearchParams("");
         break;
     }
   }, []);
 
-  const displayErrorMessage = (msg: string) => {
+  const displayErrorMessage = (msg: string, error: boolean) => {
+    if (error) setTextColor("text-red-600");
+    else setTextColor("text-blue-600");
     setErrMsg(msg);
     setDisplay(true);
     setTimeout(() => {
@@ -67,7 +77,7 @@ export default function Login() {
     const username = target.username.value;
     const password = target.password.value;
     if (!(username && password)) {
-      displayErrorMessage("*Please fill out all fields");
+      displayErrorMessage("*Please fill out all fields", true);
       return;
     }
     setLoading(true);
@@ -87,10 +97,10 @@ export default function Login() {
       .then((data) => {
         setLoading(false);
         if (data.status === 404) {
-          displayErrorMessage("*Account does not exist");
+          displayErrorMessage("*Account does not exist", true);
           return;
         } else if (data.status === 400) {
-          displayErrorMessage("*Username or password is incorrect");
+          displayErrorMessage("*Username or password is incorrect", true);
           return;
         }
         return data as Account;
@@ -112,7 +122,10 @@ export default function Login() {
       .catch((e: Error) => {
         setLoading(false);
         console.error(e);
-        displayErrorMessage("*Something went wrong, please try again later");
+        displayErrorMessage(
+          "*Something went wrong, please try again later",
+          true
+        );
       });
   };
   return (
@@ -123,7 +136,7 @@ export default function Login() {
             Login
           </h1>
           <p
-            className="text-red-600 ml-5"
+            className={`ml-5 ${textColor}`}
             style={{ display: display ? "block" : "none" }}
           >
             {errMsg}

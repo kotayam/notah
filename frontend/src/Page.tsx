@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { PageProps } from "./Props";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import refreshToken from "./Authentication";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 export default function Page({
   id,
@@ -74,23 +75,33 @@ export default function Page({
             lastSaved: data.lastSaved,
           });
         })
-        .catch((e) => {
-          console.error(e);
-          fetch(apiLink + `Authentication/refreshToken`, {
-            credentials: "include",
-          })
-            .then((data) => {
-              console.log(data);
-              if (!data.ok) {
-                window.location.href = "/login?status=timeout";
-              } else {
-                console.log("Session extended");
-              }
+        .catch(async (_) => {
+          const authorized = await refreshToken();
+          if (authorized) {
+            fetch(apiLink + `Pages/${id}`, {
+              method: "PUT",
+              credentials: "include",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ title: input.value }),
             })
-            .catch((e) => {
-              console.error(e);
-              window.location.href = "/login?status=timeout";
-            });
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                setRename(false);
+                setPage({
+                  id: data.id,
+                  title: data.title,
+                  dateCreated: data.dateCreated,
+                  lastSaved: data.lastSaved,
+                });
+              })
+              .catch((_) => {
+                window.location.href = "/login?status=error";
+              });
+          }
         });
     }
   };

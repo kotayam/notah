@@ -4,6 +4,7 @@ import AccountEdit from "./AccountEdit";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { rootState } from "./store";
+import refreshToken from "./Authentication";
 import API from "./API.json";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
@@ -32,31 +33,21 @@ export default function AccountPage() {
         console.log(data);
         if (data.status) throw new Error("error occurred");
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-              fetch(apiLink + `Accounts/${account.id}`, {
-                credentials: "include",
-              })
-                .then((res) => res.json())
-                .then((data) => {
-                  console.log(data);
-                  if (data.status) throw new Error("error occurred");
-                });
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `Accounts/${account.id}`, {
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              if (data.status) throw new Error("error occurred");
+            })
+            .catch(_ => {
+              window.location.href = "/login?status=error";
+            })
+        }
       });
   }, [account]);
 

@@ -3,9 +3,10 @@ import NoteBook from "./NoteBook";
 import { useSelector, useDispatch } from "react-redux";
 import { rootState, actionCreators } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import refreshToken from "./Authentication";
 import API from "./API.json";
 
-const apiLink = API["isDev"]? API["API"]["dev"] : API["API"]["production"];
+const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 type NoteBook = {
   id: string;
@@ -28,36 +29,64 @@ export default function NoteBooks() {
       window.location.href = "/login";
     }
     fetch(apiLink + `NoteBooks/byOwnerId/${account.id}`, {
-      credentials: 'include'
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => data as NoteBook[])
       .then((data) => {
         console.log(data);
         const nbs = new Array<NoteBook>();
-        data.forEach((nb) => nbs.push({ id: nb.id, title: nb.title, dateCreated: nb.dateCreated, lastEdited: nb.lastEdited }));
+        data.forEach((nb) =>
+          nbs.push({
+            id: nb.id,
+            title: nb.title,
+            dateCreated: nb.dateCreated,
+            lastEdited: nb.lastEdited,
+          })
+        );
         setNoteBooks(nbs);
         if (nbs.length > 0 && noteBook.id === "-1") {
-          setNoteBook({id: nbs[0].id, title: nbs[0].title, dateCreated: nbs[0].dateCreated, lastEdited: nbs[0].lastEdited});
+          setNoteBook({
+            id: nbs[0].id,
+            title: nbs[0].title,
+            dateCreated: nbs[0].dateCreated,
+            lastEdited: nbs[0].lastEdited,
+          });
         }
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `NoteBooks/byOwnerId/${account.id}`, {
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => data as NoteBook[])
+            .then((data) => {
+              console.log(data);
+              const nbs = new Array<NoteBook>();
+              data.forEach((nb) =>
+                nbs.push({
+                  id: nb.id,
+                  title: nb.title,
+                  dateCreated: nb.dateCreated,
+                  lastEdited: nb.lastEdited,
+                })
+              );
+              setNoteBooks(nbs);
+              if (nbs.length > 0 && noteBook.id === "-1") {
+                setNoteBook({
+                  id: nbs[0].id,
+                  title: nbs[0].title,
+                  dateCreated: nbs[0].dateCreated,
+                  lastEdited: nbs[0].lastEdited,
+                });
+              }
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   }, [fetchSwitch]);
 
@@ -68,7 +97,7 @@ export default function NoteBooks() {
     }
     fetch(apiLink + `NoteBooks/${account.id}`, {
       method: "POST",
-      credentials: 'include',
+      credentials: "include",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -76,69 +105,114 @@ export default function NoteBooks() {
       body: JSON.stringify({ title: `Notebook ${noteBooks.length}` }),
     })
       .then((res) => res.json())
-      .then(data => {
+      .then((data) => {
         if (data.status === 404) {
           alert("Login to add notebook!");
           return;
-        }
-        else {
+        } else {
           return data as NoteBook;
         }
-        })
+      })
       .then((data) => {
         console.log(data);
-        if (data) setNoteBook({id: data.id, title: data.title, dateCreated: data.dateCreated, lastEdited: data.lastEdited});
-        setPage({id: "-1", title: "default", dateCreated: "default", lastSaved: "default"});
+        if (data)
+          setNoteBook({
+            id: data.id,
+            title: data.title,
+            dateCreated: data.dateCreated,
+            lastEdited: data.lastEdited,
+          });
+        setPage({
+          id: "-1",
+          title: "default",
+          dateCreated: "default",
+          lastSaved: "default",
+        });
         setFetchSwitch((prevState) => !prevState);
       })
-      .catch((_) => {
-        console.log("Failed to add notebook");
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `NoteBooks/${account.id}`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title: `Notebook ${noteBooks.length}` }),
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status === 404) {
+                alert("Login to add notebook!");
+                return;
+              } else {
+                return data as NoteBook;
+              }
+            })
+            .then((data) => {
+              console.log(data);
+              if (data)
+                setNoteBook({
+                  id: data.id,
+                  title: data.title,
+                  dateCreated: data.dateCreated,
+                  lastEdited: data.lastEdited,
+                });
+              setPage({
+                id: "-1",
+                title: "default",
+                dateCreated: "default",
+                lastSaved: "default",
+              });
+              setFetchSwitch((prevState) => !prevState);
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 
   const deleteNotebook = (id: string) => {
     fetch(apiLink + `NoteBooks/${id}`, {
       method: "DELETE",
-      credentials: 'include',
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
         setFetchSwitch((prevState) => !prevState);
-        setNoteBook({id: noteBooks[0].id, title: noteBooks[0].title, dateCreated: noteBooks[0].dateCreated, lastEdited: noteBooks[0].lastEdited});
+        setNoteBook({
+          id: noteBooks[0].id,
+          title: noteBooks[0].title,
+          dateCreated: noteBooks[0].dateCreated,
+          lastEdited: noteBooks[0].lastEdited,
+        });
       })
-      .catch((e) => {
-        console.error(e);
-        fetch(apiLink + `Authentication/refreshToken`, {
-          credentials: "include",
-        })
-          .then((data) => {
-            console.log(data);
-            if (!data.ok) {
-              window.location.href = "/login?status=timeout";
-            } else {
-              console.log("Session extended");
-            }
+      .catch(async (_) => {
+        const authorized = await refreshToken();
+        if (authorized) {
+          fetch(apiLink + `NoteBooks/${id}`, {
+            method: "DELETE",
+            credentials: "include",
           })
-          .catch((e) => {
-            console.error(e);
-            window.location.href = "/login?status=timeout";
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+              setFetchSwitch((prevState) => !prevState);
+              setNoteBook({
+                id: noteBooks[0].id,
+                title: noteBooks[0].title,
+                dateCreated: noteBooks[0].dateCreated,
+                lastEdited: noteBooks[0].lastEdited,
+              });
+            })
+            .catch((_) => {
+              window.location.href = "/login?status=error";
+            });
+        }
       });
   };
 
