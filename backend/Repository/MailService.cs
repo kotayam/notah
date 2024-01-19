@@ -8,6 +8,7 @@ using backend.Models;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using MimeKit.Utils;
 
 namespace backend.Repository
 {
@@ -26,11 +27,26 @@ namespace backend.Repository
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse(_mailSettings.SenderName));
                 email.To.Add(MailboxAddress.Parse(mailData.EmailToAddress));
-                email.Subject = mailData.EmailSubject;
-                BodyBuilder emailBodyBuilder = new BodyBuilder
-                {
-                    TextBody = mailData.EmailBody
-                };
+                string htmlTemplate = "";
+                string subject = "";
+                switch(mailData.EmailPurpose) {
+                    case "signup": 
+                        htmlTemplate = "Signup.html";
+                        subject = "Welcome to Notah!";
+                        break;
+                }
+                email.Subject = subject;
+
+                string filePath = Directory.GetCurrentDirectory() + "/MailTemplates/" + htmlTemplate;
+                string templateText = File.ReadAllText(filePath);
+
+                var emailBodyBuilder = new BodyBuilder();
+
+                var image = emailBodyBuilder.LinkedResources.Add(Directory.GetCurrentDirectory() + "/MailTemplates/notah-logo.gif");
+                image.ContentId = MimeUtils.GenerateMessageId();
+
+                emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
+                emailBodyBuilder.TextBody = subject;
                 email.Body = emailBodyBuilder.ToMessageBody();
 
                 using var smtp = new SmtpClient();
@@ -43,7 +59,7 @@ namespace backend.Repository
             }
             catch (Exception e)
             {
-                // Console.WriteLine(e);
+                Console.WriteLine(e);
                 return false;
             }
         }
