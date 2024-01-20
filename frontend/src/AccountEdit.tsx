@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import refreshToken from "./Authentication";
+import { DISPLAY } from "html2canvas/dist/types/css/property-descriptors/display";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -13,8 +14,13 @@ export default function AccountEdit() {
   const { setAccount } = bindActionCreators(actionCreators, dispatch);
   const [errMsg, setErrMsg] = useState("");
   const [display, setDisplay] = useState(false);
+  const [updatingAccount, setUpdatingAccount] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [textColor, setTextColor] = useState("");
 
-  const displayErrorMessage = (msg: string) => {
+  const displayErrorMessage = (msg: string, error: boolean) => {
+    if (error) setTextColor("text-red-600");
+    else setTextColor("text-blue-600");
     setErrMsg(msg);
     setDisplay(true);
     setTimeout(() => {
@@ -31,13 +37,14 @@ export default function AccountEdit() {
     const username = target.username.value || account.username;
     const email = target.email.value || account.email;
     if (username === account.username && email === account.email) {
-      displayErrorMessage("*There is no change to make");
+      displayErrorMessage("*There is no change to make", true);
       target.username.value = "";
       target.email.value = "";
       return;
     }
     target.username.value = "";
     target.email.value = "";
+      setUpdatingAccount(true);
     fetch(apiLink + `Accounts/${account.id}`, {
       method: "PUT",
       credentials: "include",
@@ -59,6 +66,8 @@ export default function AccountEdit() {
           role: data.role,
           aiUsageLimit: data.aiUsageLimit,
         });
+        setUpdatingAccount(false);
+        displayErrorMessage("Successfully updated account information", false);
         fetch(apiLink + `Mail/SendMail`, {
           method: "POST",
           headers: {
@@ -98,6 +107,11 @@ export default function AccountEdit() {
                 role: data.role,
                 aiUsageLimit: data.aiUsageLimit,
               });
+              setUpdatingAccount(false);
+              displayErrorMessage(
+                "Successfully updated account information",
+                false
+              );
               fetch(apiLink + `Mail/SendMail`, {
                 method: "POST",
                 headers: {
@@ -114,7 +128,11 @@ export default function AccountEdit() {
               });
             })
             .catch((_) => {
-              displayErrorMessage("Something went wrong, try again later");
+              setUpdatingAccount(false);
+              displayErrorMessage(
+                "Something went wrong, try again later",
+                true
+              );
             });
         }
       });
@@ -128,12 +146,13 @@ export default function AccountEdit() {
     };
     const currPass = target.currPass.value;
     const newPass = target.newPass.value;
-    if (!(currPass || newPass)) {
-      displayErrorMessage("*There is no change to make");
+    if (!currPass || !newPass) {
+      displayErrorMessage("*There is no change to make", true);
       return;
     }
     target.currPass.value = "";
     target.newPass.value = "";
+    setChangingPassword(true);
     fetch(apiLink + `Accounts/changePassword/${account.id}`, {
       method: "PUT",
       credentials: "include",
@@ -147,7 +166,8 @@ export default function AccountEdit() {
       .then((data) => {
         console.log(data);
         if (data.status === 400) {
-          displayErrorMessage("*Incorrect password, try again");
+          setChangingPassword(false);
+          displayErrorMessage("*Incorrect password, try again", true);
           return;
         }
         setAccount({
@@ -159,6 +179,8 @@ export default function AccountEdit() {
           role: data.role,
           aiUsageLimit: data.aiUsageLimit,
         });
+        setChangingPassword(false);
+        displayErrorMessage("Successfully changed password", false);
         fetch(apiLink + `Mail/SendMail`, {
           method: "POST",
           headers: {
@@ -193,7 +215,8 @@ export default function AccountEdit() {
             .then((data) => {
               console.log(data);
               if (data.status === 400) {
-                displayErrorMessage("*Incorrect password, try again");
+                setChangingPassword(false);
+                displayErrorMessage("*Incorrect password, try again", true);
                 return;
               }
               setAccount({
@@ -205,6 +228,8 @@ export default function AccountEdit() {
                 role: data.role,
                 aiUsageLimit: data.aiUsageLimit,
               });
+              setChangingPassword(false);
+              displayErrorMessage("Successfully changed password", false);
               fetch(apiLink + `Mail/SendMail`, {
                 method: "POST",
                 headers: {
@@ -221,7 +246,11 @@ export default function AccountEdit() {
               });
             })
             .catch((_) => {
-              displayErrorMessage("Something went wrong, try again later");
+              setChangingPassword(false);
+              displayErrorMessage(
+                "Something went wrong, try again later",
+                true
+              );
             });
         }
       });
@@ -230,7 +259,7 @@ export default function AccountEdit() {
   return (
     <div className="grid grid-cols-1 p-2 gap-2">
       <p
-        className="text-red-600"
+        className={`${textColor}`}
         style={{ display: display ? "block" : "none" }}
       >
         {errMsg}
@@ -247,8 +276,10 @@ export default function AccountEdit() {
               type="text"
               id="username"
               name="username"
+              maxLength={20}
+              minLength={4}
               placeholder="New Username"
-              className="bg-gray-200"
+              className="bg-gray-200 outline-none p-1"
             />
           </div>
           <div>
@@ -262,7 +293,7 @@ export default function AccountEdit() {
               id="email"
               name="email"
               placeholder="New Email"
-              className="bg-gray-200"
+              className="bg-gray-200 outline-none p-1"
             />
           </div>
         </div>
@@ -271,7 +302,13 @@ export default function AccountEdit() {
             type="submit"
             className="hover:bg-amber-300 active:bg-amber-400 bg-amber-200 rounded-md p-1 font-semibold"
           >
-            Save Changes
+            <p style={{ display: updatingAccount ? "none" : "flex" }}>
+              Save Changes
+            </p>
+            <div
+              className="rounded-full border-4 border-solid h-5 w-5 border-r-transparent border-blue-500 animate-spin"
+              style={{ display: updatingAccount ? "flex" : "none" }}
+            ></div>
           </button>
         </div>
       </form>
@@ -288,7 +325,7 @@ export default function AccountEdit() {
               id="currPass"
               name="currPass"
               placeholder="Current Password"
-              className="bg-gray-200"
+              className="bg-gray-200 outline-none p-1"
             />
           </div>
           <div className="grid grid-cols-1">
@@ -297,8 +334,9 @@ export default function AccountEdit() {
               type="password"
               id="newPass"
               name="newPass"
+              minLength={6}
               placeholder="New Password"
-              className="bg-gray-200"
+              className="bg-gray-200 outline-none p-1"
             />
           </div>
         </div>
@@ -307,7 +345,13 @@ export default function AccountEdit() {
             type="submit"
             className="hover:bg-amber-300 active:bg-amber-400 bg-amber-200 rounded-md p-1 font-semibold"
           >
+            <p style={{ display: changingPassword ? "none" : "flex" }}>
             Change Password
+            </p>
+            <div
+              className="rounded-full border-4 border-solid h-5 w-5 border-r-transparent border-blue-500 animate-spin"
+              style={{ display: changingPassword ? "flex" : "none" }}
+            ></div>
           </button>
         </div>
       </form>

@@ -138,6 +138,7 @@ export default function Signup() {
                   id="username"
                   type="text"
                   maxLength={20}
+                  minLength={4}
                   placeholder="Type your username"
                   className="outline-none"
                 />
@@ -192,6 +193,7 @@ export default function Signup() {
                 <input
                   id="password"
                   type="password"
+                  minLength={6}
                   placeholder="Type your password"
                   className="outline-none"
                 />
