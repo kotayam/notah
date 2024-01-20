@@ -31,8 +31,8 @@ namespace backend.Controllers
                            {
                                Id = p.Id,
                                Title = p.Title,
-                               DateCreated = p.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                               LastSaved = p.LastSaved.ToString("MM/dd/yyyy h:mm tt"),
+                               DateCreated = p.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                               LastSaved = p.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                                NoteBookId = p.NoteBookId
                            };
             return Ok(pagesDto);
@@ -50,8 +50,8 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
-                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = page.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastSaved = page.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                     NoteBookId = page.NoteBookId
                 };
                 return Ok(pageDto);
@@ -71,8 +71,8 @@ namespace backend.Controllers
                            {
                                Id = p.Id,
                                Title = p.Title,
-                               DateCreated = p.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                               LastSaved = p.LastSaved.ToString("MM/dd/yyyy h:mm tt"),
+                               DateCreated = p.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                               LastSaved = p.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                                NoteBookId = p.NoteBookId
                            };
             return Ok(pagesDto);
@@ -90,8 +90,8 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
-                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = page.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastSaved = page.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(pageDto);
             }
@@ -110,8 +110,8 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
-                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = page.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastSaved = page.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(pageDto);
             }
@@ -130,8 +130,8 @@ namespace backend.Controllers
                 {
                     Id = page.Id,
                     Title = page.Title,
-                    DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = page.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastSaved = page.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(pageDto);
             }

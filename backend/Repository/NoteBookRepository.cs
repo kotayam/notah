@@ -42,8 +42,8 @@ namespace backend.Repository
                 {
                     Id = Guid.NewGuid(),
                     Title = title,
-                    DateCreated = DateTime.Now,
-                    LastEdited = DateTime.Now,
+                    DateCreated = DateTime.UtcNow,
+                    LastEdited = DateTime.UtcNow,
                     OwnerId = owner.Id,
                     Owner = owner
                 };
@@ -59,7 +59,7 @@ namespace backend.Repository
             var noteBook = await dbContext.NoteBooks.FindAsync(id);
             if (noteBook != null) {
                 noteBook.Title = title;
-                noteBook.LastEdited = DateTime.Now;
+                noteBook.LastEdited = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync();
             }
             return noteBook;

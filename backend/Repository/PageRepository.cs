@@ -40,8 +40,8 @@ namespace backend.Repository
                 {
                     Id = Guid.NewGuid(),
                     Title = title,
-                    DateCreated = DateTime.Now,
-                    LastSaved = DateTime.Now,
+                    DateCreated = DateTime.UtcNow,
+                    LastSaved = DateTime.UtcNow,
                     NoteBookId = noteBook.Id,
                     NoteBook = noteBook
                 };
@@ -60,7 +60,7 @@ namespace backend.Repository
                 if (title != "") {
                     page.Title = title;
                 }
-                page.LastSaved = DateTime.Now;
+                page.LastSaved = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync();
             }
             return page;

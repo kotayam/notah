@@ -43,8 +43,8 @@ namespace backend.Controllers
                                   Email = a.Email,
                                   Role = a.Role,
                                   AIUsageLimit = a.AIUsageLimit,
-                                  DateCreated = a.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                                  LastEdited = a.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                                  DateCreated = a.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                                  LastEdited = a.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                                   NoteBooks = (from nb in a.NoteBooks
                                                select new NoteBookDto()
                                                {
@@ -70,8 +70,8 @@ namespace backend.Controllers
                     Email = account.Email,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
-                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                     NoteBooks = (from nb in account.NoteBooks
                                  select new NoteBookDto()
                                  {
@@ -108,8 +108,8 @@ namespace backend.Controllers
                         Email = acc.Email,
                         Role = account.Role,
                         AIUsageLimit = account.AIUsageLimit,
-                        DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                        LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                        DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                        LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                     };
                     return Ok(accountDto);
                 }
@@ -133,8 +133,8 @@ namespace backend.Controllers
                     Email = acc.Email,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
-                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(accountDto);
             }
@@ -157,11 +157,12 @@ namespace backend.Controllers
                     Email = account.Email,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
-                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(accountDto);
             } catch(Exception e) {
+                Console.WriteLine(e);
                 return BadRequest();
             }
         }
@@ -182,8 +183,8 @@ namespace backend.Controllers
                     Email = account.Email,
                     Role = account.Role,
                     AIUsageLimit = account.AIUsageLimit,
-                    DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(accountDto);
             }

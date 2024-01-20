@@ -9,9 +9,15 @@ namespace backend.Data
 {
     public class NotahAPIDbContext : DbContext
     {
-        public NotahAPIDbContext(DbContextOptions options) : base(options)
+        protected readonly IConfiguration configuration;
+        public NotahAPIDbContext(IConfiguration configuration)
         {
+            this.configuration = configuration;
+        }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("TestServer"));
         }
 
         public DbSet<Account> Accounts { get; set; }

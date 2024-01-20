@@ -144,8 +144,8 @@ namespace backend.Controllers
                         Column = updatedElt.Column,
                         PageId = updatedElt.PageId,
                         Title = page.Title,
-                        DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                        LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt")
+                        DateCreated = page.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                        LastSaved = page.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt")
                     };
                     return Ok(updatedEltAndPageDto);
                 }
@@ -171,8 +171,8 @@ namespace backend.Controllers
                         Column = canvasElt.Column,
                         PageId = canvasElt.PageId,
                         Title = page.Title,
-                        DateCreated = page.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                        LastSaved = page.LastSaved.ToString("MM/dd/yyyy h:mm tt")
+                        DateCreated = page.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                        LastSaved = page.LastSaved.ToLocalTime().ToString("MM/dd/yyyy h:mm tt")
                     };
                     return Ok(canvasEltAndPageDto);
                 }

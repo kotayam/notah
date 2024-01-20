@@ -36,8 +36,8 @@ namespace backend.Controllers
                                {
                                    Id = nb.Id,
                                    Title = nb.Title,
-                                   DateCreated = nb.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                                   LastEdited = nb.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                                   DateCreated = nb.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                                   LastEdited = nb.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                                    Pages = (from n in nb.Pages
                                             select new PageDto()
                                             {
@@ -61,8 +61,8 @@ namespace backend.Controllers
                 {
                     Id = noteBook.Id,
                     Title = noteBook.Title,
-                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = noteBook.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                     Pages = (from n in noteBook.Pages
                              select new PageDto()
                              {
@@ -88,8 +88,8 @@ namespace backend.Controllers
                                {
                                    Id = nb.Id,
                                    Title = nb.Title,
-                                   DateCreated = nb.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                                   LastEdited = nb.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                                   DateCreated = nb.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                                   LastEdited = nb.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                                    Pages = (from n in nb.Pages
                                             select new PageDto()
                                             {
@@ -115,8 +115,8 @@ namespace backend.Controllers
                     {
                     Id = noteBook.Id,
                     Title = noteBook.Title,
-                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = noteBook.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                     };
                     return Ok(noteBookDto);
                 }
@@ -136,8 +136,8 @@ namespace backend.Controllers
                 {
                     Id = noteBook.Id,
                     Title = noteBook.Title,
-                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = noteBook.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(noteBookDto);
             }
@@ -156,8 +156,8 @@ namespace backend.Controllers
                 {
                     Id = noteBook.Id,
                     Title = noteBook.Title,
-                    DateCreated = noteBook.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                    LastEdited = noteBook.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                    DateCreated = noteBook.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    LastEdited = noteBook.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 };
                 return Ok(noteBookDto);
             }

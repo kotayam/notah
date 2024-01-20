@@ -62,8 +62,8 @@ namespace backend.Controllers
                 Username = account.Username,
                 Email = account.Email,
                 Role = account.Role,
-                DateCreated = account.DateCreated.ToString("MM/dd/yyyy h:mm tt"),
-                LastEdited = account.LastEdited.ToString("MM/dd/yyyy h:mm tt"),
+                DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
                 AIUsageLimit = account.AIUsageLimit
             };
             return Ok(accountDto);
@@ -80,14 +80,14 @@ namespace backend.Controllers
             if (HttpContext.Request.Cookies["accessToken"] != null) {
                 HttpContext.Response.Cookies.Append("accessToken", "", 
                     new CookieOptions {
-                        Expires = DateTime.Now.AddDays(-1)
+                        Expires = DateTime.UtcNow.AddDays(-1)
                     }
                 );
             }
             if (HttpContext.Request.Cookies["refreshToken"] != null) {
                 HttpContext.Response.Cookies.Append("refreshToken", "", 
                     new CookieOptions {
-                        Expires = DateTime.Now.AddDays(-1)
+                        Expires = DateTime.UtcNow.AddDays(-1)
                     }
                 );
             }
@@ -112,7 +112,7 @@ namespace backend.Controllers
                 JWTConfig.Issuer,
                 JWTConfig.Audience, 
                 claims, 
-                expires: DateTime.Now.AddMinutes(15), 
+                expires: DateTime.UtcNow.AddMinutes(15), 
                 signingCredentials: credentials);
             
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
@@ -125,8 +125,8 @@ namespace backend.Controllers
         private static RefreshToken GenerateRefreshToken() {
             var refreshToken = new RefreshToken() {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Created = DateTime.Now,
-                Expires = DateTime.Now.AddDays(7)
+                Created = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddDays(7)
             };
             return refreshToken;
         }
@@ -138,14 +138,14 @@ namespace backend.Controllers
             if (account == null) {
                 return Unauthorized("Cannot refresh token");
             }
-            if (account.TokenExpires < DateTime.Now) {
+            if (account.TokenExpires < DateTime.UtcNow) {
                 return Unauthorized("Token expired");
             }
             GenerateJWTAccessToken(account);
             return Ok();
         }
 
-        private async void SetRefreshToken(RefreshToken refreshToken, Account account) {
+        private async Task SetRefreshToken(RefreshToken refreshToken, Account account) {
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions {
                 Expires = refreshToken.Expires.AddMinutes(-10),
                 HttpOnly = true,
@@ -162,7 +162,7 @@ namespace backend.Controllers
         private void SetJWTAccessToken(string accessToken) {
             HttpContext.Response.Cookies.Append("accessToken", accessToken, 
                 new CookieOptions {
-                    Expires = DateTime.Now.AddMinutes(14),
+                    Expires = DateTime.UtcNow.AddMinutes(14),
                     HttpOnly = true,
                     Secure = true,
                     IsEssential = true,

@@ -46,8 +46,8 @@ namespace backend.Repository
                 Password = password,
                 Role = "user",
                 AIUsageLimit = 10,
-                DateCreated = DateTime.Now,
-                LastEdited = DateTime.Now,
+                DateCreated = DateTime.UtcNow,
+                LastEdited = DateTime.UtcNow,
                 NoteBooks = new List<NoteBook>()
             };
             await dbContext.Accounts.AddAsync(account);
@@ -62,7 +62,7 @@ namespace backend.Repository
             {
                 account.Username = username;
                 account.Email = email;
-                account.LastEdited = DateTime.Now;
+                account.LastEdited = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync();
             }
             return account;
@@ -77,7 +77,7 @@ namespace backend.Repository
                     throw new Exception("Incorrect password");
                 }
                 account.Password = passwordHasher.Hash(newPassword);
-                account.LastEdited = DateTime.Now;
+                account.LastEdited = DateTime.UtcNow;
                 await dbContext.SaveChangesAsync();
             }
             return account;
