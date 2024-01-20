@@ -27,25 +27,28 @@ namespace backend.Repository
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse(_mailSettings.SenderName));
                 email.To.Add(MailboxAddress.Parse(mailData.EmailToAddress));
-                string htmlTemplate = "";
+                
+                string filePath = "";
+                string templateText = "";
                 string subject = "";
+                var emailBodyBuilder = new BodyBuilder();
+                var image = emailBodyBuilder.LinkedResources.Add(Directory.GetCurrentDirectory() + "/MailTemplates/notah-logo.gif");
+                image.ContentId = MimeUtils.GenerateMessageId();
                 switch(mailData.EmailPurpose) {
                     case "signup": 
-                        htmlTemplate = "Signup.html";
                         subject = "Welcome to Notah!";
+                        filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Signup.html";
+                        templateText = File.ReadAllText(filePath);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
+                        break;
+                    case "login":
+                        subject = "Successful Login to Notah";
+                        filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Login.html";
+                        templateText = File.ReadAllText(filePath);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.Now);
                         break;
                 }
                 email.Subject = subject;
-
-                string filePath = Directory.GetCurrentDirectory() + "/MailTemplates/" + htmlTemplate;
-                string templateText = File.ReadAllText(filePath);
-
-                var emailBodyBuilder = new BodyBuilder();
-
-                var image = emailBodyBuilder.LinkedResources.Add(Directory.GetCurrentDirectory() + "/MailTemplates/notah-logo.gif");
-                image.ContentId = MimeUtils.GenerateMessageId();
-
-                emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
                 emailBodyBuilder.TextBody = subject;
                 email.Body = emailBodyBuilder.ToMessageBody();
 
