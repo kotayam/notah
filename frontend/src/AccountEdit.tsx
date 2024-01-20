@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators, rootState } from "./store";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import refreshToken from "./Authentication";
-import { DISPLAY } from "html2canvas/dist/types/css/property-descriptors/display";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
