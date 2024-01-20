@@ -26,15 +26,18 @@ export default function TextBox({
     canvasElements.get(page.id) || new Array<CanvasElement>()
   );
   const [border, setBorder] = useState("border-0");
+  const [outline, setOutline] = useState("outline-current");
   const [visibility, setVisibility] = useState<"visible" | "hidden">("visible");
   const [drag, setDrag] = useState(false);
 
   useEffect(() => {
     if (selectedElt.id === elt.id) {
       setBorder("border-2");
+      setOutline("outline-none");
       setVisibility("visible");
     } else {
       setBorder("border-0");
+      setOutline("outline-current");
       setVisibility("hidden");
     }
   }, [selectedElt.id]);
@@ -109,12 +112,14 @@ export default function TextBox({
           if (visibility === "hidden") {
             setVisibility("visible");
             setBorder("border-2");
+            setOutline("outline-none");
           }
         }}
         onMouseLeave={(_) => {
           if (selectedElt.id !== elt.id) {
             setBorder("border-0");
             setVisibility("hidden");
+            setOutline("outline-current");
           }
         }}
       >
@@ -159,7 +164,7 @@ export default function TextBox({
           contentEditable="true"
           suppressContentEditableWarning
           key={elt.id}
-          className="min-w-[100px]"
+          className={`min-w-[100px] ${outline}`}
           style={{
             fontFamily: elt.font,
             fontSize: elt.fontSize,

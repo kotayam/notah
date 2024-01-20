@@ -51,10 +51,15 @@ export default function Page({
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const updatePage = (e: KeyboardEvent | MouseEvent) => {
+    if (!isSaved) alert("Save before editing page");
+    if ((e as KeyboardEvent).key === "Enter" || (e as KeyboardEvent).key === undefined) {
       const input = document.getElementById(id) as HTMLInputElement;
-      if (!input) return;
+      let newTitle = input.value;
+      if (!newTitle) {
+        setRename(false);
+        return;
+      }
       fetch(apiLink + `Pages/${id}`, {
         method: "PUT",
         credentials: "include",
@@ -62,7 +67,7 @@ export default function Page({
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title: input.value }),
+        body: JSON.stringify({ title: newTitle }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -114,7 +119,8 @@ export default function Page({
             id={id}
             className="w-2/3"
             type="text"
-            onKeyDown={(e) => handleKeyDown(e)}
+            onKeyDown={(e) => updatePage(e)}
+            onMouseLeave={(e) => updatePage(e)}
             placeholder={title}
           />
           <button className="float-right mr-2" onClick={() => deletePage(id)}>

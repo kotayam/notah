@@ -52,9 +52,15 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const updateNotebook = (e: KeyboardEvent | MouseEvent) => {
+    if (!isSaved) alert("Save before editing notebook");
+    if ((e as KeyboardEvent).key === "Enter" || (e as KeyboardEvent).key === undefined) {
       const input = document.getElementById(id) as HTMLInputElement;
+      let newTitle = input.value;
+      if (!newTitle) {
+        setRename(false);
+        return;
+      }
       if (!input) return;
       fetch(apiLink + `NoteBooks/${id}`, {
         method: "PUT",
@@ -63,13 +69,13 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title: input.value }),
+        body: JSON.stringify({ title: newTitle }),
       })
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
           setRename(false);
-          setTtl(input.value);
+          setTtl(newTitle);
         })
         .catch(async (_) => {
           const authorized = await refreshToken();
@@ -81,13 +87,13 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
                 Accept: "application/json",
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ title: input.value }),
+              body: JSON.stringify({ title: newTitle }),
             })
               .then((res) => res.json())
               .then((data) => {
                 console.log(data);
                 setRename(false);
-                setTtl(input.value);
+                setTtl(data.title);
               })
               .catch((_) => {
                 window.location.href = "/login?status=error";
@@ -105,7 +111,8 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
             id={id}
             className="w-2/3"
             type="text"
-            onKeyDown={(e) => handleKeyDown(e)}
+            onKeyDown={(e) => updateNotebook(e)}
+            onMouseLeave={(e) => updateNotebook(e)}
             placeholder={ttl}
           />
           <button

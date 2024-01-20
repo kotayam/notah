@@ -88,7 +88,7 @@ export default function Shape({
           <div
             id={elt.id}
             contentEditable={isEditable}
-            className="relative bg-gray-100 border-2 border-black text-center"
+            className="relative bg-gray-100 border-2 border-black text-center outline-none"
             style={{
               width: dim.width,
               height: dim.height,
@@ -110,7 +110,7 @@ export default function Shape({
           <div
             id={elt.id}
             contentEditable={isEditable}
-            className="relative bg-gray-100 border-black border-2 text-center"
+            className="relative bg-gray-100 border-black border-2 text-center outline-none"
             style={{
               width: dim.width,
               height: dim.height,

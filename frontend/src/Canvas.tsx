@@ -53,6 +53,7 @@ export default function Canvas() {
   const table = useSelector((state: rootState) => state.table);
   const mode = useSelector((state: rootState) => state.mode);
   const page = useSelector((state: rootState) => state.page);
+  const isSaved = useSelector((state: rootState) => state.isSaved);
 
   const [drawing, setDrawing] = useState(false);
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
@@ -229,7 +230,7 @@ export default function Canvas() {
   };
 
   const selectAITextBox = (elt: AIElement) => {
-    console.log(`AT text box: ${elt.id} selected.`);
+    console.log(`AI text box: ${elt.id} selected.`);
     setSelectedElt((prevState) => {
       const newState = prevState;
       newState.id = elt.id;
@@ -247,7 +248,9 @@ export default function Canvas() {
   };
 
   const saveTitle = (div: HTMLElement) => {
-    if (div.innerText === page.title) return;
+    if (div.innerText === page.title || div.innerText === "") {
+      return;
+    }
     fetch(apiLink + `Pages/${page.id}`, {
       method: "PUT",
       credentials: "include",
@@ -366,10 +369,14 @@ export default function Canvas() {
             <h3
               id="page-title"
               suppressContentEditableWarning
-              contentEditable="true"
+              contentEditable={isSaved? true : false}
               className="text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
               onMouseDown={(e) => {
                 e.stopPropagation();
+                if (!isSaved) {
+                  alert("Save before changing title")
+                  return;
+                } 
               }}
               onKeyDown={(e) => handleKeyDown(e)}
               onMouseLeave={(_) => {
