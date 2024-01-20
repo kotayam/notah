@@ -29,18 +29,16 @@ export default function Signup() {
   const createAccount = (e: FormEvent) => {
     e.preventDefault();
     const target = e.target as typeof e.target & {
-      username: { value: string },
-      email: {value: string},
-      password: {value: string},
-      confirmPass: {value: string}
-    }
+      username: { value: string };
+      email: { value: string };
+      password: { value: string };
+      confirmPass: { value: string };
+    };
     const username = target.username.value;
     const email = target.email.value;
     const password = target.password.value;
     const confirmPass = target.confirmPass.value;
-    if (
-      !(username && email && password && confirmPass)
-    ) {
+    if (!(username && email && password && confirmPass)) {
       displayErrorMessage("*Please fill out all fields");
       return;
     }
@@ -85,14 +83,15 @@ export default function Signup() {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({emailToAddress: data.email, emailToName: data.username, emailSubject: "Welcome to Notah", emailBody: "Welcome to Notah!"})
-        })
-        .then(res => {
-          window.location.href = "/login?status=signup-success";
-        })
-        .catch(_ => {
+          body: JSON.stringify({
+            emailToAddress: data.email,
+            emailToName: data.username,
+            emailPurpose: "signup",
+          }),
+        }).catch((_) => {
           console.log("send email failed");
-        })
+        });
+        window.location.href = "/login?status=signup-success";
       })
       .catch((e) => {
         setLoading(false);
@@ -115,7 +114,7 @@ export default function Signup() {
           </p>
           <form
             className="grid grid-cols-1 gap-4 place-content-center ml-5 mr-5"
-            onSubmit={e => createAccount(e)}
+            onSubmit={(e) => createAccount(e)}
           >
             <div className="grid grid-cols-1 content-start gap-1">
               <label htmlFor="username">Username</label>

@@ -123,14 +123,15 @@ export default function Login() {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({emailToAddress: data.email, emailToName: data.username, emailSubject: "Login", emailBody: "Logged in Successfully!"})
-        })
-        .then(res => {
-          window.location.href = `/notah`;
-        })
-        .catch(_ => {
+          body: JSON.stringify({
+            emailToAddress: data.email,
+            emailToName: data.username,
+            emailPurpose: "login",
+          }),
+        }).catch((_) => {
           console.log("send email failed");
-        })
+        });
+        window.location.href = `/notah`;
       })
       .catch((e: Error) => {
         setLoading(false);

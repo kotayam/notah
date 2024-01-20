@@ -47,11 +47,17 @@ namespace backend.Repository
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.Now);
                         break;
-                    case "delete":
+                    case "account-delete":
                         subject = "Successfully Deleted Your Account";
                         filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Delete.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
+                        break;
+                    case "account-update":
+                        subject = "Successfully Updated Your Account";
+                        filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Update.html";
+                        templateText = File.ReadAllText(filePath);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.Now);
                         break;
                 }
                 email.Subject = subject;

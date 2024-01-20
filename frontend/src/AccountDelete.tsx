@@ -53,17 +53,12 @@ export default function AccountDelete() {
             body: JSON.stringify({
               emailToAddress: data.email,
               emailToName: data.username,
-              emailSubject: "Account Deleted",
-              emailBody:
-                "Your account was deleted successfully. Thank you for using Notah!",
+              emailPurpose: "account-delete",
             }),
-          })
-            .then((res) => {
-              window.location.href = "/login?status=deleted";
-            })
-            .catch((_) => {
-              console.log("send email failed");
-            });
+          }).catch((_) => {
+            console.log("send email failed");
+          });
+          window.location.href = "/login?status=deleted";
         }
       })
       .catch(async (_) => {
@@ -88,17 +83,12 @@ export default function AccountDelete() {
                   body: JSON.stringify({
                     emailToAddress: data.email,
                     emailToName: data.username,
-                    emailSubject: "Account Deleted",
-                    emailBody:
-                      "Your account was deleted successfully. Thank you for using Notah!",
+                    emailPurpose: "account-delete"
                   }),
-                })
-                  .then((res) => {
-                    window.location.href = "/login?status=deleted";
-                  })
-                  .catch((_) => {
-                    console.log("send email failed");
-                  });
+                }).catch((_) => {
+                  console.log("send email failed");
+                });
+                window.location.href = "/login?status=deleted";
               }
             })
             .catch((_) => {

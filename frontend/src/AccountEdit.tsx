@@ -59,6 +59,20 @@ export default function AccountEdit() {
           role: data.role,
           aiUsageLimit: data.aiUsageLimit,
         });
+        fetch(apiLink + `Mail/SendMail`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailToAddress: data.email,
+            emailToName: data.username,
+            emailPurpose: "account-update",
+          }),
+        }).catch((_) => {
+          console.log("send email failed");
+        });
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -83,6 +97,20 @@ export default function AccountEdit() {
                 lastEdited: data.lastEdited,
                 role: data.role,
                 aiUsageLimit: data.aiUsageLimit,
+              });
+              fetch(apiLink + `Mail/SendMail`, {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  emailToAddress: data.email,
+                  emailToName: data.username,
+                  emailPurpose: "account-update",
+                }),
+              }).catch((_) => {
+                console.log("send email failed");
               });
             })
             .catch((_) => {
@@ -181,7 +209,7 @@ export default function AccountEdit() {
         <div className="grid grid-cols-2 gap-2">
           <div>
             <div>Current Username:</div>
-            <div>{account.username}</div>
+            <div className="overflow-scroll">{account.username}</div>
           </div>
           <div className="grid grid-cols-1">
             <label htmlFor="username">New Username:</label>
@@ -195,7 +223,7 @@ export default function AccountEdit() {
           </div>
           <div>
             <div>Current Email:</div>
-            <div>{account.email}</div>
+            <div className="overflow-scroll">{account.email}</div>
           </div>
           <div className="grid grid-cols-1">
             <label htmlFor="email">New Email:</label>

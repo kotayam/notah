@@ -280,7 +280,7 @@ export default function AITextBox({
           ))}
           <div className="flex justify-center items-center">
             <div
-              className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+              className="rounded-full border-4 border-solid h-5 w-5 border-r-transparent border-blue-500 animate-spin"
               style={{ display: loading ? "" : "none" }}
             ></div>
           </div>
@@ -307,7 +307,7 @@ export default function AITextBox({
                 Generate
               </div>
               <div
-                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                className="rounded-full border-4 border-solid h-5 w-5 border-r-transparent border-blue-500 animate-spin"
                 style={{ display: loading ? "" : "none" }}
               ></div>
             </button>
