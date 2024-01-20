@@ -132,6 +132,8 @@ export default function AccountEdit() {
       displayErrorMessage("*There is no change to make");
       return;
     }
+    target.currPass.value = "";
+    target.newPass.value = "";
     fetch(apiLink + `Accounts/changePassword/${account.id}`, {
       method: "PUT",
       credentials: "include",
@@ -156,6 +158,20 @@ export default function AccountEdit() {
           lastEdited: data.lastEdited,
           role: data.role,
           aiUsageLimit: data.aiUsageLimit,
+        });
+        fetch(apiLink + `Mail/SendMail`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailToAddress: data.email,
+            emailToName: data.username,
+            emailPurpose: "password-change",
+          }),
+        }).catch((_) => {
+          console.log("send email failed");
         });
       })
       .catch(async (_) => {
@@ -188,6 +204,20 @@ export default function AccountEdit() {
                 lastEdited: data.lastEdited,
                 role: data.role,
                 aiUsageLimit: data.aiUsageLimit,
+              });
+              fetch(apiLink + `Mail/SendMail`, {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  emailToAddress: data.email,
+                  emailToName: data.username,
+                  emailPurpose: "password-change",
+                }),
+              }).catch((_) => {
+                console.log("send email failed");
               });
             })
             .catch((_) => {

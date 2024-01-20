@@ -59,6 +59,12 @@ namespace backend.Repository
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.Now);
                         break;
+                    case "password-change":
+                        subject = "Successfully Changed Your Password";
+                        filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Password.html";
+                        templateText = File.ReadAllText(filePath);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.Now);
+                        break;
                 }
                 email.Subject = subject;
                 emailBodyBuilder.TextBody = subject;
