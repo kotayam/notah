@@ -55,7 +55,7 @@ namespace backend.Controllers
             if (!result) {
                 return BadRequest();
             }
-            GenerateJWTAccessToken(account);
+            await GenerateJWTAccessToken(account);
             var accountDto = new AccountDto()
             {
                 Id = account.Id,
@@ -97,7 +97,7 @@ namespace backend.Controllers
             return Ok();
         }
 
-        private void GenerateJWTAccessToken(Account account) {
+        private async Task GenerateJWTAccessToken(Account account) {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
@@ -119,7 +119,7 @@ namespace backend.Controllers
             SetJWTAccessToken(accessToken);
 
             var refreshToken = GenerateRefreshToken();
-            SetRefreshToken(refreshToken, account);
+            await SetRefreshToken(refreshToken, account);
         }
 
         private static RefreshToken GenerateRefreshToken() {
@@ -141,7 +141,7 @@ namespace backend.Controllers
             if (account.TokenExpires < DateTime.UtcNow) {
                 return Unauthorized("Token expired");
             }
-            GenerateJWTAccessToken(account);
+            await GenerateJWTAccessToken(account);
             return Ok();
         }
 
@@ -157,6 +157,7 @@ namespace backend.Controllers
             account.DateCreated = refreshToken.Created;
             account.TokenExpires = refreshToken.Expires;
             await dbContext.SaveChangesAsync();
+
         }
 
         private void SetJWTAccessToken(string accessToken) {
