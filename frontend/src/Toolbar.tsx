@@ -189,6 +189,14 @@ export default function Toolbar() {
       });
   };
 
+  const accountPage = () => {
+    if (!isSaved) {
+      alert("Save before you go to a different page");
+      return;
+    }
+    window.location.href = "/account"
+  }
+
   const saveAsPdf = async () => {
     const container = document.getElementById("canvas");
     if (container) {
@@ -231,9 +239,9 @@ export default function Toolbar() {
           </div>
           <h1 className=" font-semibold text-2xl mobile:text-xl">Notah</h1>
           <div className="flex justify-center items-center">
-            <a
-              href="/account"
+            <button
               className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
+              onClick={() => accountPage()}
             >
               <div className="flex justify-center items-center">
                 <h3>Account</h3>
@@ -252,7 +260,7 @@ export default function Toolbar() {
                   />
                 </svg>
               </div>
-            </a>
+            </button>
             <button
               className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
               onClick={() => logout()}

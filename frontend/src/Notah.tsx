@@ -3,44 +3,40 @@ import Canvas from "./Canvas";
 import Notes from "./Notes";
 import Toolbar from "./Toolbar";
 import API from "./API.json";
-import { useSelector } from "react-redux";
-import { rootState } from "./store";
-import refreshToken from "./Authentication";
+import { useDispatch } from "react-redux";
+import { actionCreators } from "./store";
+import { bindActionCreators } from "@reduxjs/toolkit";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
 export default function Notah() {
-  const account = useSelector((root: rootState) => root.account);
+  const dispatch = useDispatch();
+  const { setAccount } = bindActionCreators(actionCreators, dispatch);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    fetch(apiLink + `Accounts/${account.id}`, {
+    fetch(apiLink + `Authentication/refreshToken`, {
       credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        if (!data.status) {
-          setChecking(false);
+        if (data.status) {
+          throw new Error();
         }
+        setAccount({
+          id: data.id,
+          username: data.username,
+          email: data.email,
+          dateCreated: data.dateCreated,
+          lastEdited: data.lastEdited,
+          role: data.role,
+          aiUsageLimit: data.aiUsageLimit,
+        });
+        setChecking(false);
       })
-      .catch(async (_) => {
-        const authorized = await refreshToken();
-        if (authorized) {
-          fetch(apiLink + `Accounts/${account.id}`, {
-            credentials: "include",
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
-              if (!data.status) {
-                setChecking(false);
-              }
-            })
-            .catch((_) => {
-              window.location.href = "/login?status=error";
-            });
-        }
+      .catch((_) => {
+        window.location.href = "/login?status=error";
       });
   }, []);
 

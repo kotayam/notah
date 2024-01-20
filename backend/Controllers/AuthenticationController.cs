@@ -55,7 +55,10 @@ namespace backend.Controllers
             if (!result) {
                 return BadRequest();
             }
-            await GenerateJWTAccessToken(account);
+            GenerateJWTAccessToken(account);
+            var refreshToken = GenerateRefreshToken();
+            await SetRefreshToken(refreshToken, account);
+            SetIdentifier(refreshToken);
             var accountDto = new AccountDto()
             {
                 Id = account.Id,
@@ -91,13 +94,20 @@ namespace backend.Controllers
                     }
                 );
             }
+            if (HttpContext.Request.Cookies["identifier"] != null) {
+                HttpContext.Response.Cookies.Append("identifier", "", 
+                    new CookieOptions {
+                        Expires = DateTime.UtcNow.AddDays(-1)
+                    }
+                );
+            }
             account.RefreshToken = "";
             await dbContext.SaveChangesAsync();
 
             return Ok();
         }
 
-        private async Task GenerateJWTAccessToken(Account account) {
+        private void GenerateJWTAccessToken(Account account) {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTConfig.Key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
@@ -117,9 +127,6 @@ namespace backend.Controllers
             
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
             SetJWTAccessToken(accessToken);
-
-            var refreshToken = GenerateRefreshToken();
-            await SetRefreshToken(refreshToken, account);
         }
 
         private static RefreshToken GenerateRefreshToken() {
@@ -141,8 +148,18 @@ namespace backend.Controllers
             if (account.TokenExpires < DateTime.UtcNow) {
                 return Unauthorized("Token expired");
             }
-            await GenerateJWTAccessToken(account);
-            return Ok();
+            GenerateJWTAccessToken(account);
+            var accountDto = new AccountDto()
+                    {
+                        Id = account.Id,
+                        Username = account.Username,
+                        Email = account.Email,
+                        Role = account.Role,
+                        AIUsageLimit = account.AIUsageLimit,
+                        DateCreated = account.DateCreated.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                        LastEdited = account.LastEdited.ToLocalTime().ToString("MM/dd/yyyy h:mm tt"),
+                    };
+            return Ok(accountDto);
         }
 
         private async Task SetRefreshToken(RefreshToken refreshToken, Account account) {
@@ -169,6 +186,17 @@ namespace backend.Controllers
                     IsEssential = true,
                     SameSite = SameSiteMode.None
             });
+        }
+
+        private void SetIdentifier(RefreshToken refreshToken) {
+            HttpContext.Response.Cookies.Append("identifier", "true", 
+                new CookieOptions {
+                    Expires = refreshToken.Expires.AddMinutes(-10),
+                    HttpOnly = false,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None
+                });
         }
     }
 }

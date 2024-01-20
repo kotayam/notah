@@ -49,6 +49,7 @@ export default function Login() {
         break;
       case "deleted":
         displayErrorMessage("Account deleted successfully", false);
+        document.cookie = "identifier="
         setSearchParams("");
         break;
       case "error":
@@ -57,6 +58,17 @@ export default function Login() {
         break;
     }
   }, []);
+
+  useEffect(() => {
+    const cookies = document.cookie.split(";").map(c => c.trim());
+    cookies.forEach(cookie => {
+      const kv = cookie.split("=");
+      if (kv[0] === "identifier" && kv[1] === "true") {
+        console.log(kv);
+        window.location.href = "/notah";
+      }
+    })
+  }, [])
 
   const displayErrorMessage = (msg: string, error: boolean) => {
     if (error) setTextColor("text-red-600");
