@@ -17,7 +17,7 @@ namespace backend.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(configuration.GetConnectionString("TestServer"));
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("ProductionAws"));
         }
 
         public DbSet<Account> Accounts { get; set; }

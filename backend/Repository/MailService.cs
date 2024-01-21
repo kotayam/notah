@@ -45,7 +45,7 @@ namespace backend.Repository
                         subject = "Successful Login to Notah";
                         filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Login.html";
                         templateText = File.ReadAllText(filePath);
-                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                     case "account-delete":
                         subject = "Successfully Deleted Your Account";
@@ -57,13 +57,13 @@ namespace backend.Repository
                         subject = "Successfully Updated Your Account";
                         filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Update.html";
                         templateText = File.ReadAllText(filePath);
-                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                     case "password-change":
                         subject = "Successfully Changed Your Password";
                         filePath = Directory.GetCurrentDirectory() + "/MailTemplates/Password.html";
                         templateText = File.ReadAllText(filePath);
-                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow);
+                        emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                 }
                 email.Subject = subject;

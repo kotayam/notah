@@ -41,6 +41,7 @@ export default function Login() {
           "*Your session expired, recent changes might not be saved",
           true
         );
+        document.cookie = "identifier=";
         setSearchParams("");
         break;
       case "signup-success":
@@ -49,12 +50,13 @@ export default function Login() {
         break;
       case "deleted":
         displayErrorMessage("Account deleted successfully", false);
-        document.cookie = "identifier="
+        document.cookie = "identifier=";
         setSearchParams("");
         break;
       case "error":
         displayErrorMessage("*Something went wrong, try again later", true);
         setSearchParams("");
+        document.cookie = "identifier=";
         break;
     }
   }, []);

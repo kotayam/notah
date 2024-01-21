@@ -25,7 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
 );
-builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("TestServer")));
+builder.Services.AddDbContext<NotahAPIDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ProductionAws")));
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<INoteBookRepository, NoteBookRepository>();
