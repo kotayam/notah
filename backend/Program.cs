@@ -35,7 +35,7 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddCors(options => {
     options.AddPolicy(name: AllowedOrigins, 
     policy => {
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://notah.heppoko.space")
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials();
