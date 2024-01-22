@@ -15,11 +15,9 @@ namespace backend.Repository
     public class MailService : IMailService
     {
         private readonly MailSettings _mailSettings;
-        private readonly IWebHostEnvironment webHostEnvironment;
-        public MailService(IOptions<MailSettings> mailSettingsOptions, IWebHostEnvironment webHostEnvironment)
+        public MailService(IOptions<MailSettings> mailSettingsOptions)
         {
             _mailSettings = mailSettingsOptions.Value;
-            this.webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<bool> SendMailAsync(MailData mailData)
@@ -34,36 +32,36 @@ namespace backend.Repository
                 string templateText = "";
                 string subject = "";
                 var emailBodyBuilder = new BodyBuilder();
-                var image = emailBodyBuilder.LinkedResources.Add(webHostEnvironment.WebRootPath + "/MailTemplates/notah-logo.gif");
+                var image = emailBodyBuilder.LinkedResources.Add(@"/MailTemplates/notah-logo.gif");
                 image.ContentId = MimeUtils.GenerateMessageId();
                 switch(mailData.EmailPurpose) {
                     case "signup": 
                         subject = "Welcome to Notah!";
-                        filePath = webHostEnvironment.WebRootPath + "/MailTemplates/Signup.html";
+                        filePath = @"/MailTemplates/Signup.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
                         break;
                     case "login":
                         subject = "Successful Login to Notah";
-                        filePath = webHostEnvironment.WebRootPath + "/MailTemplates/Login.html";
+                        filePath = @"/MailTemplates/Login.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                     case "account-delete":
                         subject = "Successfully Deleted Your Account";
-                        filePath = webHostEnvironment.WebRootPath + "/MailTemplates/Delete.html";
+                        filePath = @"/MailTemplates/Delete.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
                         break;
                     case "account-update":
                         subject = "Successfully Updated Your Account";
-                        filePath = webHostEnvironment.WebRootPath + "/MailTemplates/Update.html";
+                        filePath = @"/MailTemplates/Update.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                     case "password-change":
                         subject = "Successfully Changed Your Password";
-                        filePath = webHostEnvironment.WebRootPath + "/MailTemplates/Password.html";
+                        filePath = @"/MailTemplates/Password.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
