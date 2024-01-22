@@ -32,36 +32,36 @@ namespace backend.Repository
                 string templateText = "";
                 string subject = "";
                 var emailBodyBuilder = new BodyBuilder();
-                var image = emailBodyBuilder.LinkedResources.Add(@"/MailTemplates/notah-logo.gif");
+                var image = emailBodyBuilder.LinkedResources.Add("/app/MailTemplates/notah-logo.gif");
                 image.ContentId = MimeUtils.GenerateMessageId();
                 switch(mailData.EmailPurpose) {
                     case "signup": 
                         subject = "Welcome to Notah!";
-                        filePath = @"/MailTemplates/Signup.html";
+                        filePath = "/app/MailTemplates/Signup.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
                         break;
                     case "login":
                         subject = "Successful Login to Notah";
-                        filePath = @"/MailTemplates/Login.html";
+                        filePath = "/app/MailTemplates/Login.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                     case "account-delete":
                         subject = "Successfully Deleted Your Account";
-                        filePath = @"/MailTemplates/Delete.html";
+                        filePath = "/app/MailTemplates/Delete.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId);
                         break;
                     case "account-update":
                         subject = "Successfully Updated Your Account";
-                        filePath = @"/MailTemplates/Update.html";
+                        filePath = "/app/MailTemplates/Update.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
                     case "password-change":
                         subject = "Successfully Changed Your Password";
-                        filePath = @"/MailTemplates/Password.html";
+                        filePath = "/app/MailTemplates/Password.html";
                         templateText = File.ReadAllText(filePath);
                         emailBodyBuilder.HtmlBody = string.Format(templateText, mailData.EmailToName, image.ContentId, DateTime.UtcNow.ToString("ddd, dd MMM yyy HH:mm:ss 'GMT'"));
                         break;
