@@ -23,11 +23,14 @@ export default function NoteBooks() {
   const isSaved = useSelector((state: rootState) => state.isSaved);
   const dispatch = useDispatch();
   const { setNoteBook, setPage } = bindActionCreators(actionCreators, dispatch);
+  const [loadingGet, setLoadingGet] = useState(false);
+  const [loadingAdd, setLoadingAdd] = useState(false);
 
   useEffect(() => {
     if (account.id === "-1") {
       window.location.href = "/login";
     }
+    setLoadingGet(true);
     fetch(apiLink + `NoteBooks/byOwnerId/${account.id}`, {
       credentials: "include",
     })
@@ -53,6 +56,7 @@ export default function NoteBooks() {
             lastEdited: nbs[0].lastEdited,
           });
         }
+        setLoadingGet(false);
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -82,6 +86,7 @@ export default function NoteBooks() {
                   lastEdited: nbs[0].lastEdited,
                 });
               }
+              setLoadingGet(false);
             })
             .catch((_) => {
               window.location.href = "/login?status=error";
@@ -95,6 +100,7 @@ export default function NoteBooks() {
       alert("save before adding a new notebook!");
       return;
     }
+    setLoadingAdd(true);
     fetch(apiLink + `NoteBooks/${account.id}`, {
       method: "POST",
       credentials: "include",
@@ -107,6 +113,7 @@ export default function NoteBooks() {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 404) {
+          setLoadingAdd(false);
           alert("Login to add notebook!");
           return;
         } else {
@@ -129,6 +136,7 @@ export default function NoteBooks() {
           lastSaved: "default",
         });
         setFetchSwitch((prevState) => !prevState);
+        setLoadingAdd(false);
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -145,6 +153,7 @@ export default function NoteBooks() {
             .then((res) => res.json())
             .then((data) => {
               if (data.status === 404) {
+                setLoadingAdd(false);
                 alert("Login to add notebook!");
                 return;
               } else {
@@ -167,6 +176,7 @@ export default function NoteBooks() {
                 lastSaved: "default",
               });
               setFetchSwitch((prevState) => !prevState);
+              setLoadingAdd(false);
             })
             .catch((_) => {
               window.location.href = "/login?status=error";
@@ -220,13 +230,22 @@ export default function NoteBooks() {
     <>
       <div className="h-full flex-1 border-r-2 overflow-scroll">
         <button
-          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal w-full p-1 border-b-2 font-bold text-amber-500 text-center"
+          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal w-full p-1 border-b-2 font-bold text-amber-500 text-center flex items-center"
+          style={{ justifyContent: loadingAdd ? "center" : "" }}
           onClick={() => addNoteBook()}
         >
-          + Add Notebook
+          <p style={{ display: loadingAdd ? "none" : "flex" }}>
+            + Add Notebook
+          </p>
+          <div
+            className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+            style={{ display: loadingAdd ? "flex" : "none" }}
+          ></div>
         </button>
-        <div>
-          <ul>
+        <div
+          className={loadingGet ? "flex justify-center items-center py-8" : ""}
+        >
+          <ul style={{ display: loadingGet ? "none" : "block" }}>
             {noteBooks.map((nb) => (
               <NoteBook
                 key={nb.id}
@@ -238,6 +257,10 @@ export default function NoteBooks() {
               />
             ))}
           </ul>
+          <div
+            className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+            style={{ display: loadingGet ? "block" : "none" }}
+          ></div>
         </div>
       </div>
     </>

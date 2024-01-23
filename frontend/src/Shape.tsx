@@ -100,6 +100,7 @@ export default function Shape({
             onMouseLeave={(_) => {
               setIsEditable(false);
             }}
+            onKeyDown={(_) => setSaved(false)}
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(elt.innerHtml),
             }}
@@ -123,6 +124,7 @@ export default function Shape({
             onMouseLeave={(_) => {
               setIsEditable(false);
             }}
+            onKeyDown={(_) => setSaved(false)}
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(elt.innerHtml),
             }}

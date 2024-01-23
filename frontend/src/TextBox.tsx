@@ -173,6 +173,7 @@ export default function TextBox({
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(elt.innerHtml),
           }}
+          onKeyDown={(_) => setSaved(false)}
         ></div>
       </div>
     </>

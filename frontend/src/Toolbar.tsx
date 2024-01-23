@@ -35,7 +35,9 @@ export default function Toolbar() {
   const { setSaved, setPage } = bindActionCreators(actionCreators, dispatch);
 
   const [saveStatus, setSaveStatus] = useState("");
+  const [saving, setSaving] = useState(false);
   const [clickable, setClickable] = useState("");
+  const [loggingout, setLoggingout] = useState(false);
 
   useEffect(() => {
     if (isSaved) setSaveStatus("Work saved");
@@ -68,6 +70,8 @@ export default function Toolbar() {
       setSaved(true);
       return;
     }
+    setSaving(true);
+    setSaveStatus("Saving...");
     const authorized = await refreshToken();
     if (authorized) {
       canvasElts.forEach((elt) => {
@@ -109,7 +113,6 @@ export default function Toolbar() {
           body.type = "ai";
           body.innerHTML = innerHtml;
         }
-        setSaveStatus("Saving...");
         fetch(apiLink + `CanvasElements/${page.id}`, {
           method: "POST",
           credentials: "include",
@@ -124,6 +127,7 @@ export default function Toolbar() {
             console.log(data);
             if (data.status) {
               setSaveStatus("Failed to save");
+              setSaving(false);
               setTimeout(() => {
                 setSaveStatus("Not saved");
               }, 3000);
@@ -136,6 +140,7 @@ export default function Toolbar() {
               lastSaved: data.lastSaved,
             });
             setSaved(true);
+            setSaving(false);
           })
           .catch((_) => {
             window.location.href = "/login?status=error";
@@ -149,6 +154,7 @@ export default function Toolbar() {
       alert("Save before you logout");
       return;
     }
+    setLoggingout(true);
     fetch(apiLink + `Authentication/logout/${account.id}`, {
       method: "POST",
       credentials: "include",
@@ -194,8 +200,8 @@ export default function Toolbar() {
       alert("Save before you go to a different page");
       return;
     }
-    window.location.href = "/account"
-  }
+    window.location.href = "/account";
+  };
 
   const saveAsPdf = async () => {
     const container = document.getElementById("canvas");
@@ -231,9 +237,14 @@ export default function Toolbar() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 448 512"
                 className="w-6 h-6 mobile:w-4"
+                style={{ display: saving ? "none" : "flex" }}
               >
                 <path d="M433.9 129.9l-83.9-83.9A48 48 0 0 0 316.1 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V163.9a48 48 0 0 0 -14.1-33.9zM272 80v80H144V80h128zm122 352H54a6 6 0 0 1 -6-6V86a6 6 0 0 1 6-6h42v104c0 13.3 10.7 24 24 24h176c13.3 0 24-10.7 24-24V83.9l78.2 78.2a6 6 0 0 1 1.8 4.2V426a6 6 0 0 1 -6 6zM224 232c-48.5 0-88 39.5-88 88s39.5 88 88 88 88-39.5 88-88-39.5-88-88-88zm0 128c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40z" />
               </svg>
+              <div
+                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                style={{ display: saving ? "flex" : "none" }}
+              ></div>
             </button>
             <p className=" text-gray-800">{saveStatus}</p>
           </div>
@@ -265,7 +276,10 @@ export default function Toolbar() {
               className="hover:underline hover:bg-amber-200 p-2 mobile:p-1"
               onClick={() => logout()}
             >
-              <div className="flex justify-center items-center">
+              <div
+                className="flex justify-center items-center"
+                style={{ display: loggingout ? "none" : "flex" }}
+              >
                 <h3>Logout</h3>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -282,6 +296,10 @@ export default function Toolbar() {
                   />
                 </svg>
               </div>
+              <div
+                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                style={{ display: loggingout ? "flex" : "none" }}
+              ></div>
             </button>
           </div>
         </div>

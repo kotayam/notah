@@ -158,6 +158,7 @@ export default function Table({
       <table
         id={elt.id}
         className="border-gray-800 table-collapse table-auto text-left"
+        onKeyDown={(_) => setSaved(false)}
       >
         <tbody>{returnTableRow()}</tbody>
       </table>

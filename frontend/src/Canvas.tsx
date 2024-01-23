@@ -17,6 +17,7 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import API from "./API.json";
 import refreshToken from "./Authentication.ts";
+import { display } from "html2canvas/dist/types/css/property-descriptors/display";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
@@ -59,6 +60,8 @@ export default function Canvas() {
   const [selectedElt, setSelectedElt] = useState({ id: "none", r: -1, c: -1 });
   const [clickable, setClickable] = useState("");
   const [lastSaved, setLastSaved] = useState(page.lastSaved);
+  const [loadingGet, setLoadingGet] = useState(false);
+  const [updatingTitle, setUpdatingTitle] = useState(false);
 
   useEffect(() => {
     page.id === "-1" ? setClickable("pointer-events-none") : setClickable("");
@@ -70,6 +73,7 @@ export default function Canvas() {
 
   useEffect(() => {
     if (page.id === "-1") return;
+    setLoadingGet(true);
     const addToList = (data: CanvasElementDTO[]) => {
       data.forEach((elt) => {
         let newElt: CanvasElement;
@@ -117,7 +121,6 @@ export default function Canvas() {
         addCanvasElement(page.id, newElt);
       });
     };
-
     fetch(apiLink + `CanvasElements/byPageId/${page.id}`, {
       credentials: "include",
     })
@@ -127,6 +130,7 @@ export default function Canvas() {
         console.log(data);
         clearCanvasElements(page.id);
         addToList(data);
+        setLoadingGet(false);
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -140,6 +144,7 @@ export default function Canvas() {
               console.log(data);
               clearCanvasElements(page.id);
               addToList(data);
+              setLoadingGet(false);
             })
             .catch((_) => {
               window.location.href = "/login?status=error";
@@ -251,6 +256,7 @@ export default function Canvas() {
     if (div.innerText === page.title || div.innerText === "") {
       return;
     }
+    setUpdatingTitle(true);
     fetch(apiLink + `Pages/${page.id}`, {
       method: "PUT",
       credentials: "include",
@@ -269,6 +275,7 @@ export default function Canvas() {
           dateCreated: data.dateCreated,
           lastSaved: data.lastSaved,
         });
+        setUpdatingTitle(false);
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -291,6 +298,7 @@ export default function Canvas() {
                 dateCreated: data.dateCreated,
                 lastSaved: data.lastSaved,
               });
+              setUpdatingTitle(false);
             })
             .catch((_) => {
               window.location.href = "/login?status=error";
@@ -366,26 +374,34 @@ export default function Canvas() {
           }}
         >
           <div className="pl-3 pt-2">
-            <h3
-              id="page-title"
-              suppressContentEditableWarning
-              contentEditable={isSaved? true : false}
-              className="text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                if (!isSaved) {
-                  alert("Save before changing title")
-                  return;
-                } 
-              }}
-              onKeyDown={(e) => handleKeyDown(e)}
-              onMouseLeave={(_) => {
-                const div = document.getElementById("page-title");
-                if (div) saveTitle(div);
-              }}
-            >
-              {page.id === "-1" ? "" : page.title}
-            </h3>
+            <div>
+              <h3
+                id="page-title"
+                suppressContentEditableWarning
+                contentEditable={isSaved ? true : false}
+                className="text-3xl mobile:text-xl underline underline-offset-8 decoration-gray-500 decoration-2 w-auto outline-none"
+                style={{ display: updatingTitle ? "none" : "" }}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  if (!isSaved) {
+                    alert("Save before changing title");
+                    return;
+                  }
+                }}
+                onKeyDown={(e) => handleKeyDown(e)}
+                onMouseLeave={(_) => {
+                  const div = document.getElementById("page-title");
+                  if (div) saveTitle(div);
+                }}
+              >
+                {page.id === "-1" ? "" : page.title}
+              </h3>
+              <div
+                className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+                style={{ display: updatingTitle ? "" : "none" }}
+              ></div>
+            </div>
+
             <p
               id="page-lastSaved"
               className="pt-2 text-gray-500"
@@ -394,7 +410,16 @@ export default function Canvas() {
               {page.id === "-1" ? "" : `Last Saved: ${lastSaved}`}
             </p>
           </div>
-          {returnCanvasElement()}
+          <div style={{ display: loadingGet ? "none" : "" }}>
+            {returnCanvasElement()}
+          </div>
+          <div
+            className="flex justify-center items-center gap-2 animate-bounce py-10"
+            style={{ display: loadingGet ? "" : "none" }}
+          >
+            <div className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"></div>
+            <div>Loading Content...</div>
+          </div>
         </div>
       </div>
     </>

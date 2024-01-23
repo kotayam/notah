@@ -23,11 +23,14 @@ export default function Pages() {
   const { setPage } = bindActionCreators(actionCreators, dispatch);
   const [pages, setPages] = useState<Page[]>([]);
   const [fetchSwitch, setFetchSwitch] = useState(false);
+  const [loadingGet, setLoadingGet] = useState(false);
+  const [loadingAdd, setLoadingAdd] = useState(false);
 
   useEffect(() => {
     if (noteBook.id === "-1") {
       return;
     }
+    setLoadingGet(true);
     fetch(apiLink + `Pages/byNoteBookId/${noteBook.id}`, {
       credentials: "include",
     })
@@ -53,6 +56,7 @@ export default function Pages() {
             lastSaved: pgs[0].lastSaved,
           });
         }
+        setLoadingGet(false);
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -82,6 +86,7 @@ export default function Pages() {
                   lastSaved: pgs[0].lastSaved,
                 });
               }
+              setLoadingGet(false);
             })
             .catch((_) => {
               window.location.href = "/login?status=error";
@@ -95,6 +100,7 @@ export default function Pages() {
       alert("save before adding a new page!");
       return;
     }
+    setLoadingAdd(true);
     fetch(apiLink + `Pages/${noteBook.id}`, {
       method: "POST",
       credentials: "include",
@@ -107,6 +113,7 @@ export default function Pages() {
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 404) {
+          setLoadingAdd(false);
           alert("Select a notebook to add a new page!");
           return;
         } else return data as Page;
@@ -121,6 +128,7 @@ export default function Pages() {
             lastSaved: data.lastSaved,
           });
         setFetchSwitch((prevState) => !prevState);
+        setLoadingAdd(false);
       })
       .catch(async (_) => {
         const authorized = await refreshToken();
@@ -137,6 +145,7 @@ export default function Pages() {
             .then((res) => res.json())
             .then((data) => {
               if (data.status === 404) {
+                setLoadingAdd(false);
                 alert("Select a notebook to add a new page!");
                 return;
               } else return data as Page;
@@ -151,6 +160,7 @@ export default function Pages() {
                   lastSaved: data.lastSaved,
                 });
               setFetchSwitch((prevState) => !prevState);
+              setLoadingAdd(false);
             })
             .catch((_) => {
               window.location.href = "/login?status=error";
@@ -204,13 +214,20 @@ export default function Pages() {
     <>
       <div className="h-full flex-1 overflow-scroll">
         <button
-          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal w-full border-b-2 p-1 font-bold text-amber-500"
+          className="hover:bg-gray-200 active:bg-gray-300 whitespace-nowrap mobile:whitespace-normal w-full border-b-2 p-1 font-bold text-amber-500 text-center flex items-center"
+          style={{ justifyContent: loadingAdd ? "center" : "" }}
           onClick={() => addPage()}
         >
-          + Add Page
+          <p style={{ display: loadingAdd ? "none" : "flex" }}>+ Add Page</p>
+          <div
+            className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+            style={{ display: loadingAdd ? "flex" : "none" }}
+          ></div>
         </button>
-        <div>
-          <ul>
+        <div
+          className={loadingGet ? "flex justify-center items-center py-8" : ""}
+        >
+          <ul style={{ display: loadingGet ? "none" : "block" }}>
             {pages.map((p) => (
               <Page
                 key={p.id}
@@ -222,6 +239,10 @@ export default function Pages() {
               />
             ))}
           </ul>
+          <div
+            className="rounded-full border-4 border-solid h-6 w-6 border-r-transparent border-blue-500 animate-spin"
+            style={{ display: loadingGet ? "block" : "none" }}
+          ></div>
         </div>
       </div>
     </>
