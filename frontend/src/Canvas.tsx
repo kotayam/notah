@@ -17,7 +17,6 @@ import { bindActionCreators } from "@reduxjs/toolkit";
 import { actionCreators, rootState } from "./store/index.ts";
 import API from "./API.json";
 import refreshToken from "./Authentication.ts";
-import { display } from "html2canvas/dist/types/css/property-descriptors/display";
 
 const apiLink = API["isDev"] ? API["API"]["dev"] : API["API"]["production"];
 
