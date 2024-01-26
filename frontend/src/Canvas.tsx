@@ -126,7 +126,6 @@ export default function Canvas() {
       .then((res) => res.json())
       .then((data) => data as CanvasElementDTO[])
       .then((data) => {
-        console.log(data);
         clearCanvasElements(page.id);
         addToList(data);
         setLoadingGet(false);
@@ -140,7 +139,6 @@ export default function Canvas() {
             .then((res) => res.json())
             .then((data) => data as CanvasElementDTO[])
             .then((data) => {
-              console.log(data);
               clearCanvasElements(page.id);
               addToList(data);
               setLoadingGet(false);
@@ -211,7 +209,6 @@ export default function Canvas() {
   };
 
   const selectTextBox = (elt: TextBoxElement) => {
-    console.log(`text box: ${elt.id} selected.`);
     setSelectedElt((prevState) => {
       const newState = prevState;
       newState.id = elt.id;
@@ -220,7 +217,6 @@ export default function Canvas() {
   };
 
   const selectShape = (elt: ShapeElement) => {
-    console.log(`shape: ${elt.id} selected.`);
     setSelectedElt((prev) => {
       const newState = prev;
       newState.id = elt.id;
@@ -229,12 +225,10 @@ export default function Canvas() {
   };
 
   const selectTableText = (elt: TableElement, row: number, col: number) => {
-    console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
     setSelectedElt({ id: elt.id, r: row, c: col });
   };
 
   const selectAITextBox = (elt: AIElement) => {
-    console.log(`AI text box: ${elt.id} selected.`);
     setSelectedElt((prevState) => {
       const newState = prevState;
       newState.id = elt.id;
@@ -267,7 +261,6 @@ export default function Canvas() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setPage({
           id: data.id,
           title: data.title,
@@ -290,7 +283,6 @@ export default function Canvas() {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               setPage({
                 id: data.id,
                 title: data.title,

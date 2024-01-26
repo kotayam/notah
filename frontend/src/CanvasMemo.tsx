@@ -83,7 +83,6 @@ export default function CanvasMemo() {
   };
 
   const selectTextBox = (elt: TextBoxElement) => {
-    console.log(`text box: ${elt.id} selected.`);
     setSelectedElt((prevState) => {
       const newState = prevState;
       newState.id = elt.id;
@@ -92,7 +91,6 @@ export default function CanvasMemo() {
   };
 
   const selectShape = (elt: ShapeElement) => {
-    console.log(`shape: ${elt.id} selected.`);
     setSelectedElt((prev) => {
       const newState = prev;
       newState.id = elt.id;
@@ -101,7 +99,6 @@ export default function CanvasMemo() {
   };
 
   const selectTableText = (elt: TableElement, row: number, col: number) => {
-    console.log(`table: ${elt.id}, r: ${row}, c: ${col} selected.`);
     setSelectedElt({ id: elt.id, r: row, c: col });
   };
 

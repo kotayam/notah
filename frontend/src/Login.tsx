@@ -66,7 +66,6 @@ export default function Login() {
     cookies.forEach(cookie => {
       const kv = cookie.split("=");
       if (kv[0] === "identifier" && kv[1] === "true") {
-        console.log(kv);
         window.location.href = "/notah";
       }
     })
@@ -121,7 +120,6 @@ export default function Login() {
       })
       .then((data) => {
         if (!data) return;
-        console.log(data);
         setAccount({
           id: data.id,
           username: data.username,
@@ -143,13 +141,12 @@ export default function Login() {
             emailPurpose: "login",
           }),
         }).catch((_) => {
-          console.log("send email failed");
+          console.error("send email failed");
         });
         window.location.href = `/notah`;
       })
-      .catch((e: Error) => {
+      .catch((_) => {
         setLoading(false);
-        console.error(e);
         displayErrorMessage(
           "*Something went wrong, please try again later",
           true

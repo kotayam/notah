@@ -65,7 +65,6 @@ export default function Toolbar() {
   const save = async () => {
     if (isSaved) return;
     const canvasElts = canvasElements.get(page.id);
-    console.log(canvasElts);
     if (!canvasElts || canvasElts.length <= 0) {
       setSaved(true);
       return;
@@ -124,7 +123,6 @@ export default function Toolbar() {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
             if (data.status) {
               setSaveStatus("Failed to save");
               setSaving(false);
@@ -164,7 +162,6 @@ export default function Toolbar() {
       },
     })
       .then((data) => {
-        console.log(data);
         if (data.status !== 200) {
           throw new Error();
         }
@@ -182,7 +179,6 @@ export default function Toolbar() {
             },
           })
             .then((data) => {
-              console.log(data);
               if (data.status !== 200) {
                 throw new Error();
               }

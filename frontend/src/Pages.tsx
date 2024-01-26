@@ -37,7 +37,6 @@ export default function Pages() {
       .then((res) => res.json())
       .then((data) => data as Page[])
       .then((data) => {
-        console.log(data);
         const pgs = new Array<Page>();
         data.forEach((p) =>
           pgs.push({
@@ -67,7 +66,6 @@ export default function Pages() {
             .then((res) => res.json())
             .then((data) => data as Page[])
             .then((data) => {
-              console.log(data);
               const pgs = new Array<Page>();
               data.forEach((p) =>
                 pgs.push({
@@ -119,7 +117,6 @@ export default function Pages() {
         } else return data as Page;
       })
       .then((data) => {
-        console.log(data);
         if (data)
           setPage({
             id: data.id,
@@ -151,7 +148,6 @@ export default function Pages() {
               } else return data as Page;
             })
             .then((data) => {
-              console.log(data);
               if (data)
                 setPage({
                   id: data.id,
@@ -175,8 +171,7 @@ export default function Pages() {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then((_) => {
         setFetchSwitch((prevState) => !prevState);
         setPage({
           id: pages[0].id,
@@ -193,8 +188,7 @@ export default function Pages() {
             credentials: "include",
           })
             .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
+            .then((_) => {
               setFetchSwitch((prevState) => !prevState);
               setPage({
                 id: pages[0].id,

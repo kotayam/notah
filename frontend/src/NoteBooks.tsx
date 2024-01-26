@@ -37,7 +37,6 @@ export default function NoteBooks() {
       .then((res) => res.json())
       .then((data) => data as NoteBook[])
       .then((data) => {
-        console.log(data);
         const nbs = new Array<NoteBook>();
         data.forEach((nb) =>
           nbs.push({
@@ -67,7 +66,6 @@ export default function NoteBooks() {
             .then((res) => res.json())
             .then((data) => data as NoteBook[])
             .then((data) => {
-              console.log(data);
               const nbs = new Array<NoteBook>();
               data.forEach((nb) =>
                 nbs.push({
@@ -121,7 +119,6 @@ export default function NoteBooks() {
         }
       })
       .then((data) => {
-        console.log(data);
         if (data)
           setNoteBook({
             id: data.id,
@@ -161,7 +158,6 @@ export default function NoteBooks() {
               }
             })
             .then((data) => {
-              console.log(data);
               if (data)
                 setNoteBook({
                   id: data.id,
@@ -191,8 +187,7 @@ export default function NoteBooks() {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then((_) => {
         setFetchSwitch((prevState) => !prevState);
         setNoteBook({
           id: noteBooks[0].id,
@@ -209,8 +204,7 @@ export default function NoteBooks() {
             credentials: "include",
           })
             .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
+            .then((_) => {
               setFetchSwitch((prevState) => !prevState);
               setNoteBook({
                 id: noteBooks[0].id,

@@ -72,7 +72,6 @@ export default function Signup() {
       .then((res) => res.json())
       .then((data) => {
         setLoading(false);
-        console.log(data);
         if (data.status === 400) {
           displayErrorMessage("*Username already exists");
           return;
@@ -89,13 +88,12 @@ export default function Signup() {
             emailPurpose: "signup",
           }),
         }).catch((_) => {
-          console.log("send email failed");
+          console.error("send email failed");
         });
         window.location.href = "/login?status=signup-success";
       })
-      .catch((e) => {
+      .catch((_) => {
         setLoading(false);
-        console.error(e);
         displayErrorMessage("*Failed to create account");
       });
   };

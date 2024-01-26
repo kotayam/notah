@@ -76,8 +76,7 @@ export default function TextBox({
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then((_) => {
         deleteCanvasElement(page.id, elt.id, elt);
       })
       .catch(async (_) => {
@@ -88,8 +87,7 @@ export default function TextBox({
             credentials: "include",
           })
             .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
+            .then((_) => {
               deleteCanvasElement(page.id, elt.id, elt);
             })
             .catch((_) => {

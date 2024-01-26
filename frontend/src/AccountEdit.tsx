@@ -55,7 +55,6 @@ export default function AccountEdit() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setAccount({
           id: data.id,
           username: data.username,
@@ -79,7 +78,7 @@ export default function AccountEdit() {
             emailPurpose: "account-update",
           }),
         }).catch((_) => {
-          console.log("send email failed");
+          console.error("send email failed");
         });
       })
       .catch(async (_) => {
@@ -96,7 +95,6 @@ export default function AccountEdit() {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               setAccount({
                 id: data.id,
                 username: data.username,
@@ -123,7 +121,7 @@ export default function AccountEdit() {
                   emailPurpose: "account-update",
                 }),
               }).catch((_) => {
-                console.log("send email failed");
+                console.error("send email failed");
               });
             })
             .catch((_) => {
@@ -163,7 +161,6 @@ export default function AccountEdit() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status === 400) {
           setChangingPassword(false);
           displayErrorMessage("*Incorrect password, try again", true);
@@ -192,7 +189,7 @@ export default function AccountEdit() {
             emailPurpose: "password-change",
           }),
         }).catch((_) => {
-          console.log("send email failed");
+          console.error("send email failed");
         });
       })
       .catch(async (_) => {
@@ -212,7 +209,6 @@ export default function AccountEdit() {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               if (data.status === 400) {
                 setChangingPassword(false);
                 displayErrorMessage("*Incorrect password, try again", true);
@@ -241,7 +237,7 @@ export default function AccountEdit() {
                   emailPurpose: "password-change",
                 }),
               }).catch((_) => {
-                console.log("send email failed");
+                console.error("send email failed");
               });
             })
             .catch((_) => {

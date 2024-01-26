@@ -76,7 +76,6 @@ export default function Page({
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           setRename(false);
           setPage({
             id: data.id,
@@ -100,7 +99,6 @@ export default function Page({
             })
               .then((res) => res.json())
               .then((data) => {
-                console.log(data);
                 setRename(false);
                 setPage({
                   id: data.id,

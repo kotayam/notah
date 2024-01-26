@@ -30,7 +30,6 @@ export default function AccountPage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status) throw new Error("error occurred");
       })
       .catch(async (_) => {
@@ -41,12 +40,11 @@ export default function AccountPage() {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               if (data.status) throw new Error("error occurred");
             })
-            .catch(_ => {
+            .catch((_) => {
               window.location.href = "/login?status=error";
-            })
+            });
         }
       });
   }, [account]);

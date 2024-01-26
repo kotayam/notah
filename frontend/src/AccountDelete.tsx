@@ -39,7 +39,6 @@ export default function AccountDelete() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.status) {
           displayErrorMessage("Something went wrong, try again later");
           return;
@@ -56,7 +55,7 @@ export default function AccountDelete() {
               emailPurpose: "account-delete",
             }),
           }).catch((_) => {
-            console.log("send email failed");
+            console.error("send email failed");
           });
           window.location.href = "/login?status=deleted";
         }
@@ -70,7 +69,6 @@ export default function AccountDelete() {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log(data);
               if (data.status) {
                 throw new Error();
               } else {
@@ -86,7 +84,7 @@ export default function AccountDelete() {
                     emailPurpose: "account-delete"
                   }),
                 }).catch((_) => {
-                  console.log("send email failed");
+                  console.error("send email failed");
                 });
                 window.location.href = "/login?status=deleted";
               }

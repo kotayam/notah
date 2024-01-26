@@ -78,7 +78,6 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           setRename(false);
           setTtl(newTitle);
           setLoading(false);
@@ -103,7 +102,6 @@ export default function NoteBook({ id, title, deleteNotebook }: NoteBookProps) {
             })
               .then((res) => res.json())
               .then((data) => {
-                console.log(data);
                 setRename(false);
                 setTtl(data.title);
                 setLoading(false);

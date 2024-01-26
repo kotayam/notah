@@ -21,6 +21,7 @@ export default function Table({
   let canvasElements = useSelector((state: rootState) => state.canvasElements);
   canvasElements = new Map(canvasElements);
   const page = useSelector((state: rootState) => state.page);
+  const isSaved = useSelector((state: rootState) => state.isSaved);
   const [canvasElts, _] = useState(
     canvasElements.get(page.id) || new Array<CanvasElement>()
   );
@@ -60,13 +61,16 @@ export default function Table({
   };
 
   const deleteTable = () => {
+    if (!isSaved) {
+      deleteCanvasElement(page.id, elt.id, elt);
+      return;
+    }
     fetch(apiLink + `CanvasElements/${elt.id}`, {
       method: "DELETE",
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then((_) => {
         deleteCanvasElement(page.id, elt.id, elt);
       })
       .catch(async (_) => {
@@ -77,8 +81,7 @@ export default function Table({
             credentials: "include",
           })
             .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
+            .then((_) => {
               deleteCanvasElement(page.id, elt.id, elt);
             })
             .catch((_) => {

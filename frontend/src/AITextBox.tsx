@@ -44,7 +44,6 @@ export default function AITextBox({
   useEffect(() => {
     const splitter = new RegExp("</p>");
     const splitted = elt.innerHtml.split(splitter);
-    console.log(splitted);
     const matcher = new RegExp("<p class=.*>([^]+)");
     const res: string[] = [];
     splitted.forEach((reg) => {
@@ -53,7 +52,6 @@ export default function AITextBox({
         res.push(content[1]);
       }
     });
-    console.log(res);
     setContents(res);
   }, [elt.innerHtml]);
 
@@ -91,12 +89,10 @@ export default function AITextBox({
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
+      .then((_) => {
         deleteCanvasElement(page.id, elt.id, elt);
       })
-      .catch(async (e) => {
-        console.error(e);
+      .catch(async (_) => {
         const authorized = await refreshToken();
         if (authorized) {
           fetch(apiLink + `CanvasElements/${elt.id}`, {
@@ -104,8 +100,7 @@ export default function AITextBox({
             credentials: "include",
           })
             .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
+            .then((_) => {
               deleteCanvasElement(page.id, elt.id, elt);
             })
             .catch((_) => {
@@ -137,7 +132,6 @@ export default function AITextBox({
       .then((data) => {
         setLoading(false);
         target.prompt.value = "";
-        console.log(data);
         if (data.status === 404) {
           setContents((prev) => {
             const curr = [...prev];
@@ -156,7 +150,6 @@ export default function AITextBox({
           return;
         }
         setSaved(false);
-        console.log(data);
         setContents((prev) => [...prev, `A: ${data.answer}`]);
         account.aiUsageLimit = data.aiUsageLimit;
         setAccount(account);
@@ -195,17 +188,18 @@ export default function AITextBox({
                 return;
               }
               setSaved(false);
-              console.log(data);
               setContents((prev) => [...prev, `A: ${data.answer}`]);
               account.aiUsageLimit = data.aiUsageLimit;
               setAccount(account);
             })
-            .catch(_ => {
+            .catch((_) => {
               setLoading(false);
               target.prompt.value = "";
-              setContents((prev) => prev.filter((_, idx) => idx !== prev.length - 1));
+              setContents((prev) =>
+                prev.filter((_, idx) => idx !== prev.length - 1)
+              );
               alert("Something went wrong. Please try again later.");
-            })
+            });
         }
       });
   };
